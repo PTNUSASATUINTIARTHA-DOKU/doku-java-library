@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -41,6 +42,9 @@ public class TokenService {
 
     @Value("${doku-sdk.snap.production-base-url}")
     private String productionBaseUrl;
+
+    @Value("${doku-sdk.snap.token-expired-time}")
+    private long accessTokenTimeoutSec;
 
     public String getTimestamp() {
         return dateUtils.getISO8601StringFromDateUTC(LocalDateTime.now(), dateTimeFormatter);
@@ -86,6 +90,13 @@ public class TokenService {
 
         var response = connectionUtils.httpPost(url.toString(), httpHeaders, gson.toJson(tokenB2BRequestDTO));
 
-        return gson.fromJson(response.getBody(), TokenB2BResponseDto.class);
+        TokenB2BResponseDto tokenB2BResponseDto = gson.fromJson(response.getBody(), TokenB2BResponseDto.class);
+        var expiresIn = accessTokenTimeoutSec;
+        if (Strings.isNotEmpty(tokenB2BResponseDto.getExpiresIn())) {
+            expiresIn = Long.parseLong(tokenB2BResponseDto.getExpiresIn()) - 10;
+        }
+        tokenB2BResponseDto.setExpiresIn(String.valueOf(expiresIn));
+
+        return tokenB2BResponseDto;
     }
 }
