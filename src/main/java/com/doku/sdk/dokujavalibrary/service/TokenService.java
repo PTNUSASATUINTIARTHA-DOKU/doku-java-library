@@ -32,7 +32,7 @@ public class TokenService {
     private final SnapSignatureService snapSignatureService;
     private final Gson gson;
 
-    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     @Value("${doku-sdk.snap.generate-token-b2b}")
     private String accessTokenUrl;

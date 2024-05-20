@@ -5,11 +5,13 @@ import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
 
 @Slf4j
 @RequiredArgsConstructor
+@Service
 public class TokenController {
 
     private final TokenService tokenService;
