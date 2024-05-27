@@ -24,4 +24,16 @@ public class TokenController {
         TokenB2BRequestDto tokenB2BRequestDTO = tokenService.createTokenB2BRequestDTO(signature, clientId, timestamp);
         return tokenService.createTokenB2B(tokenB2BRequestDTO, isProduction);
     }
+
+    public Boolean isTokenInvalid(String tokenB2b, long tokenExpiresIn, long tokenGeneratedTimestamp) {
+        if (tokenService.isTokenEmpty(tokenB2b)) {
+            return true;
+        } else {
+            if (tokenService.isTokenExpired(tokenExpiresIn, tokenGeneratedTimestamp)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 }

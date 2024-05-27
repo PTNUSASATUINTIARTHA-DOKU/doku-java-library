@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -98,5 +99,16 @@ public class TokenService {
         tokenB2BResponseDto.setExpiresIn(String.valueOf(expiresIn));
 
         return tokenB2BResponseDto;
+    }
+
+    public Boolean isTokenEmpty(String tokenB2b) {
+        return tokenB2b.isEmpty();
+    }
+
+    public Boolean isTokenExpired(long tokenExpiresIn, long tokenGeneratedTimestamp) {
+        var expiryTime = tokenExpiresIn + tokenGeneratedTimestamp;
+        var currentTime = Instant.now().getEpochSecond();
+
+        return expiryTime < currentTime;
     }
 }

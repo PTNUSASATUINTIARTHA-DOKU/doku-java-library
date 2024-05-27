@@ -3,10 +3,12 @@ package com.doku.sdk.dokujavalibrary.dto.request;
 import com.doku.au.security.module.constraint.SafeString;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.validation.LengthValidation;
 import com.doku.sdk.dokujavalibrary.validation.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.PatternValidation;
 import com.doku.sdk.dokujavalibrary.validation.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.SizeValidation;
+import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.VirtualAccountNo;
 import lombok.AllArgsConstructor;
@@ -29,7 +31,7 @@ public class CreateVaRequestDto {
 
     @NotNull(groups = MandatoryValidation.class, message = "partnerServiceId cannot be null. Please provide a partnerServiceId. Example: ' 888994'.")
     @SafeString(groups = SafeStringValidation.class, message = "partnerServiceId must be a string. Ensure that partnerServiceId is enclosed in quotes. Example: ' 888994'.")
-    @FixedLength(length = {8}, message = "partnerServiceId must be exactly 8 characters long. Ensure that partnerServiceId has 8 characters, left-padded with spaces. Example: ' 888994'.")
+    @FixedLength(length = {8}, groups = LengthValidation.class, message = "partnerServiceId must be exactly 8 characters long. Ensure that partnerServiceId has 8 characters, left-padded with spaces. Example: ' 888994'.")
     @Pattern(regexp = "^\\s{0,7}\\d{1,8}$?", groups = PatternValidation.class, message = "partnerServiceId must consist of up to 7 spaces followed by 1 to 8 digits. Make sure partnerServiceId follows this format. Example: ' 888994' (2 spaces and 6 digits).")
     private String partnerServiceId;
 
@@ -70,8 +72,10 @@ public class CreateVaRequestDto {
     private AdditionalInfoDto additionalInfo;
 
     @NotNull(groups = MandatoryValidation.class)
+    @FixedLength(length = {1}, groups = LengthValidation.class)
     private String virtualAccountTrxType;
 
     @SafeString(groups = SafeStringValidation.class)
+    @DateIso8601
     private String expiredDate;
 }
