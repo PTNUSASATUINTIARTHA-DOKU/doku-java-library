@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.response;
+package com.doku.sdk.dokujavalibrary.dto.va.notification.payment;
 
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateVaResponseDto {
+public class PaymentNotificationResponseBodyDto {
     private String responseCode;
     private String responseMessage;
     private VirtualAccountDataDto virtualAccountData;

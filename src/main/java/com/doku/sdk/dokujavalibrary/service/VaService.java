@@ -2,9 +2,12 @@ package com.doku.sdk.dokujavalibrary.service;
 
 import com.doku.sdk.dokujavalibrary.common.ConnectionUtils;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
-import com.doku.sdk.dokujavalibrary.dto.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
-import com.doku.sdk.dokujavalibrary.dto.response.CreateVaResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
+import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +59,8 @@ public class VaService {
     }
 
     public CreateVaResponseDto createVa(RequestHeaderDto requestHeaderDto, CreateVaRequestDto createVaRequestDto, Boolean isProduction) {
+        createVaRequestDto.validateCreateRequestVaDto(createVaRequestDto);
+
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -65,15 +70,6 @@ public class VaService {
         httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
         httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
-
-        if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {
-            createVaRequestDto.getTotalAmount().setValue("0");
-            createVaRequestDto.getTotalAmount().setCurrency("IDR");
-        }
-
-        if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getReusableStatus() == null) {
-            createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().setReusableStatus(false);
-        }
 
         StringBuilder url = new StringBuilder();
         if (isProduction) {
@@ -87,5 +83,24 @@ public class VaService {
         var response = connectionUtils.httpPost(url.toString(), httpHeaders, gson.toJson(createVaRequestDto));
 
         return gson.fromJson(response.getBody(), CreateVaResponseDto.class);
+    }
+
+    public CreateVaRequestDto convertToCreateVaRequestDto(CreateVaRequestDtoV1 createVaRequestDtoV1) {
+        return CreateVaRequestDto.builder()
+                .partnerServiceId(createVaRequestDtoV1.getPartnerServiceId())
+                .virtualAccountName(createVaRequestDtoV1.getName())
+                .virtualAccountEmail(createVaRequestDtoV1.getEmail())
+                .virtualAccountPhone(createVaRequestDtoV1.getMobilephone())
+                .trxId(createVaRequestDtoV1.getTransIdMerchant())
+                .totalAmount(TotalAmountDto.builder()
+                        .value(createVaRequestDtoV1.getAmount())
+                        .currency(createVaRequestDtoV1.getCurrency())
+                        .build())
+                .additionalInfo(AdditionalInfoDto.builder()
+                        .channel(createVaRequestDtoV1.getPaymentChannel())
+                        .build())
+                .virtualAccountTrxType("1")
+                .expiredDate(createVaRequestDtoV1.getExpiredDate())
+                .build();
     }
 }

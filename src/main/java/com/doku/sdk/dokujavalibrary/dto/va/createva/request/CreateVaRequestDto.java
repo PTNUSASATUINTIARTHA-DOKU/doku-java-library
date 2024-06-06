@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.request;
+package com.doku.sdk.dokujavalibrary.dto.va.createva.request;
 
 import com.doku.au.security.module.constraint.SafeString;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
@@ -78,4 +78,16 @@ public class CreateVaRequestDto {
     @SafeString(groups = SafeStringValidation.class)
     @DateIso8601
     private String expiredDate;
+
+    public void validateCreateRequestVaDto(CreateVaRequestDto createVaRequestDto) {
+
+        if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {
+            createVaRequestDto.getTotalAmount().setValue("0");
+            createVaRequestDto.getTotalAmount().setCurrency("IDR");
+        }
+
+        if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getReusableStatus() == null) {
+            createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().setReusableStatus(false);
+        }
+    }
 }
