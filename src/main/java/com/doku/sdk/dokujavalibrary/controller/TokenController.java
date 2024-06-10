@@ -1,9 +1,11 @@
 package com.doku.sdk.dokujavalibrary.controller;
 
+import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.request.TokenB2BRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
+import com.doku.sdk.dokujavalibrary.service.VaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.security.PrivateKey;
 public class TokenController {
 
     private final TokenService tokenService;
+    private final VaService vaService;
 
     public TokenB2BResponseDto getTokenB2B(PrivateKey privateKey, String clientId, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
@@ -53,5 +56,9 @@ public class TokenController {
     public NotificationTokenDto generateInvalidSignatureResponse() {
         String timestamp = tokenService.getTimestamp();
         return tokenService.generateInvalidSignature(timestamp);
+    }
+
+    public RequestHeaderDto doGenerateRequestHeader(PrivateKey privateKey, String clientId, String tokenB2b) {
+        return vaService.generateRequestHeaderDto(null, clientId, tokenB2b, privateKey);
     }
 }

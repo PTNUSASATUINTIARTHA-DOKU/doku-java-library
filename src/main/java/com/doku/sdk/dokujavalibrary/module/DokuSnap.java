@@ -3,6 +3,7 @@ package com.doku.sdk.dokujavalibrary.module;
 import com.doku.sdk.dokujavalibrary.controller.NotificationController;
 import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
+import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
@@ -90,5 +91,14 @@ public class DokuSnap {
             }
         }
         return notificationController.generateInvalidTokenResponse();
+    }
+
+    public RequestHeaderDto generateRequestHeader() {
+        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+        if (tokenInvalid) {
+            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+        }
+
+        return tokenController.doGenerateRequestHeader(privateKey, clientId, tokenB2b);
     }
 }

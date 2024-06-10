@@ -18,7 +18,9 @@ public class VaController {
     private final VaService vaService;
 
     public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, PrivateKey privateKey, String clientId, String tokenB2b, Boolean isProduction) {
-        var requestHeader = vaService.createVaRequestHeaderDto(createVaRequestDto, clientId, tokenB2b, privateKey);
+        String channelId = createVaRequestDto.getAdditionalInfo().getChannel();
+        var requestHeader = vaService.generateRequestHeaderDto(channelId, clientId, tokenB2b, privateKey);
+
         return vaService.createVa(requestHeader, createVaRequestDto, isProduction);
     }
 

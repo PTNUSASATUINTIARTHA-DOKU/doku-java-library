@@ -44,7 +44,7 @@ public class VaService {
         return uuid.toString() + timestamp;
     }
 
-    public RequestHeaderDto createVaRequestHeaderDto(CreateVaRequestDto createVaRequestDto, String clientId, String tokenB2b, PrivateKey privateKey) {
+    public RequestHeaderDto generateRequestHeaderDto(String channelId, String clientId, String tokenB2b, PrivateKey privateKey) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.createSignature(privateKey, clientId, timestamp);
 
@@ -53,7 +53,7 @@ public class VaService {
                 .xSignature(signature)
                 .xPartnerId(clientId)
                 .xExternalId(generateExternalId())
-                .channelId(createVaRequestDto.getAdditionalInfo().getChannel())
+                .channelId(channelId)
                 .authorization(tokenB2b)
                 .build();
     }
