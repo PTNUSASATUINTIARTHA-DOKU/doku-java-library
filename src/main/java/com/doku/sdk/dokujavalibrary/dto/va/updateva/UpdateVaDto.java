@@ -1,6 +1,5 @@
-package com.doku.sdk.dokujavalibrary.dto.va.createva.request;
+package com.doku.sdk.dokujavalibrary.dto.va.updateva;
 
-import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
@@ -29,7 +28,7 @@ import java.util.Arrays;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateVaRequestDto {
+public class UpdateVaDto {
 
     @NotNull(groups = MandatoryValidation.class, message = "partnerServiceId cannot be null. Please provide a partnerServiceId. Example: ' 888994'.")
     @SafeString(groups = SafeStringValidation.class, message = "partnerServiceId must be a string. Ensure that partnerServiceId is enclosed in quotes. Example: ' 888994'.")
@@ -46,7 +45,6 @@ public class CreateVaRequestDto {
     @VirtualAccountNo
     private String virtualAccountNo;
 
-    @NotNull(groups = MandatoryValidation.class, message = "virtualAccountName cannot be null. Please provide a virtualAccountName. Example: 'Toru Yamashita'.")
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountName must be a string. Ensure that virtualAccountName is enclosed in quotes. Example: 'Toru Yamashita'.")
     @Size(min = 1, groups = SizeValidation.class, message = "virtualAccountName must be at least 1 character long. Ensure that virtualAccountName is not empty. Example: 'Toru Yamashita'.")
     @Size(max = 255, groups = SizeValidation.class, message = "virtualAccountName must be 255 characters or fewer. Ensure that virtualAccountName is no longer than 255 characters. Example: 'Toru Yamashita'.")
@@ -71,7 +69,7 @@ public class CreateVaRequestDto {
     private String trxId;
 
     private TotalAmountDto totalAmount;
-    private AdditionalInfoDto additionalInfo;
+    private UpdateVaAdditionalInfoDto additionalInfo;
 
     @NotNull(groups = MandatoryValidation.class)
     @FixedLength(length = {1}, groups = LengthValidation.class)
@@ -81,18 +79,19 @@ public class CreateVaRequestDto {
     @DateIso8601
     private String expiredDate;
 
-    public void validateCreateRequestVaDto(CreateVaRequestDto createVaRequestDto) {
+    public void validateUpdateVaRequestDto(UpdateVaDto updateVaDto) {
 
-        if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {
-            createVaRequestDto.getTotalAmount().setValue("0");
-            createVaRequestDto.getTotalAmount().setCurrency("IDR");
+        if (updateVaDto.getVirtualAccountTrxType().equals("2")) {
+            updateVaDto.getTotalAmount().setValue("0");
+            updateVaDto.getTotalAmount().setCurrency("IDR");
         }
 
-        if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getReusableStatus() == null) {
-            createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().setReusableStatus(false);
+        if (!updateVaDto.getAdditionalInfo().getUpdateVaVirtualAccountConfig().getStatus().equals("ACTIVE") &&
+                !updateVaDto.getAdditionalInfo().getUpdateVaVirtualAccountConfig().getStatus().equals("INACTIVE")) {
+            throw new BadRequestException("", "Status can only be ACTIVE or INACTIVE");
         }
 
-        if (isValidChannel(createVaRequestDto.getAdditionalInfo().getChannel()) == false) {
+        if (isValidChannel(updateVaDto.getAdditionalInfo().getChannel()) == false) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }

@@ -1,9 +1,9 @@
 package com.doku.sdk.dokujavalibrary.dto.va;
 
-import com.doku.au.security.module.constraint.SafeString;
-import com.doku.sdk.dokujavalibrary.validation.MandatoryValidation;
-import com.doku.sdk.dokujavalibrary.validation.SafeStringValidation;
-import com.doku.sdk.dokujavalibrary.validation.SizeValidation;
+import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
+import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
+import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
+import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

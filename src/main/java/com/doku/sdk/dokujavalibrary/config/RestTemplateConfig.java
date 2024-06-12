@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -21,26 +20,13 @@ import java.net.Proxy;
 @RequiredArgsConstructor
 public class RestTemplateConfig {
 
-    @Value("${doku-sdk.proxy.host}")
-    private String proxyHost;
-
-    @Value("${doku-sdk.proxy.port}")
-    private Integer proxyPort;
-
-    @Value("${doku-sdk.http.client.proxy.enable}")
-    private Boolean enableProxy;
-
-    @Value("${doku-sdk.read.timeout}")
-    private Integer readTimeOut;
-
-    @Value("${doku-sdk.connect.timeout}")
-    private Integer connectTimeOut;
-
-    @Value("${doku-sdk.socket.timeout}")
-    private Integer socketTimeOut;
-
-    @Value("${doku-sdk.connection-request.timeout}")
-    private Integer connectionRequestTimeOut;
+    private static final String proxyHost = "localhost";
+    private static final Integer proxyPort = 8443;
+    private static final Boolean enableProxy = false;
+    private static final Integer readTimeOut = 30000;
+    private static final Integer connectTimeOut = 30000;
+    private static final Integer socketTimeOut = 30000;
+    private static final Integer connectionRequestTimeOut = 30000;
 
     private final RestTemplateResponseErrorHandler restTemplateResponseErrorHandler;
 

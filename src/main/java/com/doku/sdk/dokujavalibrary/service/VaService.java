@@ -1,6 +1,8 @@
 package com.doku.sdk.dokujavalibrary.service;
 
 import com.doku.sdk.dokujavalibrary.common.ConnectionUtils;
+import com.doku.sdk.dokujavalibrary.common.ValidationUtils;
+import com.doku.sdk.dokujavalibrary.config.SdkConfig;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
@@ -8,9 +10,11 @@ import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
+import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -24,18 +28,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VaService {
 
+    private static final Logger log = LoggerFactory.getLogger(VaService.class);
     private final TokenService tokenService;
     private final ConnectionUtils connectionUtils;
     private final Gson gson;
-
-    @Value("${doku-sdk.snap.create-va}")
-    private String createVaUrl;
-
-    @Value("${doku-sdk.snap.sandbox-base-url}")
-    private String sandboxBaseUrl;
-
-    @Value("${doku-sdk.snap.production-base-url}")
-    private String productionBaseUrl;
 
     public String generateExternalId() {
         UUID uuid = UUID.randomUUID();
@@ -59,6 +55,15 @@ public class VaService {
     }
 
     public CreateVaResponseDto createVa(RequestHeaderDto requestHeaderDto, CreateVaRequestDto createVaRequestDto, Boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(createVaRequestDto);
+        } catch (BadRequestException e) {
+            return CreateVaResponseDto.builder()
+                    .responseCode(e.getResponseCode())
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+
         createVaRequestDto.validateCreateRequestVaDto(createVaRequestDto);
 
         var httpHeaders = new HttpHeaders();
@@ -71,16 +76,8 @@ public class VaService {
         httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
 
-        StringBuilder url = new StringBuilder();
-        if (isProduction) {
-            url.append(productionBaseUrl);
-            url.append(createVaUrl);
-        } else {
-            url.append(sandboxBaseUrl);
-            url.append(createVaUrl);
-        }
-
-        var response = connectionUtils.httpPost(url.toString(), httpHeaders, gson.toJson(createVaRequestDto));
+        String url = SdkConfig.getCreateVaUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(createVaRequestDto));
 
         return gson.fromJson(response.getBody(), CreateVaResponseDto.class);
     }

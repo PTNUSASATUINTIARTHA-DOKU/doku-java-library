@@ -1,6 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.request;
 
-import com.doku.au.security.module.constraint.SafeString;
+import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
