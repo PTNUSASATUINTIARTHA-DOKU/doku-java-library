@@ -45,9 +45,12 @@ public class TokenService {
         return dateUtils.getISO8601StringFromDateUTC(LocalDateTime.now(), dateTimeFormatter);
     }
 
-    @SneakyThrows
     public String createSignature(PrivateKey privateKey, String clientId, String timestamp) {
         return SignatureUtils.createTokenB2bSignature(clientId, timestamp, privateKey);
+    }
+
+    public String generateSymmetricSignature(String httpMethod, String endpointUrl, String accessToken, String requestBody, String timestamp, String secretKey) {
+        return SignatureUtils.createSymmetricSignature(httpMethod, endpointUrl, accessToken, requestBody, timestamp, secretKey);
     }
 
     public TokenB2BRequestDto createTokenB2BRequestDTO(String signature, String clientId, String timestamp) {

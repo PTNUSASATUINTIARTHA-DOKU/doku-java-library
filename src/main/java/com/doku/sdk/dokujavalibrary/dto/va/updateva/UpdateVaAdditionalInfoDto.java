@@ -18,7 +18,7 @@ public class UpdateVaAdditionalInfoDto {
 
     @SafeString(groups = SafeStringValidation.class)
     private String channel;
-    private UpdateVaVirtualAccountConfigDto updateVaVirtualAccountConfig;
+    private UpdateVaVirtualAccountConfigDto virtualAccountConfig;
 
     @Data
     @Builder

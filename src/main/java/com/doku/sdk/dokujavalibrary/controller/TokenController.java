@@ -59,6 +59,10 @@ public class TokenController {
     }
 
     public RequestHeaderDto doGenerateRequestHeader(PrivateKey privateKey, String clientId, String tokenB2b) {
-        return vaService.generateRequestHeaderDto(null, clientId, tokenB2b, privateKey);
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.createSignature(privateKey, clientId, timestamp);
+        String externalId = vaService.generateExternalId();
+
+        return vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, tokenB2b);
     }
 }

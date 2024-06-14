@@ -1,6 +1,7 @@
-package com.doku.sdk.dokujavalibrary.dto.va.updateva;
+package com.doku.sdk.dokujavalibrary.dto.va.updateva.request;
 
 import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.UpdateVaAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
@@ -86,8 +87,8 @@ public class UpdateVaDto {
             updateVaDto.getTotalAmount().setCurrency("IDR");
         }
 
-        if (!updateVaDto.getAdditionalInfo().getUpdateVaVirtualAccountConfig().getStatus().equals("ACTIVE") &&
-                !updateVaDto.getAdditionalInfo().getUpdateVaVirtualAccountConfig().getStatus().equals("INACTIVE")) {
+        if (!updateVaDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("ACTIVE") &&
+                !updateVaDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("INACTIVE")) {
             throw new BadRequestException("", "Status can only be ACTIVE or INACTIVE");
         }
 

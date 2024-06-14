@@ -1,7 +1,6 @@
 package com.doku.sdk.dokujavalibrary.service;
 
 import com.doku.sdk.dokujavalibrary.common.ConnectionUtils;
-import com.doku.sdk.dokujavalibrary.common.ValidationUtils;
 import com.doku.sdk.dokujavalibrary.config.SdkConfig;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
@@ -10,7 +9,8 @@ import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.UUID;
@@ -40,32 +39,18 @@ public class VaService {
         return uuid.toString() + timestamp;
     }
 
-    public RequestHeaderDto generateRequestHeaderDto(String channelId, String clientId, String tokenB2b, PrivateKey privateKey) {
-        String timestamp = tokenService.getTimestamp();
-        String signature = tokenService.createSignature(privateKey, clientId, timestamp);
-
+    public RequestHeaderDto generateRequestHeaderDto(String timestamp, String signature, String clientId, String externalId, String channelId, String tokenB2b) {
         return RequestHeaderDto.builder()
                 .xTimestamp(timestamp)
                 .xSignature(signature)
                 .xPartnerId(clientId)
-                .xExternalId(generateExternalId())
+                .xExternalId(externalId)
                 .channelId(channelId)
                 .authorization(tokenB2b)
                 .build();
     }
 
     public CreateVaResponseDto createVa(RequestHeaderDto requestHeaderDto, CreateVaRequestDto createVaRequestDto, Boolean isProduction) {
-        try {
-            ValidationUtils.validateRequest(createVaRequestDto);
-        } catch (BadRequestException e) {
-            return CreateVaResponseDto.builder()
-                    .responseCode(e.getResponseCode())
-                    .responseMessage(e.getMessage())
-                    .build();
-        }
-
-        createVaRequestDto.validateCreateRequestVaDto(createVaRequestDto);
-
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -99,5 +84,22 @@ public class VaService {
                 .virtualAccountTrxType("1")
                 .expiredDate(createVaRequestDtoV1.getExpiredDate())
                 .build();
+    }
+
+    public UpdateVaResponseDto doUpdateVa(RequestHeaderDto requestHeaderDto, UpdateVaDto updateVaDto, Boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getUpdateVaUrl(isProduction);
+        var response = connectionUtils.httpPut(url, httpHeaders, gson.toJson(updateVaDto));
+
+        return gson.fromJson(response.getBody(), UpdateVaResponseDto.class);
     }
 }
