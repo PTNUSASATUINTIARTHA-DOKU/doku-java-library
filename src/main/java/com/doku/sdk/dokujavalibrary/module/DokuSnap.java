@@ -9,8 +9,9 @@ import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
-import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
@@ -54,7 +55,7 @@ public class DokuSnap {
                     .responseMessage(e.getMessage())
                     .build();
         }
-        createVaRequestDto.validateCreateRequestVaDto(createVaRequestDto);
+        createVaRequestDto.validateCreateVaRequestDto(createVaRequestDto);
 
         Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
         if (tokenInvalid) {
@@ -120,7 +121,7 @@ public class DokuSnap {
         return tokenController.doGenerateRequestHeader(privateKey, clientId, tokenB2b);
     }
 
-    public UpdateVaResponseDto updateVa(UpdateVaDto updateVaDto) {
+    public UpdateVaResponseDto updateVa(UpdateVaDto updateVaDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
         try {
             ValidationUtils.validateRequest(updateVaDto);
         } catch (BadRequestException e) {
@@ -137,5 +138,24 @@ public class DokuSnap {
         }
 
         return vaController.doUpdateVa(updateVaDto, clientId, tokenB2b, secretKey, isProduction);
+    }
+
+    public DeleteVaResponseDto deletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(deleteVaRequestDto);
+        } catch (BadRequestException e) {
+            return DeleteVaResponseDto.builder()
+                    .responseCode(e.getResponseCode())
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+        deleteVaRequestDto.validateDeleteVaRequestDto(deleteVaRequestDto);
+
+        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+        if (tokenInvalid) {
+            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+        }
+
+        return vaController.doDeletePaymentCode(deleteVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
     }
 }

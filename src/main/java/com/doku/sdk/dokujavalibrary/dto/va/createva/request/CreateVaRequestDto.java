@@ -81,7 +81,7 @@ public class CreateVaRequestDto {
     @DateIso8601
     private String expiredDate;
 
-    public void validateCreateRequestVaDto(CreateVaRequestDto createVaRequestDto) {
+    public void validateCreateVaRequestDto(CreateVaRequestDto createVaRequestDto) {
 
         if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {
             createVaRequestDto.getTotalAmount().setValue("0");

@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.va;
+package com.doku.sdk.dokujavalibrary.dto.va.deleteva.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class VirtualAccountConfigDto {
-
-    private Boolean reusableStatus;
-    private String status;
-    private String minAmount;
-    private String maxAmount;
+public class DeleteVaResponseDto {
+    private String responseCode;
+    private String responseMessage;
+    private DeleteVaResponseVirtualAccountDataDto virtualAccountData;
 }

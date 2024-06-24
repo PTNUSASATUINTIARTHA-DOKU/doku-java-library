@@ -5,6 +5,7 @@ import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TotalAmountDto {
 
     @NotNull(groups = MandatoryValidation.class)

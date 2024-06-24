@@ -9,12 +9,12 @@ import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VaService {
 
-    private static final Logger log = LoggerFactory.getLogger(VaService.class);
     private final TokenService tokenService;
     private final ConnectionUtils connectionUtils;
     private final Gson gson;
@@ -101,5 +100,22 @@ public class VaService {
         var response = connectionUtils.httpPut(url, httpHeaders, gson.toJson(updateVaDto));
 
         return gson.fromJson(response.getBody(), UpdateVaResponseDto.class);
+    }
+
+    public DeleteVaResponseDto doDeletePaymentCode(RequestHeaderDto requestHeaderDto, DeleteVaRequestDto deleteVaRequestDto, Boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDeleteVaUrl(isProduction);
+        var response = connectionUtils.httpDelete(url, httpHeaders, gson.toJson(deleteVaRequestDto));
+
+        return gson.fromJson(response.getBody(), DeleteVaResponseDto.class);
     }
 }
