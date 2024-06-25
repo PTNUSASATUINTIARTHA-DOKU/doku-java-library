@@ -88,11 +88,13 @@ public class CreateVaRequestDto {
             createVaRequestDto.getTotalAmount().setCurrency("IDR");
         }
 
-        if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getReusableStatus() == null) {
-            createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().setReusableStatus(false);
+        if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig() != null) {
+            if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getReusableStatus() == null) {
+                createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().setReusableStatus(false);
+            }
         }
 
-        if (isValidChannel(createVaRequestDto.getAdditionalInfo().getChannel()) == false) {
+        if (!isValidChannel(createVaRequestDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }

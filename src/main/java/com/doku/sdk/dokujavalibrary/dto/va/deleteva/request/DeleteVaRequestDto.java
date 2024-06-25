@@ -51,7 +51,7 @@ public class DeleteVaRequestDto {
     private DeleteVaRequestAdditionalInfoDto additionalInfo;
 
     public void validateDeleteVaRequestDto(DeleteVaRequestDto deleteVaRequestDto) {
-        if (isValidChannel(deleteVaRequestDto.getAdditionalInfo().getChannel()) == false) {
+        if (!isValidChannel(deleteVaRequestDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }

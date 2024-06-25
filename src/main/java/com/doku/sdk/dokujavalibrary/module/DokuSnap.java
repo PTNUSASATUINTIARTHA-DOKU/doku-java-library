@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class DokuSnap {
     private String clientId;
     private Boolean isProduction;
     private String tokenB2b;
-    private long tokenExpiresIn;
+    private final long tokenExpiresIn = 900;
     private long tokenGeneratedTimestamp;
     private String publicKey;
     private String issuer;
@@ -59,6 +60,7 @@ public class DokuSnap {
 
         Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
         if (tokenInvalid) {
+            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
             tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
         }
 
@@ -115,6 +117,7 @@ public class DokuSnap {
     public RequestHeaderDto generateRequestHeader() {
         Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
         if (tokenInvalid) {
+            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
             tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
         }
 
@@ -134,6 +137,7 @@ public class DokuSnap {
 
         Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
         if (tokenInvalid) {
+            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
             tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
         }
 
@@ -153,6 +157,7 @@ public class DokuSnap {
 
         Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
         if (tokenInvalid) {
+            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
             tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
         }
 

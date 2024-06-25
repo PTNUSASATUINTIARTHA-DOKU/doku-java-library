@@ -94,7 +94,7 @@ public class UpdateVaDto {
             throw new BadRequestException("", "Status can only be ACTIVE or INACTIVE");
         }
 
-        if (isValidChannel(updateVaDto.getAdditionalInfo().getChannel()) == false) {
+        if (!isValidChannel(updateVaDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }
