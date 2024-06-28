@@ -81,6 +81,20 @@ public class CreateVaRequestDto {
     @DateIso8601
     private String expiredDate;
 
+    private OriginDto origin;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OriginDto {
+        private String product;
+        private String source;
+        private String sourceVersion;
+        private String system;
+        private String apiFormat;
+    }
+
     public void validateCreateVaRequestDto(CreateVaRequestDto createVaRequestDto) {
 
         if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {

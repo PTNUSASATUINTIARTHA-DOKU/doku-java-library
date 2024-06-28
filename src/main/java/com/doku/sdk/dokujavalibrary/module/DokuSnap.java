@@ -6,6 +6,8 @@ import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
@@ -44,6 +46,7 @@ public class DokuSnap {
     private String secretKey;
 
     public TokenB2BResponseDto getB2bToken(PrivateKey privateKey, String clientId, Boolean isProduction) {
+        tokenGeneratedTimestamp = Instant.now().getEpochSecond();
         return tokenController.getTokenB2B(privateKey, clientId, isProduction);
     }
 
@@ -162,5 +165,24 @@ public class DokuSnap {
         }
 
         return vaController.doDeletePaymentCode(deleteVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
+    }
+
+    public CheckStatusVaResponseDto checkStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(checkStatusVaRequestDto);
+        } catch (BadRequestException e) {
+            return CheckStatusVaResponseDto.builder()
+                    .responseCode(e.getResponseCode())
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+
+        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+        if (tokenInvalid) {
+            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+        }
+
+        return vaController.doCheckStatusVa(checkStatusVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
     }
 }

@@ -6,6 +6,8 @@ import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
@@ -27,7 +29,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VaService {
 
-    private final TokenService tokenService;
     private final ConnectionUtils connectionUtils;
     private final Gson gson;
 
@@ -59,6 +60,14 @@ public class VaService {
         httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
         httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        createVaRequestDto.setOrigin(CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion("1.0.0")
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                .build());
 
         String url = SdkConfig.getCreateVaUrl(isProduction);
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(createVaRequestDto));
@@ -117,5 +126,21 @@ public class VaService {
         var response = connectionUtils.httpDelete(url, httpHeaders, gson.toJson(deleteVaRequestDto));
 
         return gson.fromJson(response.getBody(), DeleteVaResponseDto.class);
+    }
+
+    public CheckStatusVaResponseDto doCheckStatusVa(RequestHeaderDto requestHeaderDto, CheckStatusVaRequestDto checkStatusVaRequestDto, Boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getCheckStatusVaUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(checkStatusVaRequestDto));
+
+        return gson.fromJson(response.getBody(), CheckStatusVaResponseDto.class);
     }
 }

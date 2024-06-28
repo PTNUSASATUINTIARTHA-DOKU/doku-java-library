@@ -1,6 +1,8 @@
 package com.doku.sdk.dokujavalibrary.controller;
 
 import com.doku.sdk.dokujavalibrary.config.SdkConfig;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
@@ -63,5 +65,16 @@ public class VaController {
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);
 
         return vaService.doDeletePaymentCode(requestHeader, deleteVaRequestDto, isProduction);
+    }
+
+    public CheckStatusVaResponseDto doCheckStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
+        String endpointUrl = SdkConfig.getCheckStatusVaUrl(isProduction);
+        String requestBody = gson.toJson(checkStatusVaRequestDto);
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = vaService.generateExternalId();
+        var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, tokenB2b);
+
+        return vaService.doCheckStatusVa(requestHeader, checkStatusVaRequestDto, isProduction);
     }
 }
