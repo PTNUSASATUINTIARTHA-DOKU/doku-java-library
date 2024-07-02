@@ -48,7 +48,7 @@ public class TokenController {
         return tokenService.validateTokenB2b(requestTokenB2b, publicKey);
     }
 
-    public NotificationTokenDto generateTokenB2b(String expiredIn, String issuer, PrivateKey privateKey, String clientId, String timestamp) {
+    public NotificationTokenDto generateTokenB2b(long expiredIn, String issuer, PrivateKey privateKey, String clientId, String timestamp) {
         String token = tokenService.generateToken(expiredIn, issuer, clientId, privateKey);
         return tokenService.generateNotificationTokenDto(token, timestamp, clientId, expiredIn);
     }

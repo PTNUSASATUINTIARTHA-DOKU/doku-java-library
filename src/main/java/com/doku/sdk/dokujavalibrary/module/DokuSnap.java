@@ -77,25 +77,22 @@ public class DokuSnap {
         return createVa(createVaRequestDto, privateKey, clientId, isProduction);
     }
 
-    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
+    private Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
         return tokenController.validateTokenB2b(requestTokenB2b, publicKey);
     }
 
-    public Boolean validateSignature(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
+    private Boolean validateSignature(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
         return tokenController.validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
     }
 
     public NotificationTokenDto validateSignatureAndGenerateToken(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
         Boolean isSignatureValid = validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
-        return generateTokenB2b(isSignatureValid);
+        return generateTokenB2b(isSignatureValid, privateKey, clientId, requestTimestamp);
     }
 
-    public NotificationTokenDto generateTokenB2b(Boolean isSignatureValid) {
-        String parsedTokenExpiresIn = String.valueOf(tokenExpiresIn);
-        String parsedTokenGeneratedTimestamp = String.valueOf(tokenGeneratedTimestamp);
-
+    public NotificationTokenDto generateTokenB2b(Boolean isSignatureValid, PrivateKey privateKey, String clientId, String timestamp) {
         if (isSignatureValid) {
-            return tokenController.generateTokenB2b(parsedTokenExpiresIn, issuer, privateKey, clientId, parsedTokenGeneratedTimestamp);
+            return tokenController.generateTokenB2b(tokenExpiresIn, issuer, privateKey, clientId, timestamp);
         } else {
             return tokenController.generateInvalidSignatureResponse();
         }

@@ -24,11 +24,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -97,22 +97,19 @@ public class TokenService {
     }
 
     public Boolean compareSignatures(String requestSignature, String newSignature) {
-        return requestSignature.matches(newSignature);
+        return requestSignature.equals(newSignature);
     }
 
     @SneakyThrows
-    public String generateToken(String expiredIn, String issuer, String clientId, PrivateKey privateKey) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
-        var parsedExpiredDate = dateFormat.parse(expiredIn);
-
+    public String generateToken(long expiredIn, String issuer, String clientId, PrivateKey privateKey) {
         return Jwts.builder()
-                .setExpiration(parsedExpiredDate)
+                .setExpiration(Date.from(Instant.ofEpochSecond(expiredIn)))
                 .setIssuer(issuer)
                 .claim("clientId", clientId)
                 .signWith(privateKey, SignatureAlgorithm.RS256).compact();
     }
 
-    public NotificationTokenDto generateNotificationTokenDto(String token, String timestamp, String clientId, String expiresIn) {
+    public NotificationTokenDto generateNotificationTokenDto(String token, String timestamp, String clientId, long expiresIn) {
         return NotificationTokenDto.builder()
                 .header(NotificationTokenHeaderDto.builder()
                         .xClientKey(clientId)
@@ -123,7 +120,7 @@ public class TokenService {
                         .responseMessage("Successful")
                         .accessToken(token)
                         .tokenType("Bearer")
-                        .expiresIn(expiresIn)
+                        .expiresIn(String.valueOf(expiresIn))
                         .additionalInfo("")
                         .build())
                 .build();
