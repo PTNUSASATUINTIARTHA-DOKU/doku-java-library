@@ -23,10 +23,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import java.security.KeyFactory;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 
@@ -103,7 +108,7 @@ public class TokenService {
     @SneakyThrows
     public String generateToken(long expiredIn, String issuer, String clientId, PrivateKey privateKey) {
         return Jwts.builder()
-                .setExpiration(Date.from(Instant.ofEpochSecond(expiredIn)))
+                .setExpiration(Date.from(Instant.now().plus(900, ChronoUnit.SECONDS)))
                 .setIssuer(issuer)
                 .claim("clientId", clientId)
                 .signWith(privateKey, SignatureAlgorithm.RS256).compact();
@@ -138,8 +143,11 @@ public class TokenService {
                 .build();
     }
 
-    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
+    public Boolean validateTokenB2b(String requestTokenB2b, String requestPublicKey) {
         try {
+            byte[] publicKeyBytes = Base64.getDecoder().decode(requestPublicKey);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
             Jws<Claims> jwt = Jwts.parserBuilder()
                     .setSigningKey(publicKey)
                     .build()

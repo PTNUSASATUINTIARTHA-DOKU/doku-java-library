@@ -56,7 +56,7 @@ public class VaController {
     }
 
     public DeleteVaResponseDto doDeletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
-        String endpointUrl = SdkConfig.getUpdateVaUrl(isProduction);
+        String endpointUrl = SdkConfig.getDeleteVaUrl(isProduction);
         String requestBody = gson.toJson(deleteVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.DELETE.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
