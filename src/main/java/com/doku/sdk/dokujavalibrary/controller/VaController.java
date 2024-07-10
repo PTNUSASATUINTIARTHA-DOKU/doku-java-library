@@ -33,7 +33,7 @@ public class VaController {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.createSignature(privateKey, clientId, timestamp);
         String externalId = vaService.generateExternalId();
-        String channelId = createVaRequestDto.getAdditionalInfo().getChannel();
+        String channelId = "SDK";
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);
 
         return vaService.createVa(requestHeader, createVaRequestDto, isProduction);
@@ -49,7 +49,7 @@ public class VaController {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.PUT.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = vaService.generateExternalId();
-        String channelId = updateVaDto.getAdditionalInfo().getChannel();
+        String channelId = "SDK";
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);
 
         return vaService.doUpdateVa(requestHeader, updateVaDto, isProduction);
@@ -61,7 +61,7 @@ public class VaController {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.DELETE.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = vaService.generateExternalId();
-        String channelId = deleteVaRequestDto.getAdditionalInfo().getChannel();
+        String channelId = "SDK";
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);
 
         return vaService.doDeletePaymentCode(requestHeader, deleteVaRequestDto, isProduction);
