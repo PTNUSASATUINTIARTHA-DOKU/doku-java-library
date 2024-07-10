@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.va.inquiry.request;
+package com.doku.sdk.dokujavalibrary.dto.va.inquiry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

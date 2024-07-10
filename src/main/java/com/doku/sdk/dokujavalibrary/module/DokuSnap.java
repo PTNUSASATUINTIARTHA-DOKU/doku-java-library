@@ -77,7 +77,7 @@ public class DokuSnap {
         return createVa(createVaRequestDto, privateKey, clientId, isProduction);
     }
 
-    private Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
+    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
         return tokenController.validateTokenB2b(requestTokenB2b, publicKey);
     }
 

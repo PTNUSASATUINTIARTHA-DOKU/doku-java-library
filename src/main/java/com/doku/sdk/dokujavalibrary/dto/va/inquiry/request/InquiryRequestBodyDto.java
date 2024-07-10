@@ -17,4 +17,5 @@ public class InquiryRequestBodyDto {
     private String trxDateInit;
     private String language;
     private String inquiryRequestId;
+    private InquiryRequestAdditionalInfoDto additionalInfo;
 }
