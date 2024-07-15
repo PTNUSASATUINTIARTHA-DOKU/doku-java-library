@@ -19,5 +19,7 @@ public class VirtualAccountDataDto {
     private String virtualAccountEmail;
     private String trxId;
     private TotalAmountDto totalAmount;
+    private String virtualAccountTrxType;
+    private String expiredDate;
     private AdditionalInfoDto additionalInfo;
 }

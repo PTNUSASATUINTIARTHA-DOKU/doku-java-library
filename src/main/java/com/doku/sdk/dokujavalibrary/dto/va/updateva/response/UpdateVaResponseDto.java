@@ -1,6 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.va.updateva.response;
 
-import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
+import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +16,5 @@ import lombok.NoArgsConstructor;
 public class UpdateVaResponseDto {
     private String responseCode;
     private String responseMessage;
-    private UpdateVaDto virtualAccountData;
+    private VirtualAccountDataDto virtualAccountData;
 }

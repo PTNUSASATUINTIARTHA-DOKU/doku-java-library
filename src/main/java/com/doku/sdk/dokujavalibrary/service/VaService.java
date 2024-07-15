@@ -13,7 +13,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
-import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +94,7 @@ public class VaService {
                 .build();
     }
 
-    public UpdateVaResponseDto doUpdateVa(RequestHeaderDto requestHeaderDto, UpdateVaDto updateVaDto, Boolean isProduction) {
+    public UpdateVaResponseDto doUpdateVa(RequestHeaderDto requestHeaderDto, UpdateVaRequestDto updateVaRequestDto, Boolean isProduction) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -106,7 +106,7 @@ public class VaService {
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
 
         String url = SdkConfig.getUpdateVaUrl(isProduction);
-        var response = connectionUtils.httpPut(url, httpHeaders, gson.toJson(updateVaDto));
+        var response = connectionUtils.httpPut(url, httpHeaders, gson.toJson(updateVaRequestDto));
 
         return gson.fromJson(response.getBody(), UpdateVaResponseDto.class);
     }

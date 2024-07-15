@@ -23,17 +23,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+
+import static com.doku.sdk.dokujavalibrary.common.RsaKeyUtils.getPrivateKey;
+import static com.doku.sdk.dokujavalibrary.common.RsaKeyUtils.getPublicKey;
 
 @Service
 @Slf4j
@@ -50,7 +48,7 @@ public class TokenService {
         return dateUtils.getISO8601StringFromDateUTC(LocalDateTime.now(), dateTimeFormatter);
     }
 
-    public String createSignature(PrivateKey privateKey, String clientId, String timestamp) {
+    public String createSignature(String privateKey, String clientId, String timestamp) {
         return SignatureUtils.createTokenB2bSignature(clientId, timestamp, privateKey);
     }
 
@@ -106,12 +104,12 @@ public class TokenService {
     }
 
     @SneakyThrows
-    public String generateToken(long expiredIn, String issuer, String clientId, PrivateKey privateKey) {
+    public String generateToken(long expiredIn, String issuer, String clientId, String privateKey) {
         return Jwts.builder()
                 .setExpiration(Date.from(Instant.now().plus(900, ChronoUnit.SECONDS)))
                 .setIssuer(issuer)
                 .claim("clientId", clientId)
-                .signWith(privateKey, SignatureAlgorithm.RS256).compact();
+                .signWith(getPrivateKey(privateKey), SignatureAlgorithm.RS256).compact();
     }
 
     public NotificationTokenDto generateNotificationTokenDto(String token, String timestamp, String clientId, long expiresIn) {
@@ -143,13 +141,10 @@ public class TokenService {
                 .build();
     }
 
-    public Boolean validateTokenB2b(String requestTokenB2b, String requestPublicKey) {
+    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
         try {
-            byte[] publicKeyBytes = Base64.getDecoder().decode(requestPublicKey);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
             Jws<Claims> jwt = Jwts.parserBuilder()
-                    .setSigningKey(publicKey)
+                    .setSigningKey(getPublicKey(publicKey))
                     .build()
                     .parseClaimsJws(requestTokenB2b);
             return true;

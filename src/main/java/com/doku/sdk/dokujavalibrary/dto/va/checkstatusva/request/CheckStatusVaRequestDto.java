@@ -1,8 +1,8 @@
 package com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request;
 
+import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
-import com.doku.sdk.dokujavalibrary.validation.annotation.VirtualAccountNo;
 import com.doku.sdk.dokujavalibrary.validation.group.LengthValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
@@ -30,13 +30,14 @@ public class CheckStatusVaRequestDto {
     @Pattern(regexp = "^\\s{0,7}\\d{1,8}$?", groups = PatternValidation.class, message = "partnerServiceId must consist of up to 7 spaces followed by 1 to 8 digits. Make sure partnerServiceId follows this format. Example: ' 888994' (2 spaces and 6 digits).")
     private String partnerServiceId;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @Length(max = 20, groups = SizeValidation.class)
-    @Pattern(regexp = "^\\d+$")
+    @NotNull(groups = MandatoryValidation.class)
+    @SafeString(groups = SafeStringValidation.class, message = "customerNo must be a string. Ensure that customerNo is enclosed in quotes. Example: '00000000000000000001'.")
+    @Length(max = 20, groups = SizeValidation.class, message = "customerNo must be 20 characters or fewer. Ensure that customerNo is no longer than 20 characters. Example: '00000000000000000001'.")
+    @Pattern(regexp = "^[0-9]*$", groups = PatternValidation.class, message = "customerNo must consist of only digits. Ensure that customerNo contains only numbers. Example: '00000000000000000001'.")
     private String customerNo;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @VirtualAccountNo
+    @NotNull(groups = MandatoryValidation.class, message = "virtualAccountNo cannot be null. Please provide a virtualAccountNo. Example: ' 88899400000000000000000001'.")
+    @SafeString(groups = SafeStringValidation.class, message = "virtualAccountNo must be a string. Ensure that virtualAccountNo is enclosed in quotes. Example: ' 88899400000000000000000001'.")
     private String virtualAccountNo;
 
     @SafeString(groups = SafeStringValidation.class)
@@ -48,4 +49,15 @@ public class CheckStatusVaRequestDto {
     private String paymentRequestId;
 
     private Object additionalInfo;
+
+    public void validateCheckStatusVaRequestDto(CheckStatusVaRequestDto checkStatusVaRequestDto) {
+        if (!checkStatusVaRequestDto.getPartnerServiceId().isEmpty()
+                && !checkStatusVaRequestDto.getCustomerNo().isEmpty()
+                && !checkStatusVaRequestDto.getVirtualAccountNo().isEmpty()) {
+            String target = checkStatusVaRequestDto.getPartnerServiceId() + checkStatusVaRequestDto.getCustomerNo();
+            if (!checkStatusVaRequestDto.getVirtualAccountNo().equals(target)) {
+                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+            }
+        }
+    }
 }

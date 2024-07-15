@@ -7,7 +7,6 @@ import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
-import com.doku.sdk.dokujavalibrary.validation.annotation.VirtualAccountNo;
 import com.doku.sdk.dokujavalibrary.validation.group.LengthValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
@@ -19,6 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -37,13 +37,14 @@ public class CreateVaRequestDto {
     @Pattern(regexp = "^\\s{0,7}\\d{1,8}$?", groups = PatternValidation.class, message = "partnerServiceId must consist of up to 7 spaces followed by 1 to 8 digits. Make sure partnerServiceId follows this format. Example: ' 888994' (2 spaces and 6 digits).")
     private String partnerServiceId;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @Length(max = 20, groups = SizeValidation.class)
-    @Pattern(regexp = "^\\d+$")
+    @NotNull(groups = MandatoryValidation.class)
+    @SafeString(groups = SafeStringValidation.class, message = "customerNo must be a string. Ensure that customerNo is enclosed in quotes. Example: '00000000000000000001'.")
+    @Length(max = 20, groups = SizeValidation.class, message = "customerNo must be 20 characters or fewer. Ensure that customerNo is no longer than 20 characters. Example: '00000000000000000001'.")
+    @Pattern(regexp = "^[0-9]*$", groups = PatternValidation.class, message = "customerNo must consist of only digits. Ensure that customerNo contains only numbers. Example: '00000000000000000001'.")
     private String customerNo;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @VirtualAccountNo
+    @NotNull(groups = MandatoryValidation.class, message = "virtualAccountNo cannot be null. Please provide a virtualAccountNo. Example: ' 88899400000000000000000001'.")
+    @SafeString(groups = SafeStringValidation.class, message = "virtualAccountNo must be a string. Ensure that virtualAccountNo is enclosed in quotes. Example: ' 88899400000000000000000001'.")
     private String virtualAccountNo;
 
     @NotNull(groups = MandatoryValidation.class, message = "virtualAccountName cannot be null. Please provide a virtualAccountName. Example: 'Toru Yamashita'.")
@@ -56,7 +57,7 @@ public class CreateVaRequestDto {
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountEmail must be a string. Ensure that virtualAccountEmail is enclosed in quotes. Example: 'toru@example.com'.")
     @Size(min = 1, groups = SizeValidation.class, message = "virtualAccountEmail must be at least 1 character long. Ensure that virtualAccountEmail is not empty. Example: 'toru@example.com'.")
     @Size(max = 255, groups = SizeValidation.class, message = "virtualAccountEmail must be 255 characters or fewer. Ensure that virtualAccountEmail is no longer than 255 characters. Example: 'toru@example.com'.")
-    @Email(groups = PatternValidation.class)
+    @Email(groups = PatternValidation.class, regexp = ".+[@].+[\\.].+")
     private String virtualAccountEmail;
 
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountPhone must be a string. Ensure that virtualAccountPhone is enclosed in quotes. Example: '628123456789'.")
@@ -70,15 +71,19 @@ public class CreateVaRequestDto {
     @Size(max = 64, groups = SizeValidation.class, message = "trxId must be 64 characters or fewer. Ensure that trxId is no longer than 64 characters. Example: '23219829713'.")
     private String trxId;
 
+    @Valid
     private TotalAmountDto totalAmount;
+
+    @Valid
     private AdditionalInfoDto additionalInfo;
 
     @NotNull(groups = MandatoryValidation.class)
-    @FixedLength(length = {1}, groups = LengthValidation.class)
+    @SafeString(groups = SafeStringValidation.class, message = "virtualAccountTrxType must be a string. Ensure that virtualAccountTrxType is enclosed in quotes. Example: 'C'.")
+    @FixedLength(length = {1}, groups = LengthValidation.class, message = "virtualAccountTrxType must be exactly 1 character long. Ensure that virtualAccountTrxType is either 'C', 'O', or 'V'. Example: 'C'.")
     private String virtualAccountTrxType;
 
     @SafeString(groups = SafeStringValidation.class)
-    @DateIso8601
+    @DateIso8601(groups = PatternValidation.class, message = "expiredDate must be in ISO-8601 format. Ensure that expiredDate follows the correct format. Example: '2023-01-01T10:55:00+07:00'.")
     private String expiredDate;
 
     private OriginDto origin;
@@ -96,10 +101,23 @@ public class CreateVaRequestDto {
     }
 
     public void validateCreateVaRequestDto(CreateVaRequestDto createVaRequestDto) {
+        if (!createVaRequestDto.getPartnerServiceId().isEmpty()
+                && !createVaRequestDto.getCustomerNo().isEmpty()
+                && !createVaRequestDto.getVirtualAccountNo().isEmpty()) {
+            String target = createVaRequestDto.getPartnerServiceId() + createVaRequestDto.getCustomerNo();
+            if (!createVaRequestDto.getVirtualAccountNo().equals(target)) {
+                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+            }
+        }
 
-        if (createVaRequestDto.getVirtualAccountTrxType().equals("2")) {
-            createVaRequestDto.getTotalAmount().setValue("0");
-            createVaRequestDto.getTotalAmount().setCurrency("IDR");
+        if (!createVaRequestDto.getTotalAmount().getCurrency().equals("IDR")) {
+            throw new BadRequestException("", "totalAmount.currency must be 'IDR'. Ensure that totalAmount.currency is 'IDR'. Example: 'IDR'.");
+        }
+
+        if (!createVaRequestDto.getVirtualAccountTrxType().equals("C") &&
+                !createVaRequestDto.getVirtualAccountTrxType().equals("O") &&
+                !createVaRequestDto.getVirtualAccountTrxType().equals("V")) {
+            throw new BadRequestException("", "virtualAccountTrxType must be either 'C', 'O', or 'V'. Ensure that virtualAccountTrxType is one of these values. Example: 'C'.");
         }
 
         if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig() != null) {

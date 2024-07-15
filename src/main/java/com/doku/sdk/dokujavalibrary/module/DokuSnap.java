@@ -16,14 +16,15 @@ import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
-import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.security.PrivateKey;
 import java.time.Instant;
 
 @Service
@@ -35,7 +36,7 @@ public class DokuSnap {
     private final NotificationController notificationController;
 
     // global variable?
-    private PrivateKey privateKey;
+    private String privateKey;
     private String clientId;
     private Boolean isProduction;
     private String tokenB2b;
@@ -45,29 +46,37 @@ public class DokuSnap {
     private String issuer;
     private String secretKey;
 
-    public TokenB2BResponseDto getB2bToken(PrivateKey privateKey, String clientId, Boolean isProduction) {
+    public TokenB2BResponseDto getB2bToken(String privateKey, String clientId, Boolean isProduction) {
         tokenGeneratedTimestamp = Instant.now().getEpochSecond();
-        return tokenController.getTokenB2B(privateKey, clientId, isProduction);
-    }
 
-    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, PrivateKey privateKey, String clientId, Boolean isProduction) {
         try {
-            ValidationUtils.validateRequest(createVaRequestDto);
-        } catch (BadRequestException e) {
-            return CreateVaResponseDto.builder()
-                    .responseCode(e.getResponseCode())
+            return tokenController.getTokenB2B(privateKey, clientId, isProduction);
+        } catch (Exception e) {
+            return TokenB2BResponseDto.builder()
+                    .responseCode("5007300")
                     .responseMessage(e.getMessage())
                     .build();
         }
-        createVaRequestDto.validateCreateVaRequestDto(createVaRequestDto);
+    }
 
-        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
-        if (tokenInvalid) {
-            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
-            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, Boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(createVaRequestDto);
+            createVaRequestDto.validateCreateVaRequestDto(createVaRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return vaController.createVa(createVaRequestDto, privateKey, clientId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CreateVaResponseDto.builder()
+                    .responseCode("5002700")
+                    .responseMessage(e.getMessage())
+                    .build();
         }
-
-        return vaController.createVa(createVaRequestDto, privateKey, clientId, tokenB2b, isProduction);
     }
 
     // function name is recommended to be different
@@ -81,16 +90,16 @@ public class DokuSnap {
         return tokenController.validateTokenB2b(requestTokenB2b, publicKey);
     }
 
-    private Boolean validateSignature(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
+    private Boolean validateSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
         return tokenController.validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
     }
 
-    public NotificationTokenDto validateSignatureAndGenerateToken(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
+    public NotificationTokenDto validateSignatureAndGenerateToken(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
         Boolean isSignatureValid = validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
         return generateTokenB2b(isSignatureValid, privateKey, clientId, requestTimestamp);
     }
 
-    public NotificationTokenDto generateTokenB2b(Boolean isSignatureValid, PrivateKey privateKey, String clientId, String timestamp) {
+    public NotificationTokenDto generateTokenB2b(Boolean isSignatureValid, String privateKey, String clientId, String timestamp) {
         if (isSignatureValid) {
             return tokenController.generateTokenB2b(tokenExpiresIn, issuer, privateKey, clientId, timestamp);
         } else {
@@ -124,62 +133,64 @@ public class DokuSnap {
         return tokenController.doGenerateRequestHeader(privateKey, clientId, tokenB2b);
     }
 
-    public UpdateVaResponseDto updateVa(UpdateVaDto updateVaDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
+    public UpdateVaResponseDto updateVa(UpdateVaRequestDto updateVaRequestDto, String privateKey, String clientId, String secretKey, boolean isProduction) {
         try {
-            ValidationUtils.validateRequest(updateVaDto);
+            ValidationUtils.validateRequest(updateVaRequestDto);
+            updateVaRequestDto.validateUpdateVaRequestDto(updateVaRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return vaController.doUpdateVa(updateVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
         } catch (BadRequestException e) {
             return UpdateVaResponseDto.builder()
-                    .responseCode(e.getResponseCode())
+                    .responseCode("5002800")
                     .responseMessage(e.getMessage())
                     .build();
         }
-        updateVaDto.validateUpdateVaRequestDto(updateVaDto);
-
-        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
-        if (tokenInvalid) {
-            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
-            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
-        }
-
-        return vaController.doUpdateVa(updateVaDto, clientId, tokenB2b, secretKey, isProduction);
     }
 
-    public DeleteVaResponseDto deletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
+    public DeleteVaResponseDto deletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, String privateKey, String clientId, String secretKey, boolean isProduction) {
         try {
             ValidationUtils.validateRequest(deleteVaRequestDto);
+            deleteVaRequestDto.validateDeleteVaRequestDto(deleteVaRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return vaController.doDeletePaymentCode(deleteVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
         } catch (BadRequestException e) {
             return DeleteVaResponseDto.builder()
-                    .responseCode(e.getResponseCode())
+                    .responseCode("5003100")
                     .responseMessage(e.getMessage())
                     .build();
         }
-        deleteVaRequestDto.validateDeleteVaRequestDto(deleteVaRequestDto);
-
-        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
-        if (tokenInvalid) {
-            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
-            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
-        }
-
-        return vaController.doDeletePaymentCode(deleteVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
     }
 
-    public CheckStatusVaResponseDto checkStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto, PrivateKey privateKey, String clientId, String secretKey, boolean isProduction) {
+    public CheckStatusVaResponseDto checkStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto, String privateKey, String clientId, String secretKey, boolean isProduction) {
         try {
             ValidationUtils.validateRequest(checkStatusVaRequestDto);
+            checkStatusVaRequestDto.validateCheckStatusVaRequestDto(checkStatusVaRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return vaController.doCheckStatusVa(checkStatusVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
         } catch (BadRequestException e) {
             return CheckStatusVaResponseDto.builder()
-                    .responseCode(e.getResponseCode())
+                    .responseCode("5002600")
                     .responseMessage(e.getMessage())
                     .build();
         }
-
-        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
-        if (tokenInvalid) {
-            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
-            tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
-        }
-
-        return vaController.doCheckStatusVa(checkStatusVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
     }
+
 }

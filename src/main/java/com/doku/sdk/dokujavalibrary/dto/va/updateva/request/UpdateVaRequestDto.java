@@ -7,7 +7,6 @@ import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
-import com.doku.sdk.dokujavalibrary.validation.annotation.VirtualAccountNo;
 import com.doku.sdk.dokujavalibrary.validation.group.LengthValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
@@ -20,6 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UpdateVaDto {
+public class UpdateVaRequestDto {
 
     @NotNull(groups = MandatoryValidation.class, message = "partnerServiceId cannot be null. Please provide a partnerServiceId. Example: ' 888994'.")
     @SafeString(groups = SafeStringValidation.class, message = "partnerServiceId must be a string. Ensure that partnerServiceId is enclosed in quotes. Example: ' 888994'.")
@@ -39,13 +39,14 @@ public class UpdateVaDto {
     @Pattern(regexp = "^\\s{0,7}\\d{1,8}$?", groups = PatternValidation.class, message = "partnerServiceId must consist of up to 7 spaces followed by 1 to 8 digits. Make sure partnerServiceId follows this format. Example: ' 888994' (2 spaces and 6 digits).")
     private String partnerServiceId;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @Length(max = 20, groups = SizeValidation.class)
-    @Pattern(regexp = "^\\d+$")
+    @NotNull(groups = MandatoryValidation.class)
+    @SafeString(groups = SafeStringValidation.class, message = "customerNo must be a string. Ensure that customerNo is enclosed in quotes. Example: '00000000000000000001'.")
+    @Length(max = 20, groups = SizeValidation.class, message = "customerNo must be 20 characters or fewer. Ensure that customerNo is no longer than 20 characters. Example: '00000000000000000001'.")
+    @Pattern(regexp = "^[0-9]*$", groups = PatternValidation.class, message = "customerNo must consist of only digits. Ensure that customerNo contains only numbers. Example: '00000000000000000001'.")
     private String customerNo;
 
-    @SafeString(groups = SafeStringValidation.class)
-    @VirtualAccountNo
+    @NotNull(groups = MandatoryValidation.class, message = "virtualAccountNo cannot be null. Please provide a virtualAccountNo. Example: ' 88899400000000000000000001'.")
+    @SafeString(groups = SafeStringValidation.class, message = "virtualAccountNo must be a string. Ensure that virtualAccountNo is enclosed in quotes. Example: ' 88899400000000000000000001'.")
     private String virtualAccountNo;
 
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountName must be a string. Ensure that virtualAccountName is enclosed in quotes. Example: 'Toru Yamashita'.")
@@ -57,7 +58,7 @@ public class UpdateVaDto {
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountEmail must be a string. Ensure that virtualAccountEmail is enclosed in quotes. Example: 'toru@example.com'.")
     @Size(min = 1, groups = SizeValidation.class, message = "virtualAccountEmail must be at least 1 character long. Ensure that virtualAccountEmail is not empty. Example: 'toru@example.com'.")
     @Size(max = 255, groups = SizeValidation.class, message = "virtualAccountEmail must be 255 characters or fewer. Ensure that virtualAccountEmail is no longer than 255 characters. Example: 'toru@example.com'.")
-    @Email(groups = PatternValidation.class)
+    @Email(groups = PatternValidation.class, regexp = ".+[@].+[\\.].+")
     private String virtualAccountEmail;
 
     @SafeString(groups = SafeStringValidation.class, message = "virtualAccountPhone must be a string. Ensure that virtualAccountPhone is enclosed in quotes. Example: '628123456789'.")
@@ -71,30 +72,47 @@ public class UpdateVaDto {
     @Size(max = 64, groups = SizeValidation.class, message = "trxId must be 64 characters or fewer. Ensure that trxId is no longer than 64 characters. Example: '23219829713'.")
     private String trxId;
 
+    @Valid
     private TotalAmountDto totalAmount;
+
+    @Valid
     private UpdateVaAdditionalInfoDto additionalInfo;
 
     @NotNull(groups = MandatoryValidation.class)
-    @FixedLength(length = {1}, groups = LengthValidation.class)
+    @SafeString(groups = SafeStringValidation.class, message = "virtualAccountTrxType must be a string. Ensure that virtualAccountTrxType is enclosed in quotes. Example: 'C'.")
+    @FixedLength(length = {1}, groups = LengthValidation.class, message = "virtualAccountTrxType must be exactly 1 character long. Ensure that virtualAccountTrxType is either 'C', 'O', or 'V'. Example: 'C'.")
     private String virtualAccountTrxType;
 
     @SafeString(groups = SafeStringValidation.class)
-    @DateIso8601
+    @DateIso8601(groups = PatternValidation.class, message = "expiredDate must be in ISO-8601 format. Ensure that expiredDate follows the correct format. Example: '2023-01-01T10:55:00+07:00'.")
     private String expiredDate;
 
-    public void validateUpdateVaRequestDto(UpdateVaDto updateVaDto) {
-
-        if (updateVaDto.getVirtualAccountTrxType().equals("2")) {
-            updateVaDto.getTotalAmount().setValue("0");
-            updateVaDto.getTotalAmount().setCurrency("IDR");
+    public void validateUpdateVaRequestDto(UpdateVaRequestDto updateVaRequestDto) {
+        if (!updateVaRequestDto.getPartnerServiceId().isEmpty()
+                && !updateVaRequestDto.getCustomerNo().isEmpty()
+                && !updateVaRequestDto.getVirtualAccountNo().isEmpty()) {
+            String target = updateVaRequestDto.getPartnerServiceId() + updateVaRequestDto.getCustomerNo();
+            if (!updateVaRequestDto.getVirtualAccountNo().equals(target)) {
+                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+            }
         }
 
-        if (!updateVaDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("ACTIVE") &&
-                !updateVaDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("INACTIVE")) {
-            throw new BadRequestException("", "Status can only be ACTIVE or INACTIVE");
+        if (!updateVaRequestDto.getTotalAmount().getCurrency().equals("IDR")) {
+            throw new BadRequestException("", "totalAmount.currency must be 'IDR'. Ensure that totalAmount.currency is 'IDR'. Example: 'IDR'.");
         }
 
-        if (!isValidChannel(updateVaDto.getAdditionalInfo().getChannel())) {
+        if (!updateVaRequestDto.getVirtualAccountTrxType().equals("C") &&
+                !updateVaRequestDto.getVirtualAccountTrxType().equals("O") &&
+                !updateVaRequestDto.getVirtualAccountTrxType().equals("V")) {
+            throw new BadRequestException("", "virtualAccountTrxType must be either 'C', 'O', or 'V'. Ensure that virtualAccountTrxType is one of these values. Example: 'C'.");
+        }
+
+        if (!updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("ACTIVE") &&
+                !updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("INACTIVE")) {
+            throw new BadRequestException("", "status must be either ‘ACTIVE’ or ‘INACTIVE’. Ensure that status is one of these values. Example: ‘INACTIVE’.");
+        }
+
+        if (!isValidChannel(updateVaRequestDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }

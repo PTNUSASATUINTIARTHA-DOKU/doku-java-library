@@ -17,18 +17,20 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.util.Base64;
 
+import static com.doku.sdk.dokujavalibrary.common.RsaKeyUtils.getPrivateKey;
+
 public class SignatureUtils {
 
     private SignatureUtils() {
     }
 
     @SneakyThrows
-    public static String createTokenB2bSignature(String clientId, String timestamp, PrivateKey privateKey) {
+    public static String createTokenB2bSignature(String clientId, String timestamp, String privateKey) {
         StringBuilder component = new StringBuilder();
         component.append(clientId).append("|");
         component.append(timestamp);
 
-        return SHA256withRSA(component.toString(), privateKey);
+        return SHA256withRSA(component.toString(), getPrivateKey(privateKey));
     }
 
     private static String SHA256withRSA(String stringToSign, PrivateKey privateKey) throws Exception {

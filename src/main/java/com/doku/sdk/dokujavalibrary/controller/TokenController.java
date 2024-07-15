@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.PrivateKey;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -20,7 +18,7 @@ public class TokenController {
     private final TokenService tokenService;
     private final VaService vaService;
 
-    public TokenB2BResponseDto getTokenB2B(PrivateKey privateKey, String clientId, Boolean isProduction) {
+    public TokenB2BResponseDto getTokenB2B(String privateKey, String clientId, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.createSignature(privateKey, clientId, timestamp);
         TokenB2BRequestDto tokenB2BRequestDTO = tokenService.createTokenB2BRequestDTO(signature, clientId, timestamp);
@@ -39,7 +37,7 @@ public class TokenController {
         }
     }
 
-    public Boolean validateSignature(String requestSignature, String requestTimestamp, PrivateKey privateKey, String clientId) {
+    public Boolean validateSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
         String newSignature = tokenService.createSignature(privateKey, clientId, requestTimestamp);
         return tokenService.compareSignatures(requestSignature, newSignature);
     }
@@ -48,7 +46,7 @@ public class TokenController {
         return tokenService.validateTokenB2b(requestTokenB2b, publicKey);
     }
 
-    public NotificationTokenDto generateTokenB2b(long expiredIn, String issuer, PrivateKey privateKey, String clientId, String timestamp) {
+    public NotificationTokenDto generateTokenB2b(long expiredIn, String issuer, String privateKey, String clientId, String timestamp) {
         String token = tokenService.generateToken(expiredIn, issuer, clientId, privateKey);
         return tokenService.generateNotificationTokenDto(token, timestamp, clientId, expiredIn);
     }
@@ -58,7 +56,7 @@ public class TokenController {
         return tokenService.generateInvalidSignature(timestamp);
     }
 
-    public RequestHeaderDto doGenerateRequestHeader(PrivateKey privateKey, String clientId, String tokenB2b) {
+    public RequestHeaderDto doGenerateRequestHeader(String privateKey, String clientId, String tokenB2b) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.createSignature(privateKey, clientId, timestamp);
         String externalId = vaService.generateExternalId();

@@ -3,12 +3,15 @@ package com.doku.sdk.dokujavalibrary.dto.va.updateva;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
+import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @Builder
@@ -18,6 +21,8 @@ public class UpdateVaAdditionalInfoDto {
 
     @SafeString(groups = SafeStringValidation.class)
     private String channel;
+
+    @Valid
     private UpdateVaVirtualAccountConfigDto virtualAccountConfig;
 
     @Data
@@ -27,7 +32,12 @@ public class UpdateVaAdditionalInfoDto {
     public static class UpdateVaVirtualAccountConfigDto {
 
         @NotNull(groups = MandatoryValidation.class)
-        @SafeString(groups = SafeStringValidation.class)
+        @SafeString(groups = SafeStringValidation.class, message = "status must be a string. Ensure that status is enclosed in quotes. Example: ‘INACTIVE’.")
+        @Size(min = 1, groups = SizeValidation.class, message = "status must be at least 1 character long. Ensure that status is not empty. Example: ‘INACTIVE’.")
+        @Size(max = 20, groups = SizeValidation.class, message = "status must be 20 characters or fewer. Ensure that status is no longer than 20 characters. Example: ‘INACTIVE’.")
         private String status;
+
+        private String minAmount;
+        private String maxAmount;
     }
 }

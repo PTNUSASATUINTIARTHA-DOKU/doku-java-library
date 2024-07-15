@@ -8,7 +8,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
-import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaDto;
+import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import com.doku.sdk.dokujavalibrary.service.VaService;
@@ -17,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
-import java.security.PrivateKey;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class VaController {
     private final TokenService tokenService;
     private final Gson gson;
 
-    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, PrivateKey privateKey, String clientId, String tokenB2b, Boolean isProduction) {
+    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, String tokenB2b, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.createSignature(privateKey, clientId, timestamp);
         String externalId = vaService.generateExternalId();
@@ -43,16 +41,16 @@ public class VaController {
         return vaService.convertToCreateVaRequestDto(createVaRequestDtoV1);
     }
 
-    public UpdateVaResponseDto doUpdateVa(UpdateVaDto updateVaDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
+    public UpdateVaResponseDto doUpdateVa(UpdateVaRequestDto updateVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
         String endpointUrl = SdkConfig.getUpdateVaUrl(isProduction);
-        String requestBody = gson.toJson(updateVaDto);
+        String requestBody = gson.toJson(updateVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.PUT.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = vaService.generateExternalId();
         String channelId = "SDK";
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);
 
-        return vaService.doUpdateVa(requestHeader, updateVaDto, isProduction);
+        return vaService.doUpdateVa(requestHeader, updateVaRequestDto, isProduction);
     }
 
     public DeleteVaResponseDto doDeletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
