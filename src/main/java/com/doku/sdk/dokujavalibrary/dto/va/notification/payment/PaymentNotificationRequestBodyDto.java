@@ -1,7 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.va.notification.payment;
 
-import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +21,20 @@ public class PaymentNotificationRequestBodyDto {
     private String paymentRequestId;
     private TotalAmountDto paidAmount;
     private String virtualAccountPhone;
-    private AdditionalInfoDto additionalInfo;
+    private PaymentNotificationRequestAdditionalInfoDto additionalInfo;
     private String trxDateTime;
     private String virtualAccountTrxType;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PaymentNotificationRequestAdditionalInfoDto {
+        private String channel;
+        private VirtualAccountConfigDto virtualAccountConfig;
+        private String senderName;
+        private String sourceAccountNo;
+        private String sourceBankCode;
+        private String sourceBankName;
+    }
 }

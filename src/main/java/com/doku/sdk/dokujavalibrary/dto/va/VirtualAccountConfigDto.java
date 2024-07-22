@@ -1,10 +1,16 @@
 package com.doku.sdk.dokujavalibrary.dto.va;
 
+import com.doku.sdk.dokujavalibrary.validation.group.AmountValidation;
+import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -15,6 +21,12 @@ public class VirtualAccountConfigDto {
 
     private Boolean reusableStatus;
     private String status;
-    private String minAmount;
-    private String maxAmount;
+
+    @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
+    @Size(min = 1, groups = SizeValidation.class)
+    private BigDecimal minAmount;
+
+    @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
+    @Size(min = 1, groups = SizeValidation.class)
+    private BigDecimal maxAmount;
 }

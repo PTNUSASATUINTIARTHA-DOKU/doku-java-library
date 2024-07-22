@@ -1,6 +1,8 @@
 package com.doku.sdk.dokujavalibrary.service;
 
-import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
+import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
+import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
@@ -18,12 +20,25 @@ public class NotificationService {
                 .body(PaymentNotificationResponseBodyDto.builder()
                         .responseCode("2002500")
                         .responseMessage("Success")
-                        .virtualAccountData(VirtualAccountDataDto.builder()
+                        .virtualAccountData(PaymentNotificationResponseBodyDto.PaymentNotificationResponseVirtualAccountDataDto.builder()
                                 .partnerServiceId(paymentNotificationRequestBodyDto.getPartnerServiceId())
                                 .customerNo(paymentNotificationRequestBodyDto.getCustomerNo())
                                 .virtualAccountNo(paymentNotificationRequestBodyDto.getVirtualAccountNo())
                                 .virtualAccountName(paymentNotificationRequestBodyDto.getVirtualAccountName())
                                 .virtualAccountEmail(paymentNotificationRequestBodyDto.getVirtualAccountEmail())
+                                .paymentRequestId(paymentNotificationRequestBodyDto.getPaymentRequestId())
+                                .paidAmount(TotalAmountDto.builder()
+                                        .value(paymentNotificationRequestBodyDto.getPaidAmount().getValue())
+                                        .currency(paymentNotificationRequestBodyDto.getPaidAmount().getCurrency())
+                                        .build())
+                                .virtualAccountTrxType(paymentNotificationRequestBodyDto.getVirtualAccountTrxType())
+                                .additionalInfo(AdditionalInfoDto.builder()
+                                        .channel(paymentNotificationRequestBodyDto.getAdditionalInfo().getChannel())
+                                        .virtualAccountConfig(VirtualAccountConfigDto.builder()
+                                                .minAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount())
+                                                .maxAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount())
+                                                .build())
+                                        .build())
                                 .build())
                         .build())
                 .build();

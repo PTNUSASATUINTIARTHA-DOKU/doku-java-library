@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -28,6 +30,7 @@ public class InquiryResponseVirtualAccountDataDto {
     private String inquiryStatus;
     private InquiryReasonDto inquiryReason;
     private String inquiryRequestId;
+    private List<Object> freeText;
 
     @Data
     @Builder

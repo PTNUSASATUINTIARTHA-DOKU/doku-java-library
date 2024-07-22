@@ -6,6 +6,7 @@ import javax.validation.GroupSequence;
         SafeStringValidation.class,
         PatternValidation.class,
         SizeValidation.class,
+        AmountValidation.class,
         LengthValidation.class})
 public interface GeneralSequenceValidation {
 }
