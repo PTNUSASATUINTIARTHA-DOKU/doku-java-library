@@ -26,7 +26,7 @@ public class TotalAmountDto {
     @SafeString(groups = SafeStringValidation.class, message = "totalAmount.value must be a string. Ensure that totalAmount.value is enclosed in quotes. Example: '11500.00'.")
     @Size(min = 4, groups = SizeValidation.class, message = "totalAmount.value must be at least 4 characters long and formatted as 0.00. Ensure that totalAmount.value is at least 4 characters long and in the correct format. Example: '100.00'.")
     @Size(max = 19, groups = SizeValidation.class, message = "totalAmount.value must be 19 characters or fewer and formatted as 9999999999999999.99. Ensure that totalAmount.value is no longer than 19 characters and in the correct format. Example: '9999999999999999.99'.")
-    @Pattern(regexp = "^(0|[1-9]\\d{0,15})(\\.\\d{2})?$", groups = PatternValidation.class)
+    @Pattern(regexp = "[0-9]{1,16}\\.[0-9]{2}", groups = PatternValidation.class, message = "invalid pattern")
     private String value;
 
     @NotNull(groups = MandatoryValidation.class, message = "totalAmount.currency cannot be null. Please provide a totalAmount.currency. Example: 'IDR'.")

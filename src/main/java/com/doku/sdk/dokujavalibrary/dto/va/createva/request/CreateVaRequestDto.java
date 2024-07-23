@@ -136,8 +136,7 @@ public class CreateVaRequestDto {
                 throw new BadRequestException("", "Only supported for virtualAccountTrxType O and V only");
             }
 
-            if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount().compareTo(createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount()) < 0 ||
-                    createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount().compareTo(createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount()) == 0) {
+            if (createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount().compareTo(createVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount()) >= 0) {
                 throw new BadRequestException("", "maxAmount cannot be lesser than minAmount");
             }
         }

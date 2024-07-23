@@ -115,6 +115,17 @@ public class UpdateVaRequestDto {
         if (!isValidChannel(updateVaRequestDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
+
+        if (updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount() != null &&
+                updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount() != null) {
+            if (updateVaRequestDto.getVirtualAccountTrxType().equals("C")) {
+                throw new BadRequestException("", "Only supported for virtualAccountTrxType O and V only");
+            }
+
+            if (updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount().compareTo(updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount()) >= 0) {
+                throw new BadRequestException("", "maxAmount cannot be lesser than minAmount");
+            }
+        }
     }
 
     private static boolean isValidChannel(String channel) {

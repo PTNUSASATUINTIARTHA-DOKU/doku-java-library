@@ -1,6 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.va.updateva;
 
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
+import com.doku.sdk.dokujavalibrary.validation.group.AmountValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
@@ -10,8 +11,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 @Data
 @Builder
@@ -37,7 +41,11 @@ public class UpdateVaAdditionalInfoDto {
         @Size(max = 20, groups = SizeValidation.class, message = "status must be 20 characters or fewer. Ensure that status is no longer than 20 characters. Example: ‘INACTIVE’.")
         private String status;
 
-        private String minAmount;
-        private String maxAmount;
+        @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
+        @DecimalMin(value = "1", groups = SizeValidation.class)
+        private BigDecimal minAmount;
+
+        @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
+        private BigDecimal maxAmount;
     }
 }

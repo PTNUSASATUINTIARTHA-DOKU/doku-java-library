@@ -20,6 +20,8 @@ import com.doku.sdk.dokujavalibrary.dto.va.updateva.UpdateVaAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 
+import java.math.BigDecimal;
+
 public class TestUtil {
 
     public static final String CLIENT_ID = "clientId";
@@ -49,7 +51,7 @@ public class TestUtil {
                 .virtualAccountPhone("6281288932399")
                 .trxId("INV_20240711001")
                 .totalAmount(TotalAmountDto.builder()
-                        .value("10000")
+                        .value("10000.00")
                         .currency("IDR")
                         .build())
                 .additionalInfo(AdditionalInfoDto.builder()
@@ -75,7 +77,7 @@ public class TestUtil {
                         .virtualAccountEmail("sdk@email.com")
                         .trxId("INV_20240711001")
                         .totalAmount(TotalAmountDto.builder()
-                                .value("10000")
+                                .value("10000.00")
                                 .currency("IDR")
                                 .build())
                         .additionalInfo(AdditionalInfoDto.builder()
@@ -96,7 +98,7 @@ public class TestUtil {
                 .virtualAccountPhone("6281288932399")
                 .trxId("INV_20240710001")
                 .totalAmount(TotalAmountDto.builder()
-                        .value("10000")
+                        .value("10000.00")
                         .currency("IDR")
                         .build())
                 .additionalInfo(UpdateVaAdditionalInfoDto.builder()
@@ -122,7 +124,7 @@ public class TestUtil {
                         .virtualAccountEmail("sdk@email.com")
                         .trxId("INV_20240710001")
                         .totalAmount(TotalAmountDto.builder()
-                                .value("10000")
+                                .value("10000.00")
                                 .currency("IDR")
                                 .build())
                         .expiredDate("2024-07-29T09:54:04+07:00")
@@ -182,11 +184,11 @@ public class TestUtil {
                         .virtualAccountNo("    1899000000000661")
                         .trxId("INV_20240715001")
                         .paidAmount(TotalAmountDto.builder()
-                                .value("10000")
+                                .value("10000.00")
                                 .currency("IDR")
                                 .build())
                         .billAmount(TotalAmountDto.builder()
-                                .value("10000")
+                                .value("10000.00")
                                 .currency("IDR")
                                 .build())
                         .additionalInfo(CheckStatusResponseAdditionalInfoDto.builder()

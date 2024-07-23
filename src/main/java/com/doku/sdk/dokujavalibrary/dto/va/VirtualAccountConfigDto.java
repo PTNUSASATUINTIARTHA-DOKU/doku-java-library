@@ -8,8 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
 @Data
@@ -23,10 +23,9 @@ public class VirtualAccountConfigDto {
     private String status;
 
     @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
-    @Size(min = 1, groups = SizeValidation.class)
+    @DecimalMin(value = "1", groups = SizeValidation.class)
     private BigDecimal minAmount;
 
     @Digits(integer = 16, fraction = 2, groups = AmountValidation.class)
-    @Size(min = 1, groups = SizeValidation.class)
     private BigDecimal maxAmount;
 }
