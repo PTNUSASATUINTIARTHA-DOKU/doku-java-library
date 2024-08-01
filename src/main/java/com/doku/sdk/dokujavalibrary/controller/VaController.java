@@ -29,7 +29,7 @@ public class VaController {
 
     public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, String tokenB2b, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
-        String signature = tokenService.createSignature(privateKey, clientId, timestamp);
+        String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
         String externalId = vaService.generateExternalId();
         String channelId = "SDK";
         var requestHeader = vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, channelId, tokenB2b);

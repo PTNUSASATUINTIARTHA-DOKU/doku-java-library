@@ -48,8 +48,8 @@ public class TokenService {
         return dateUtils.getISO8601StringFromDateUTC(LocalDateTime.now(), dateTimeFormatter);
     }
 
-    public String createSignature(String privateKey, String clientId, String timestamp) {
-        return SignatureUtils.createTokenB2bSignature(clientId, timestamp, privateKey);
+    public String generateAsymmetricSignature(String privateKey, String clientId, String timestamp) {
+        return SignatureUtils.createAsymmetricSignature(clientId, timestamp, privateKey);
     }
 
     public String generateSymmetricSignature(String httpMethod, String endpointUrl, String accessToken, String requestBody, String timestamp, String secretKey) {

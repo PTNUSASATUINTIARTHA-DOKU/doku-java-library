@@ -25,7 +25,7 @@ public class SignatureUtils {
     }
 
     @SneakyThrows
-    public static String createTokenB2bSignature(String clientId, String timestamp, String privateKey) {
+    public static String createAsymmetricSignature(String clientId, String timestamp, String privateKey) {
         StringBuilder component = new StringBuilder();
         component.append(clientId).append("|");
         component.append(timestamp);

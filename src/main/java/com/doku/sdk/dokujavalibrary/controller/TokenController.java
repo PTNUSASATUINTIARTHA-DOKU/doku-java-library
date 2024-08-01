@@ -20,7 +20,7 @@ public class TokenController {
 
     public TokenB2BResponseDto getTokenB2B(String privateKey, String clientId, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
-        String signature = tokenService.createSignature(privateKey, clientId, timestamp);
+        String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
         TokenB2BRequestDto tokenB2BRequestDTO = tokenService.createTokenB2BRequestDTO(signature, clientId, timestamp);
         return tokenService.createTokenB2B(tokenB2BRequestDTO, isProduction);
     }
@@ -37,8 +37,8 @@ public class TokenController {
         }
     }
 
-    public Boolean validateSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
-        String newSignature = tokenService.createSignature(privateKey, clientId, requestTimestamp);
+    public Boolean validateAsymmetricSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
+        String newSignature = tokenService.generateAsymmetricSignature(privateKey, clientId, requestTimestamp);
         return tokenService.compareSignatures(requestSignature, newSignature);
     }
 
@@ -58,7 +58,7 @@ public class TokenController {
 
     public RequestHeaderDto doGenerateRequestHeader(String privateKey, String clientId, String tokenB2b) {
         String timestamp = tokenService.getTimestamp();
-        String signature = tokenService.createSignature(privateKey, clientId, timestamp);
+        String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
         String externalId = vaService.generateExternalId();
 
         return vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, tokenB2b);

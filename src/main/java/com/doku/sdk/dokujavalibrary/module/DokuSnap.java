@@ -20,8 +20,6 @@ import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -90,12 +88,12 @@ public class DokuSnap {
         return tokenController.validateTokenB2b(requestTokenB2b, publicKey);
     }
 
-    private Boolean validateSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
-        return tokenController.validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
+    private Boolean validateAsymmetricSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
+        return tokenController.validateAsymmetricSignature(requestSignature, requestTimestamp, privateKey, clientId);
     }
 
-    public NotificationTokenDto validateSignatureAndGenerateToken(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
-        Boolean isSignatureValid = validateSignature(requestSignature, requestTimestamp, privateKey, clientId);
+    public NotificationTokenDto validateAsymmetricSignatureAndGenerateToken(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
+        Boolean isSignatureValid = validateAsymmetricSignature(requestSignature, requestTimestamp, privateKey, clientId);
         return generateTokenB2b(isSignatureValid, privateKey, clientId, requestTimestamp);
     }
 
