@@ -16,6 +16,8 @@ public class RequestHeaderDto {
     private String xSignature;
     private String xPartnerId;
     private String xExternalId;
+    private String xDeviceId;
+    private String xIpAddress;
     private String channelId;
     private String authorization;
 }

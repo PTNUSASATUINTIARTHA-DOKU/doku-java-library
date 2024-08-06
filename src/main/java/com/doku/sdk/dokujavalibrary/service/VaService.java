@@ -34,11 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,24 +44,6 @@ public class VaService {
 
     private final ConnectionUtils connectionUtils;
     private final Gson gson;
-
-    public String generateExternalId() {
-        UUID uuid = UUID.randomUUID();
-        long timestamp = Instant.now().getEpochSecond();
-
-        return uuid.toString() + timestamp;
-    }
-
-    public RequestHeaderDto generateRequestHeaderDto(String timestamp, String signature, String clientId, String externalId, String channelId, String tokenB2b) {
-        return RequestHeaderDto.builder()
-                .xTimestamp(timestamp)
-                .xSignature(signature)
-                .xPartnerId(clientId)
-                .xExternalId(externalId)
-                .channelId(channelId)
-                .authorization(tokenB2b)
-                .build();
-    }
 
     public CreateVaResponseDto createVa(RequestHeaderDto requestHeaderDto, CreateVaRequestDto createVaRequestDto, Boolean isProduction) {
         var httpHeaders = new HttpHeaders();

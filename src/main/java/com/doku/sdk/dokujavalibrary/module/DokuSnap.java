@@ -1,9 +1,12 @@
 package com.doku.sdk.dokujavalibrary.module;
 
 import com.doku.sdk.dokujavalibrary.common.ValidationUtils;
+import com.doku.sdk.dokujavalibrary.controller.DirectDebitController;
 import com.doku.sdk.dokujavalibrary.controller.NotificationController;
 import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
@@ -31,6 +34,7 @@ public class DokuSnap {
 
     private final TokenController tokenController;
     private final VaController vaController;
+    private final DirectDebitController directDebitController;
     private final NotificationController notificationController;
 
     // global variable?
@@ -186,6 +190,31 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return CheckStatusVaResponseDto.builder()
                     .responseCode("5002600")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public AccountBindingResponseDto doAccountBinding(AccountBindingRequestDto accountBindingRequestDto,
+                                                      String privateKey,
+                                                      String clientId,
+                                                      boolean isProduction,
+                                                      String deviceId,
+                                                      String ipAddress) {
+        try {
+            ValidationUtils.validateRequest(accountBindingRequestDto);
+            accountBindingRequestDto.validateAccountBindingRequest(accountBindingRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doAccountBinding(accountBindingRequestDto, secretKey, clientId, deviceId, ipAddress, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return AccountBindingResponseDto.builder()
+                    .responseCode("5000700")
                     .responseMessage(e.getMessage())
                     .build();
         }

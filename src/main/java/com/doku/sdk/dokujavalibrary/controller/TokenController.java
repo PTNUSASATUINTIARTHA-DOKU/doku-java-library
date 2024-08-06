@@ -1,11 +1,11 @@
 package com.doku.sdk.dokujavalibrary.controller;
 
+import com.doku.sdk.dokujavalibrary.common.SnapUtils;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.request.TokenB2BRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
-import com.doku.sdk.dokujavalibrary.service.VaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class TokenController {
 
     private final TokenService tokenService;
-    private final VaService vaService;
+    private final SnapUtils snapUtils;
 
     public TokenB2BResponseDto getTokenB2B(String privateKey, String clientId, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
@@ -59,8 +59,8 @@ public class TokenController {
     public RequestHeaderDto doGenerateRequestHeader(String privateKey, String clientId, String tokenB2b) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
-        String externalId = vaService.generateExternalId();
+        String externalId = snapUtils.generateExternalId();
 
-        return vaService.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, tokenB2b);
+        return snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, null, tokenB2b);
     }
 }
