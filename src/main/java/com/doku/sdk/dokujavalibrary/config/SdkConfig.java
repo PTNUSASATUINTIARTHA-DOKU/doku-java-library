@@ -10,6 +10,7 @@ public class SdkConfig {
     private static final String DELETE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/delete-va";
     private static final String CHECK_STATUS_VA = "/orders/v1.0/transfer-va/status";
     private static final String DIRECT_DEBIT_ACCOUNT_BINDING = "/direct-debit/core/v1/registration-account-binding";
+    private static final String DIRECT_DEBIT_ACCOUNT_UNBINDING = "/direct-debit/core/v1/registration-account-unbinding";
 
     public static String getBaseUrl(boolean isProduction) {
         return isProduction ? PRODUCTION_BASE_URL : SANDBOX_BASE_URL;
@@ -37,5 +38,9 @@ public class SdkConfig {
 
     public static String getDirectDebitAccountBindingUrl(boolean isProduction) {
         return getBaseUrl(isProduction) + DIRECT_DEBIT_ACCOUNT_BINDING;
+    }
+
+    public static String getDirectDebitAccountUnbindingUrl(boolean isProduction) {
+        return getBaseUrl(isProduction) + DIRECT_DEBIT_ACCOUNT_UNBINDING;
     }
 }

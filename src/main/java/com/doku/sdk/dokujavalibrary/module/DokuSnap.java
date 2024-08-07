@@ -7,6 +7,8 @@ import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
@@ -214,6 +216,30 @@ public class DokuSnap {
             return directDebitController.doAccountBinding(accountBindingRequestDto, secretKey, clientId, deviceId, ipAddress, tokenB2b, isProduction);
         } catch (BadRequestException e) {
             return AccountBindingResponseDto.builder()
+                    .responseCode("5000700")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public AccountUnbindingResponseDto doAccountBinding(AccountUnbindingRequestDto accountUnbindingRequestDto,
+                                                        String privateKey,
+                                                        String clientId,
+                                                        boolean isProduction,
+                                                        String ipAddress) {
+        try {
+            ValidationUtils.validateRequest(accountUnbindingRequestDto);
+            accountUnbindingRequestDto.validateAccountUnbindingRequest(accountUnbindingRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doAccountUnbinding(accountUnbindingRequestDto, secretKey, clientId, ipAddress, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return AccountUnbindingResponseDto.builder()
                     .responseCode("5000700")
                     .responseMessage(e.getMessage())
                     .build();
