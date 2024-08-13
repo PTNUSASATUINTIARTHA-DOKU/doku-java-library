@@ -1,7 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.va.createva.request;
 
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;

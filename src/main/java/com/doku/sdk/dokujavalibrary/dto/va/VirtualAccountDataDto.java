@@ -1,5 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.va;
 
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

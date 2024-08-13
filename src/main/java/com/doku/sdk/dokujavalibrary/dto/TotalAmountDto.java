@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.va;
+package com.doku.sdk.dokujavalibrary.dto;
 
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;

@@ -1,7 +1,7 @@
 package com.doku.sdk.dokujavalibrary.service;
 
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseBodyDto;

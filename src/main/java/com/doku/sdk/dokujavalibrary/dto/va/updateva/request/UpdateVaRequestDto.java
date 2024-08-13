@@ -1,6 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.va.updateva.request;
 
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.UpdateVaAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;

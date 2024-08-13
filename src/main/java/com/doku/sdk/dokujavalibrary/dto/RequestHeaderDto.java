@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.request;
+package com.doku.sdk.dokujavalibrary.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -19,5 +19,6 @@ public class RequestHeaderDto {
     private String xDeviceId;
     private String xIpAddress;
     private String channelId;
+    private String authorizationCustomer;
     private String authorization;
 }

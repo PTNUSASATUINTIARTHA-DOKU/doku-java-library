@@ -1,5 +1,6 @@
 package com.doku.sdk.dokujavalibrary.module;
 
+import com.doku.sdk.dokujavalibrary.controller.DirectDebitController;
 import com.doku.sdk.dokujavalibrary.controller.NotificationController;
 import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
@@ -26,13 +27,17 @@ class DokuSnapTest extends TestUtil {
     @Mock
     private VaController vaController;
     @Mock
+    private DirectDebitController directDebitController;
+    @Mock
     private NotificationController notificationController;
 
     @BeforeEach
     void setup() {
-        dokuSnap = new DokuSnap(tokenController, vaController, notificationController);
-        ReflectionTestUtils.setField(dokuSnap, "tokenExpiresIn", 900);
-        ReflectionTestUtils.setField(dokuSnap, "tokenGeneratedTimestamp", 900);
+        dokuSnap = new DokuSnap(tokenController, vaController, directDebitController, notificationController);
+        ReflectionTestUtils.setField(dokuSnap, "tokenB2bExpiresIn", 900);
+        ReflectionTestUtils.setField(dokuSnap, "tokenB2bGeneratedTimestamp", 900);
+        ReflectionTestUtils.setField(dokuSnap, "tokenB2b2cExpiresIn", 900);
+        ReflectionTestUtils.setField(dokuSnap, "tokenB2b2cGeneratedTimestamp", 900);
     }
 
     @Test

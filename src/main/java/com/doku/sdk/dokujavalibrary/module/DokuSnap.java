@@ -5,12 +5,14 @@ import com.doku.sdk.dokujavalibrary.controller.DirectDebitController;
 import com.doku.sdk.dokujavalibrary.controller.NotificationController;
 import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
+import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
-import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
-import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
@@ -18,6 +20,8 @@ import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.inquiry.request.InquiryRequestBodyDto;
+import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
@@ -28,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 
 @Service
@@ -44,14 +49,17 @@ public class DokuSnap {
     private String clientId;
     private Boolean isProduction;
     private String tokenB2b;
-    private final long tokenExpiresIn = 900;
-    private long tokenGeneratedTimestamp;
+    private final long tokenB2bExpiresIn = 900;
+    private long tokenB2bGeneratedTimestamp;
+    private String tokenB2b2c;
+    private final long tokenB2b2cExpiresIn = 900;
+    private long tokenB2b2cGeneratedTimestamp;
     private String publicKey;
     private String issuer;
     private String secretKey;
 
     public TokenB2BResponseDto getB2bToken(String privateKey, String clientId, Boolean isProduction) {
-        tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+        tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
 
         try {
             return tokenController.getTokenB2B(privateKey, clientId, isProduction);
@@ -68,9 +76,9 @@ public class DokuSnap {
             ValidationUtils.validateRequest(createVaRequestDto);
             createVaRequestDto.validateCreateVaRequestDto(createVaRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
@@ -83,7 +91,6 @@ public class DokuSnap {
         }
     }
 
-    // function name is recommended to be different
     public CreateVaResponseDto createVaV1(CreateVaRequestDtoV1 createVaRequestDtoV1) {
         CreateVaRequestDto createVaRequestDto = vaController.convertToCreateVaRequestDto(createVaRequestDtoV1);
 
@@ -105,7 +112,7 @@ public class DokuSnap {
 
     public NotificationTokenDto generateTokenB2b(Boolean isSignatureValid, String privateKey, String clientId, String timestamp) {
         if (isSignatureValid) {
-            return tokenController.generateTokenB2b(tokenExpiresIn, issuer, privateKey, clientId, timestamp);
+            return tokenController.generateTokenB2b(tokenB2bExpiresIn, issuer, privateKey, clientId, timestamp);
         } else {
             return tokenController.generateInvalidSignatureResponse();
         }
@@ -128,9 +135,9 @@ public class DokuSnap {
     }
 
     public RequestHeaderDto generateRequestHeader() {
-        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+        Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
         if (tokenInvalid) {
-            tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+            tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
             tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
         }
 
@@ -142,9 +149,9 @@ public class DokuSnap {
             ValidationUtils.validateRequest(updateVaRequestDto);
             updateVaRequestDto.validateUpdateVaRequestDto(updateVaRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
@@ -162,9 +169,9 @@ public class DokuSnap {
             ValidationUtils.validateRequest(deleteVaRequestDto);
             deleteVaRequestDto.validateDeleteVaRequestDto(deleteVaRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
@@ -182,9 +189,9 @@ public class DokuSnap {
             ValidationUtils.validateRequest(checkStatusVaRequestDto);
             checkStatusVaRequestDto.validateCheckStatusVaRequestDto(checkStatusVaRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
@@ -197,6 +204,14 @@ public class DokuSnap {
         }
     }
 
+    public InquiryResponseBodyDto directInquiryResponseMapping(String inquiryResponseV1) {
+        return vaController.v1ToSnapConverter(inquiryResponseV1);
+    }
+
+    public String directInquiryRequestMapping(HttpServletRequest headerRequest, InquiryRequestBodyDto inquiryRequestBodyDto) {
+        return vaController.snapToV1Converter(headerRequest, inquiryRequestBodyDto);
+    }
+
     public AccountBindingResponseDto doAccountBinding(AccountBindingRequestDto accountBindingRequestDto,
                                                       String privateKey,
                                                       String clientId,
@@ -207,9 +222,9 @@ public class DokuSnap {
             ValidationUtils.validateRequest(accountBindingRequestDto);
             accountBindingRequestDto.validateAccountBindingRequest(accountBindingRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
@@ -231,15 +246,42 @@ public class DokuSnap {
             ValidationUtils.validateRequest(accountUnbindingRequestDto);
             accountUnbindingRequestDto.validateAccountUnbindingRequest(accountUnbindingRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenExpiresIn, tokenGeneratedTimestamp);
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
-                tokenGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
             return directDebitController.doAccountUnbinding(accountUnbindingRequestDto, secretKey, clientId, ipAddress, tokenB2b, isProduction);
         } catch (BadRequestException e) {
             return AccountUnbindingResponseDto.builder()
+                    .responseCode("5000700")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,
+                                        String privateKey,
+                                        String clientId,
+                                        String ipAddress,
+                                        String channelId,
+                                        boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(paymentRequestDto);
+            paymentRequestDto.validatePaymentRequest(paymentRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            // tba token b2b2c
+
+            return directDebitController.doPayment(paymentRequestDto, secretKey, clientId, ipAddress, channelId, tokenB2b2c, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return PaymentResponseDto.builder()
                     .responseCode("5000700")
                     .responseMessage(e.getMessage())
                     .build();

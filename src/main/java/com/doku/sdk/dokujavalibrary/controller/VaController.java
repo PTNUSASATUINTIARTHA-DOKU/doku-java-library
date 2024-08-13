@@ -9,6 +9,8 @@ import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDtoV1
 import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.inquiry.request.InquiryRequestBodyDto;
+import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +38,7 @@ public class VaController {
         String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
         String externalId = snapUtils.generateExternalId();
         String channelId = "SDK";
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
 
         return vaService.createVa(requestHeader, createVaRequestDto, isProduction);
     }
@@ -50,7 +54,7 @@ public class VaController {
         String signature = tokenService.generateSymmetricSignature(HttpMethod.PUT.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
         String channelId = "SDK";
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
 
         return vaService.doUpdateVa(requestHeader, updateVaRequestDto, isProduction);
     }
@@ -62,7 +66,7 @@ public class VaController {
         String signature = tokenService.generateSymmetricSignature(HttpMethod.DELETE.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
         String channelId = "SDK";
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
 
         return vaService.doDeletePaymentCode(requestHeader, deleteVaRequestDto, isProduction);
     }
@@ -73,8 +77,16 @@ public class VaController {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null,null, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null,null, null, tokenB2b);
 
         return vaService.doCheckStatusVa(requestHeader, checkStatusVaRequestDto, isProduction);
+    }
+
+    public InquiryResponseBodyDto v1ToSnapConverter(String inquiryResponseV1) {
+        return vaService.directInquiryResponseMapping(inquiryResponseV1);
+    }
+
+    public String snapToV1Converter(HttpServletRequest headerRequest, InquiryRequestBodyDto inquiryRequestBodyDto) {
+        return vaService.directInquiryRequestMapping(headerRequest, inquiryRequestBodyDto);
     }
 }

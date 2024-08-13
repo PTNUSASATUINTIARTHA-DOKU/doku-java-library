@@ -1,8 +1,8 @@
 package com.doku.sdk.dokujavalibrary.util;
 
-import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.CheckStatusVirtualAccountDataDto;
@@ -19,8 +19,6 @@ import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseVir
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.UpdateVaAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
-
-import java.math.BigDecimal;
 
 public class TestUtil {
 

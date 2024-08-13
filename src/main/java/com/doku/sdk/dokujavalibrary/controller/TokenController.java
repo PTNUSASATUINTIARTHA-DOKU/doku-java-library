@@ -1,9 +1,9 @@
 package com.doku.sdk.dokujavalibrary.controller;
 
 import com.doku.sdk.dokujavalibrary.common.SnapUtils;
-import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
-import com.doku.sdk.dokujavalibrary.dto.request.TokenB2BRequestDto;
-import com.doku.sdk.dokujavalibrary.dto.response.TokenB2BResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
+import com.doku.sdk.dokujavalibrary.dto.token.request.TokenB2BRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +61,6 @@ public class TokenController {
         String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
         String externalId = snapUtils.generateExternalId();
 
-        return snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, null, tokenB2b);
+        return snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, null, null, tokenB2b);
     }
 }

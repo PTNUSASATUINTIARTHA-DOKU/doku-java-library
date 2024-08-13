@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.request;
+package com.doku.sdk.dokujavalibrary.dto.token.request;
 
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import lombok.AllArgsConstructor;

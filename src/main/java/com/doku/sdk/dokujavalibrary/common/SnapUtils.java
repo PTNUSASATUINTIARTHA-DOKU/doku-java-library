@@ -1,12 +1,12 @@
 package com.doku.sdk.dokujavalibrary.common;
 
-import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
-import lombok.RequiredArgsConstructor;
+import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@Component
 public class SnapUtils {
 
     public String generateExternalId() {
@@ -23,6 +23,7 @@ public class SnapUtils {
                                                      String deviceId,
                                                      String ipAddress,
                                                      String channelId,
+                                                     String tokenB2b2c,
                                                      String tokenB2b) {
         return RequestHeaderDto.builder()
                 .xTimestamp(timestamp)
@@ -32,6 +33,7 @@ public class SnapUtils {
                 .xDeviceId(deviceId)
                 .xIpAddress(ipAddress)
                 .channelId(channelId)
+                .authorizationCustomer(tokenB2b2c)
                 .authorization(tokenB2b)
                 .build();
     }

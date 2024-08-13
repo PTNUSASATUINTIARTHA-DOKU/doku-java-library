@@ -6,6 +6,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
 import com.doku.sdk.dokujavalibrary.service.DirectDebitService;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import com.google.gson.Gson;
@@ -36,7 +38,7 @@ public class DirectDebitController {
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
 
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, tokenB2b);
 
         return directDebitService.doAccountBindingProcess(requestHeader, accountBindingRequestDto, isProduction);
     }
@@ -47,15 +49,35 @@ public class DirectDebitController {
                                                           String ipAddress,
                                                           String tokenB2b,
                                                           boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitAccountUnbindingUrl(isProduction);
         String requestBody = gson.toJson(accountUnbindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
 
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, null, tokenB2b);
 
         return directDebitService.doAccountUnbindingProcess(requestHeader, accountUnbindingRequestDto, isProduction);
+    }
+
+    public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,
+                                        String secretKey,
+                                        String clientId,
+                                        String ipAddress,
+                                        String channelId,
+                                        String tokenB2b2c,
+                                        String tokenB2b,
+                                        boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
+        String requestBody = gson.toJson(paymentRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, channelId, tokenB2b2c, tokenB2b);
+
+        return directDebitService.doPaymentProcess(requestHeader, paymentRequestDto, isProduction);
     }
 }

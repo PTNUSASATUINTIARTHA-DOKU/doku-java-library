@@ -1,6 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.va.checkstatusva;
 
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusResponseAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusResponsePaymentFlagReasonDto;
 import com.fasterxml.jackson.annotation.JsonInclude;

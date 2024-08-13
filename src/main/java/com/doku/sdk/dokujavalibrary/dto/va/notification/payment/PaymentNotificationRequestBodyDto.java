@@ -1,6 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.va.notification.payment;
 
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

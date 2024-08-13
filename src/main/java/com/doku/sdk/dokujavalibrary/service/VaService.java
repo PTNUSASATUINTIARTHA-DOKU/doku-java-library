@@ -3,9 +3,9 @@ package com.doku.sdk.dokujavalibrary.service;
 import com.doku.sdk.dokujavalibrary.common.ConnectionUtils;
 import com.doku.sdk.dokujavalibrary.config.SdkConfig;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
-import com.doku.sdk.dokujavalibrary.dto.request.RequestHeaderDto;
+import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
-import com.doku.sdk.dokujavalibrary.dto.va.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
@@ -139,10 +139,10 @@ public class VaService {
         return gson.fromJson(response.getBody(), CheckStatusVaResponseDto.class);
     }
 
-    public InquiryResponseBodyDto directInquiryResponseMapping(String inquiryResponseV1) {
+    public InquiryResponseBodyDto directInquiryResponseMapping(String xmlString) {
         try {
             XmlMapper xmlMapper = new XmlMapper();
-            var responseV1 =  xmlMapper.readValue(inquiryResponseV1, DirectInquiryMerchantResponseV1Dto.class);
+            var responseV1 =  xmlMapper.readValue(xmlString, DirectInquiryMerchantResponseV1Dto.class);
 
             if (responseV1.getCurrency().equals("360") || responseV1.getPurchaseCurrency().equals("360")) {
                 responseV1.setCurrency("IDR");
