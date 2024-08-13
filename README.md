@@ -10,6 +10,10 @@ For detailed information, visit the full [DOKU API Docs](https://developers.doku
 
 ## Installation
 Get started by installing the library:
+
+### Maven
+Put the following dependency to your `pom.xml`:
+
 ```xml
 <dependency>
     <groupId>com.doku.sdk</groupId>
@@ -17,6 +21,12 @@ Get started by installing the library:
     <version>0.0.1-SNAPSHOT</version>
 </dependency>
 ```
+
+### SpringBoot Configuration
+If you use Spring Boot, you might want to add these package into your main Apps:
+
+`@SpringBootApplication(scanBasePackages = {"your-project-package","com.doku.sdk.dokujavalibrary"})`
+
 
 ## Usage
 This section will guide you through setting up the DOKU Java library, creating payment requests, and handling notifications. Let’s get started!
