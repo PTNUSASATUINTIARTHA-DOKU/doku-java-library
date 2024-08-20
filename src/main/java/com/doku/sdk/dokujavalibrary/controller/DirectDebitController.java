@@ -6,6 +6,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
 import com.doku.sdk.dokujavalibrary.service.DirectDebitService;
@@ -79,5 +81,24 @@ public class DirectDebitController {
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, channelId, tokenB2b2c, tokenB2b);
 
         return directDebitService.doPaymentProcess(requestHeader, paymentRequestDto, isProduction);
+    }
+
+    public PaymentJumpAppResponseDto doPaymentJumpApp(PaymentJumpAppRequestDto paymentJumpAppRequestDto,
+                                                      String secretKey,
+                                                      String clientId,
+                                                      String deviceId,
+                                                      String ipAddress,
+                                                      String tokenB2b,
+                                                      boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
+        String requestBody = gson.toJson(paymentJumpAppRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, tokenB2b);
+
+        return directDebitService.doPaymentJumpAppProcess(requestHeader, paymentJumpAppRequestDto, isProduction);
     }
 }

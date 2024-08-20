@@ -5,6 +5,7 @@ public class SdkConfig {
     private static final String SANDBOX_BASE_URL = "https://api-uat.doku.com";
     private static final String PRODUCTION_BASE_URL = "https://dashboard.doku.com";
     private static final String ACCESS_TOKEN_B2B = "/authorization/v1/access-token/b2b";
+    private static final String ACCESS_TOKEN_B2B2C = "/authorization/v1/access-token/b2b2c";
     private static final String CREATE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/create-va";
     private static final String UPDATE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/update-va";
     private static final String DELETE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/delete-va";
@@ -19,6 +20,10 @@ public class SdkConfig {
 
     public static String getAccessTokenUrl(boolean isProduction) {
         return getBaseUrl(isProduction) + ACCESS_TOKEN_B2B;
+    }
+
+    public static String getAccessTokenB2b2cUrl(boolean isProduction) {
+        return getBaseUrl(isProduction) + ACCESS_TOKEN_B2B2C;
     }
 
     public static String getCreateVaUrl(boolean isProduction) {

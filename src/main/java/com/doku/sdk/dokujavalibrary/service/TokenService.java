@@ -5,7 +5,9 @@ import com.doku.sdk.dokujavalibrary.common.DateUtils;
 import com.doku.sdk.dokujavalibrary.common.SignatureUtils;
 import com.doku.sdk.dokujavalibrary.config.SdkConfig;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
+import com.doku.sdk.dokujavalibrary.dto.token.request.TokenB2B2CRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.token.request.TokenB2BRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.token.NotificationTokenDto;
@@ -65,7 +67,6 @@ public class TokenService {
                 .build();
     }
 
-    @SneakyThrows
     public TokenB2BResponseDto createTokenB2B(TokenB2BRequestDto tokenB2BRequestDTO, Boolean isProduction) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -151,5 +152,32 @@ public class TokenService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public TokenB2B2CRequestDto createTokenB2b2cRequestDto(String authCode) {
+        return TokenB2B2CRequestDto.builder()
+                .grantType("authorization_code")
+                .authCode(authCode)
+                .build();
+    }
+
+    public TokenB2B2CResponseDto hitTokenB2b2cApi(TokenB2B2CRequestDto tokenB2B2CRequestDto,
+                                                  String timestamp,
+                                                  String signature,
+                                                  String clientId,
+                                                  boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, timestamp);
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, signature);
+        httpHeaders.set(SnapHeaderConstant.X_CLIENT_KEY, clientId);
+
+        String url = SdkConfig.getAccessTokenB2b2cUrl(isProduction);
+
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(tokenB2B2CRequestDto));
+        TokenB2B2CResponseDto tokenB2B2CResponseDto = gson.fromJson(response.getBody(), TokenB2B2CResponseDto.class);
+
+        return tokenB2B2CResponseDto;
     }
 }

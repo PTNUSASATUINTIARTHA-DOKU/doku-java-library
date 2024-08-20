@@ -10,8 +10,11 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
@@ -65,6 +68,19 @@ public class DokuSnap {
             return tokenController.getTokenB2B(privateKey, clientId, isProduction);
         } catch (Exception e) {
             return TokenB2BResponseDto.builder()
+                    .responseCode("5007300")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public TokenB2B2CResponseDto getB2b2cToken(String authCode, String privateKey, String clientId, boolean isProduction) {
+        tokenB2b2cGeneratedTimestamp = Instant.now().getEpochSecond();
+
+        try {
+            return tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction);
+        } catch (Exception e) {
+            return TokenB2B2CResponseDto.builder()
                     .responseCode("5007300")
                     .responseMessage(e.getMessage())
                     .build();
@@ -237,7 +253,7 @@ public class DokuSnap {
         }
     }
 
-    public AccountUnbindingResponseDto doAccountBinding(AccountUnbindingRequestDto accountUnbindingRequestDto,
+    public AccountUnbindingResponseDto doAccountUnbinding(AccountUnbindingRequestDto accountUnbindingRequestDto,
                                                         String privateKey,
                                                         String clientId,
                                                         boolean isProduction,
@@ -255,7 +271,7 @@ public class DokuSnap {
             return directDebitController.doAccountUnbinding(accountUnbindingRequestDto, secretKey, clientId, ipAddress, tokenB2b, isProduction);
         } catch (BadRequestException e) {
             return AccountUnbindingResponseDto.builder()
-                    .responseCode("5000700")
+                    .responseCode("5000900")
                     .responseMessage(e.getMessage())
                     .build();
         }
@@ -282,7 +298,32 @@ public class DokuSnap {
             return directDebitController.doPayment(paymentRequestDto, secretKey, clientId, ipAddress, channelId, tokenB2b2c, tokenB2b, isProduction);
         } catch (BadRequestException e) {
             return PaymentResponseDto.builder()
-                    .responseCode("5000700")
+                    .responseCode("5005400")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public PaymentJumpAppResponseDto doPaymentJumpApp(PaymentJumpAppRequestDto paymentJumpAppRequestDto,
+                                                      String privateKey,
+                                                      String clientId,
+                                                      String deviceId,
+                                                      String ipAddress,
+                                                      boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(paymentJumpAppRequestDto);
+            paymentJumpAppRequestDto.validatePaymentJumpAppRequest(paymentJumpAppRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doPaymentJumpApp(paymentJumpAppRequestDto, secretKey, clientId, deviceId, ipAddress, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return PaymentJumpAppResponseDto.builder()
+                    .responseCode("5005400")
                     .responseMessage(e.getMessage())
                     .build();
         }
