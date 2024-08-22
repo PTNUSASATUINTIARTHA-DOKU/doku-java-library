@@ -6,6 +6,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -61,6 +63,24 @@ public class DirectDebitController {
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, null, tokenB2b);
 
         return directDebitService.doAccountUnbindingProcess(requestHeader, accountUnbindingRequestDto, isProduction);
+    }
+
+    public CardRegistrationResponseDto doCardRegistration(CardRegistrationRequestDto cardRegistrationRequestDto,
+                                                          String secretKey,
+                                                          String clientId,
+                                                          String channelId,
+                                                          String tokenB2b,
+                                                          boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction);
+        String requestBody = gson.toJson(cardRegistrationRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
+
+        return directDebitService.doCardRegistrationProcess(requestHeader, cardRegistrationRequestDto, isProduction);
     }
 
     public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,

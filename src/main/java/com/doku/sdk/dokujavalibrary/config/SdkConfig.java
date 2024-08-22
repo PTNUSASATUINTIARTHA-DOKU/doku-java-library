@@ -11,6 +11,7 @@ public class SdkConfig {
     private static final String DELETE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/delete-va";
     private static final String CHECK_STATUS_VA = "/orders/v1.0/transfer-va/status";
     private static final String DIRECT_DEBIT_ACCOUNT_BINDING = "/direct-debit/core/v1/registration-account-binding";
+    private static final String DIRECT_DEBIT_CARD_REGISTRATION = "/direct-debit/core/v1/registration-card-bind";
     private static final String DIRECT_DEBIT_ACCOUNT_UNBINDING = "/direct-debit/core/v1/registration-account-unbinding";
     private static final String DIRECT_DEBIT_PAYMENT = "/direct-debit/core/v1/debit/payment-host-to-host";
 
@@ -44,6 +45,10 @@ public class SdkConfig {
 
     public static String getDirectDebitAccountBindingUrl(boolean isProduction) {
         return getBaseUrl(isProduction) + DIRECT_DEBIT_ACCOUNT_BINDING;
+    }
+
+    public static String getDirectDebitCardRegistrationUrl(boolean isProduction) {
+        return getBaseUrl(isProduction) + DIRECT_DEBIT_CARD_REGISTRATION;
     }
 
     public static String getDirectDebitAccountUnbindingUrl(boolean isProduction) {

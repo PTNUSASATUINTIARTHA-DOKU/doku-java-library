@@ -8,6 +8,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -60,6 +62,23 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(accountUnbindingRequestDto));
 
         return gson.fromJson(response.getBody(), AccountUnbindingResponseDto.class);
+    }
+
+    public CardRegistrationResponseDto doCardRegistrationProcess(RequestHeaderDto requestHeaderDto, CardRegistrationRequestDto cardRegistrationRequestDto, boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(cardRegistrationRequestDto));
+
+        return gson.fromJson(response.getBody(), CardRegistrationResponseDto.class);
     }
 
     public PaymentResponseDto doPaymentProcess(RequestHeaderDto requestHeaderDto, PaymentRequestDto paymentRequestDto, boolean isProduction) {

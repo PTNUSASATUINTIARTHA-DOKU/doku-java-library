@@ -10,6 +10,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -272,6 +274,30 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return AccountUnbindingResponseDto.builder()
                     .responseCode("5000900")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public CardRegistrationResponseDto doCardRegistration(CardRegistrationRequestDto cardRegistrationRequestDto,
+                                                          String privateKey,
+                                                          String clientId,
+                                                          String channelId,
+                                                          boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(cardRegistrationRequestDto);
+            cardRegistrationRequestDto.validateCardRegistrationRequest(cardRegistrationRequestDto);
+
+            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doCardRegistration(cardRegistrationRequestDto, secretKey, clientId, channelId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CardRegistrationResponseDto.builder()
+                    .responseCode("5000700")
                     .responseMessage(e.getMessage())
                     .build();
         }
