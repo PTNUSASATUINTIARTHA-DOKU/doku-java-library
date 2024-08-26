@@ -14,6 +14,7 @@ public class SdkConfig {
     private static final String DIRECT_DEBIT_CARD_REGISTRATION = "/direct-debit/core/v1/registration-card-bind";
     private static final String DIRECT_DEBIT_ACCOUNT_UNBINDING = "/direct-debit/core/v1/registration-account-unbinding";
     private static final String DIRECT_DEBIT_PAYMENT = "/direct-debit/core/v1/debit/payment-host-to-host";
+    private static final String DIRECT_DEBIT_REFUND = "/direct-debit/core/v1/debit/refund";
 
     public static String getBaseUrl(boolean isProduction) {
         return isProduction ? PRODUCTION_BASE_URL : SANDBOX_BASE_URL;
@@ -57,5 +58,9 @@ public class SdkConfig {
 
     public static String getDirectDebitPaymentUrl(boolean isProduction) {
         return getBaseUrl(isProduction) + DIRECT_DEBIT_PAYMENT;
+    }
+
+    public static String getDirectDebitRefundUrl(boolean isProduction) {
+        return getBaseUrl(isProduction) + DIRECT_DEBIT_REFUND;
     }
 }

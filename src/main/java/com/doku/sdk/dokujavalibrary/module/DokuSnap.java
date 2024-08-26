@@ -16,6 +16,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpA
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
@@ -297,7 +299,7 @@ public class DokuSnap {
             return directDebitController.doCardRegistration(cardRegistrationRequestDto, secretKey, clientId, channelId, tokenB2b, isProduction);
         } catch (BadRequestException e) {
             return CardRegistrationResponseDto.builder()
-                    .responseCode("5000700")
+                    .responseCode("5000100")
                     .responseMessage(e.getMessage())
                     .build();
         }
@@ -308,18 +310,23 @@ public class DokuSnap {
                                         String clientId,
                                         String ipAddress,
                                         String channelId,
+                                        String authCode,
                                         boolean isProduction) {
         try {
             ValidationUtils.validateRequest(paymentRequestDto);
             paymentRequestDto.validatePaymentRequest(paymentRequestDto);
 
-            Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
-            if (tokenInvalid) {
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
                 tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
-            // tba token b2b2c
+            Boolean tokenB2b2cInvalid = tokenController.isTokenInvalid(tokenB2b2c, tokenB2b2cExpiresIn, tokenB2b2cGeneratedTimestamp);
+            if (tokenB2b2cInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
+            }
 
             return directDebitController.doPayment(paymentRequestDto, secretKey, clientId, ipAddress, channelId, tokenB2b2c, tokenB2b, isProduction);
         } catch (BadRequestException e) {
@@ -350,6 +357,37 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return PaymentJumpAppResponseDto.builder()
                     .responseCode("5005400")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public RefundResponseDto doRefund(RefundRequestDto refundRequestDto,
+                                      String privateKey,
+                                      String clientId,
+                                      String ipAddress,
+                                      String authCode,
+                                      boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(refundRequestDto);
+            refundRequestDto.validateRefundRequest(refundRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            Boolean tokenB2b2cInvalid = tokenController.isTokenInvalid(tokenB2b2c, tokenB2b2cExpiresIn, tokenB2b2cGeneratedTimestamp);
+            if (tokenB2b2cInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doRefund(refundRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
+        } catch (BadRequestException e) {
+            return RefundResponseDto.builder()
+                    .responseCode("5005800")
                     .responseMessage(e.getMessage())
                     .build();
         }

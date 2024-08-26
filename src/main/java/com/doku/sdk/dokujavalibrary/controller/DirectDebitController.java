@@ -12,6 +12,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpA
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
 import com.doku.sdk.dokujavalibrary.service.DirectDebitService;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import com.google.gson.Gson;
@@ -120,5 +122,24 @@ public class DirectDebitController {
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, tokenB2b);
 
         return directDebitService.doPaymentJumpAppProcess(requestHeader, paymentJumpAppRequestDto, isProduction);
+    }
+
+    public RefundResponseDto doRefund(RefundRequestDto refundRequestDto,
+                                      String secretKey,
+                                      String clientId,
+                                      String ipAddress,
+                                      String tokenB2b,
+                                      String tokenB2b2c,
+                                      boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitRefundUrl(isProduction);
+        String requestBody = gson.toJson(refundRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, tokenB2b2c, tokenB2b);
+
+        return directDebitService.doRefundProcess(requestHeader, refundRequestDto, isProduction);
     }
 }

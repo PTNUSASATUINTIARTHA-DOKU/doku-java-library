@@ -14,6 +14,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpA
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -116,5 +118,23 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(paymentJumpAppRequestDto));
 
         return gson.fromJson(response.getBody(), PaymentJumpAppResponseDto.class);
+    }
+
+    public RefundResponseDto doRefundProcess(RequestHeaderDto requestHeaderDto, RefundRequestDto refundRequestDto, boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.X_IP_ADDRESS, requestHeaderDto.getXIpAddress());
+        httpHeaders.set(SnapHeaderConstant.BEARER_CUSTOMER, requestHeaderDto.getAuthorizationCustomer());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDirectDebitRefundUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(refundRequestDto));
+
+        return gson.fromJson(response.getBody(), RefundResponseDto.class);
     }
 }
