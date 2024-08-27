@@ -8,6 +8,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.BalanceInquiryRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
@@ -136,5 +138,23 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(refundRequestDto));
 
         return gson.fromJson(response.getBody(), RefundResponseDto.class);
+    }
+
+    public BalanceInquiryResponseDto doBalanceInquiryProcess(RequestHeaderDto requestHeaderDto, BalanceInquiryRequestDto balanceInquiryRequestDto, boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.X_IP_ADDRESS, requestHeaderDto.getXIpAddress());
+        httpHeaders.set(SnapHeaderConstant.BEARER_CUSTOMER, requestHeaderDto.getAuthorizationCustomer());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDirectDebitBalanceInquiryUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(balanceInquiryRequestDto));
+
+        return gson.fromJson(response.getBody(), BalanceInquiryResponseDto.class);
     }
 }
