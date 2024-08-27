@@ -10,6 +10,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -162,5 +164,22 @@ public class DirectDebitController {
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, tokenB2b2c, tokenB2b);
 
         return directDebitService.doBalanceInquiryProcess(requestHeader, balanceInquiryRequestDto, isProduction);
+    }
+
+    public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto,
+                                                String secretKey,
+                                                String clientId,
+                                                String tokenB2b,
+                                                boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitCheckStatusUrl(isProduction);
+        String requestBody = gson.toJson(checkStatusRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, null, null, tokenB2b);
+
+        return directDebitService.doCheckStatusProcess(requestHeader, checkStatusRequestDto, isProduction);
     }
 }

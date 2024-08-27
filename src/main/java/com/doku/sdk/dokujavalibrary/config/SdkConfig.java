@@ -16,6 +16,7 @@ public class SdkConfig {
     private static final String DIRECT_DEBIT_PAYMENT = "/direct-debit/core/v1/debit/payment-host-to-host";
     private static final String DIRECT_DEBIT_REFUND = "/direct-debit/core/v1/debit/refund";
     private static final String DIRECT_DEBIT_BALANCE_INQUIRY = "/direct-debit/core/v1/balance-inquiry";
+    private static final String DIRECT_DEBIT_CHECK_STATUS = "/orders/v1.0/debit/status";
 
     public static String getBaseUrl(boolean isProduction) {
         return isProduction ? PRODUCTION_BASE_URL : SANDBOX_BASE_URL;
@@ -67,5 +68,9 @@ public class SdkConfig {
 
     public static String getDirectDebitBalanceInquiryUrl(boolean isProduction) {
         return getBaseUrl(isProduction) + DIRECT_DEBIT_BALANCE_INQUIRY;
+    }
+
+    public static String getDirectDebitCheckStatusUrl(boolean isProduction) {
+        return getBaseUrl(isProduction) + DIRECT_DEBIT_CHECK_STATUS;
     }
 }

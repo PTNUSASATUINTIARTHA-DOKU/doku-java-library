@@ -12,6 +12,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -156,5 +158,21 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(balanceInquiryRequestDto));
 
         return gson.fromJson(response.getBody(), BalanceInquiryResponseDto.class);
+    }
+
+    public CheckStatusResponseDto doCheckStatusProcess(RequestHeaderDto requestHeaderDto, CheckStatusRequestDto checkStatusRequestDto, boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDirectDebitCheckStatusUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(checkStatusRequestDto));
+
+        return gson.fromJson(response.getBody(), CheckStatusResponseDto.class);
     }
 }

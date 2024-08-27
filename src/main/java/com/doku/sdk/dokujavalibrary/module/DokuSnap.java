@@ -14,6 +14,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
@@ -421,6 +423,29 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return BalanceInquiryResponseDto.builder()
                     .responseCode("5001100")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto,
+                                                String privateKey,
+                                                String clientId,
+                                                boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(checkStatusRequestDto);
+            checkStatusRequestDto.validateCheckStatusRequest(checkStatusRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doCheckStatus(checkStatusRequestDto, secretKey, clientId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CheckStatusResponseDto.builder()
+                    .responseCode("5005500")
                     .responseMessage(e.getMessage())
                     .build();
         }
