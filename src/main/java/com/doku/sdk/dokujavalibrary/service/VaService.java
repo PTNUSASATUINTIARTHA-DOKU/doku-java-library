@@ -209,10 +209,17 @@ public class VaService {
         return ConverterUtils.toFormData(snapToV1);
     }
 
-    public String paymentNotificationConverter(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+    public String vaPaymentNotificationConverter(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        String paymentChannel = VaChannelEnum.findByV2Channel(paymentNotificationRequestBodyDto.getAdditionalInfo().getChannel()).getV2Channel();
+        if (paymentNotificationRequestBodyDto.getPaidAmount().getCurrency().equals("IDR")) {
+            paymentNotificationRequestBodyDto.getPaidAmount().setCurrency("360");
+        }
+
         Map<String, String> paymentNotificationV1 = new HashMap<>();
         paymentNotificationV1.put("AMOUNT", paymentNotificationRequestBodyDto.getPaidAmount().getValue());
         paymentNotificationV1.put("TRANSIDMERCHANT", paymentNotificationRequestBodyDto.getTrxId());
+        paymentNotificationV1.put("STATUSTYPE", "/");
+        paymentNotificationV1.put("PAYMENTCHANNEL", paymentChannel);
         paymentNotificationV1.put("PAYMENTCODE", paymentNotificationRequestBodyDto.getVirtualAccountNo());
         paymentNotificationV1.put("CURRENCY", paymentNotificationRequestBodyDto.getPaidAmount().getCurrency());
         paymentNotificationV1.put("PURCHASECURRENCY", paymentNotificationRequestBodyDto.getPaidAmount().getCurrency());
