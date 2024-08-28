@@ -10,10 +10,18 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.Accou
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.BalanceInquiryRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2BResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
@@ -281,15 +289,14 @@ public class DokuSnap {
         }
     }
 
-    public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,
-                                        String privateKey,
-                                        String clientId,
-                                        String ipAddress,
-                                        String channelId,
-                                        boolean isProduction) {
+    public CardRegistrationResponseDto doCardRegistration(CardRegistrationRequestDto cardRegistrationRequestDto,
+                                                          String privateKey,
+                                                          String clientId,
+                                                          String channelId,
+                                                          boolean isProduction) {
         try {
-            ValidationUtils.validateRequest(paymentRequestDto);
-            paymentRequestDto.validatePaymentRequest(paymentRequestDto);
+            ValidationUtils.validateRequest(cardRegistrationRequestDto);
+            cardRegistrationRequestDto.validateCardRegistrationRequest(cardRegistrationRequestDto);
 
             Boolean tokenInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
             if (tokenInvalid) {
@@ -297,7 +304,37 @@ public class DokuSnap {
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
-            // tba token b2b2c
+            return directDebitController.doCardRegistration(cardRegistrationRequestDto, secretKey, clientId, channelId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CardRegistrationResponseDto.builder()
+                    .responseCode("5000100")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,
+                                        String privateKey,
+                                        String clientId,
+                                        String ipAddress,
+                                        String channelId,
+                                        String authCode,
+                                        boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(paymentRequestDto);
+            paymentRequestDto.validatePaymentRequest(paymentRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            Boolean tokenB2b2cInvalid = tokenController.isTokenInvalid(tokenB2b2c, tokenB2b2cExpiresIn, tokenB2b2cGeneratedTimestamp);
+            if (tokenB2b2cInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
+            }
 
             return directDebitController.doPayment(paymentRequestDto, secretKey, clientId, ipAddress, channelId, tokenB2b2c, tokenB2b, isProduction);
         } catch (BadRequestException e) {
@@ -328,6 +365,91 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return PaymentJumpAppResponseDto.builder()
                     .responseCode("5005400")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public RefundResponseDto doRefund(RefundRequestDto refundRequestDto,
+                                      String privateKey,
+                                      String clientId,
+                                      String ipAddress,
+                                      String authCode,
+                                      boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(refundRequestDto);
+            refundRequestDto.validateRefundRequest(refundRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            Boolean tokenB2b2cInvalid = tokenController.isTokenInvalid(tokenB2b2c, tokenB2b2cExpiresIn, tokenB2b2cGeneratedTimestamp);
+            if (tokenB2b2cInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doRefund(refundRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
+        } catch (BadRequestException e) {
+            return RefundResponseDto.builder()
+                    .responseCode("5005800")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public BalanceInquiryResponseDto doBalanceInquiry(BalanceInquiryRequestDto balanceInquiryRequestDto,
+                                                      String privateKey,
+                                                      String clientId,
+                                                      String ipAddress,
+                                                      String authCode,
+                                                      boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(balanceInquiryRequestDto);
+            balanceInquiryRequestDto.validateBalanceInquiryRequest(balanceInquiryRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            Boolean tokenB2b2cInvalid = tokenController.isTokenInvalid(tokenB2b2c, tokenB2b2cExpiresIn, tokenB2b2cGeneratedTimestamp);
+            if (tokenB2b2cInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doBalanceInquiry(balanceInquiryRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
+        } catch (BadRequestException e) {
+            return BalanceInquiryResponseDto.builder()
+                    .responseCode("5001100")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto,
+                                                String privateKey,
+                                                String clientId,
+                                                boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(checkStatusRequestDto);
+            checkStatusRequestDto.validateCheckStatusRequest(checkStatusRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doCheckStatus(checkStatusRequestDto, secretKey, clientId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CheckStatusResponseDto.builder()
+                    .responseCode("5005500")
                     .responseMessage(e.getMessage())
                     .build();
         }

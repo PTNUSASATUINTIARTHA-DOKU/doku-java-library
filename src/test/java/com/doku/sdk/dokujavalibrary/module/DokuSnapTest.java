@@ -844,4 +844,140 @@ class DokuSnapTest extends TestUtil {
 
         assertEquals("5002600", response.getResponseCode());
     }
+
+    @Test
+    void directDebitAccountBinding_Success() {
+        when(directDebitController.doAccountBinding(any(), any(), any(), any(), any(), any(), any())).thenReturn(getAccountBindingResponseDto());
+        var response = dokuSnap.doAccountBinding(getAccountBindingRequestDto(), PRIVATE_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+
+        assertEquals("2000700", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitAccountBinding_Failed() {
+        var request = getAccountBindingRequestDto();
+        request.setPhoneNo(null);
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+
+        assertEquals("5000700", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitAccountUnbinding_Success() {
+        when(directDebitController.doAccountUnbinding(any(), any(), any(), any(), any(), any())).thenReturn(getAccountUnbindingResponseDto());
+        var response = dokuSnap.doAccountUnbinding(getAccountUnbindingRequestDto(), PRIVATE_KEY, CLIENT_ID, false, IP_ADDRESS);
+
+        assertEquals("2000900", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitAccountUnbinding_Failed() {
+        var request = getAccountUnbindingRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doAccountUnbinding(request, PRIVATE_KEY, CLIENT_ID, false, IP_ADDRESS);
+
+        assertEquals("5000900", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitCardRegistration_Success() {
+        when(directDebitController.doCardRegistration(any(), any(), any(), any(), any(), any())).thenReturn(getCardRegistrationResponseDto());
+        var response = dokuSnap.doCardRegistration(getCardRegistrationRequestDto(), PRIVATE_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+
+        assertEquals("2000100", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitCardRegistration_Failed() {
+        var request = getCardRegistrationRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+
+        assertEquals("5000100", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitPayment_Success() {
+        when(directDebitController.doPayment(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(getPaymentResponseDto());
+        var response = dokuSnap.doPayment(getPaymentRequestDto(), PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", "authCode", false);
+
+        assertEquals("2005400", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitPayment_Failed() {
+        var request = getPaymentRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doPayment(request, PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
+
+        assertEquals("5005400", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitPaymentJumpApp_Success() {
+        when(directDebitController.doPaymentJumpApp(any(), any(), any(), any(), any(), any(), any())).thenReturn(getPaymentJumpAppResponseDto());
+        var response = dokuSnap.doPaymentJumpApp(getPaymentJumpAppRequestDto(), PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("2005400", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitPaymentJumpApp_Failed() {
+        var request = getPaymentJumpAppRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doPaymentJumpApp(request, PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("5005400", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitBalanceInquiry_Success() {
+        when(directDebitController.doBalanceInquiry(any(), any(), any(), any(), any(), any(), any())).thenReturn(getBalanceInquiryResponseDto());
+        var response = dokuSnap.doBalanceInquiry(getBalanceInquiryRequestDto(), PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("2001100", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitBalanceInquiry_Failed() {
+        var request = getBalanceInquiryRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doBalanceInquiry(request, PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("5001100", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitRefund_Success() {
+        when(directDebitController.doRefund(any(), any(), any(), any(), any(), any(), any())).thenReturn(getRefundResponseDto());
+        var response = dokuSnap.doRefund(getRefundRequestDto(), PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("2005800", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitRefund_Failed() {
+        var request = getRefundRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+
+        assertEquals("5005800", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitCheckStatus_Success() {
+        when(directDebitController.doCheckStatus(any(), any(), any(), any(), any())).thenReturn(getCheckStatusResponseDto());
+        var response = dokuSnap.doCheckStatus(getCheckStatusRequestDto(), PRIVATE_KEY, CLIENT_ID, false);
+
+        assertEquals("2005500", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitCheckStatus_Failed() {
+        var request = getCheckStatusRequestDto();
+        request.setServiceCode(null);
+        var response = dokuSnap.doCheckStatus(request, PRIVATE_KEY, CLIENT_ID, false);
+
+        assertEquals("5005500", response.getResponseCode());
+    }
 }

@@ -1,4 +1,4 @@
-package com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request;
+package com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request;
 
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
@@ -23,29 +23,30 @@ import java.util.Arrays;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountBindingRequestDto {
+public class CardRegistrationRequestDto {
+    private String cardData;
+
+    @SafeString(groups = SafeStringValidation.class)
+    @Size(max = 64, groups = SizeValidation.class)
+    @Pattern(regexp = "^[a-zA-Z0-9]+$")
+    private String custIdMerchant;
 
     @NotNull(groups = MandatoryValidation.class)
-    @SafeString(groups = SafeStringValidation.class)
     @Size(min = 9, groups = SizeValidation.class)
     @Size(max = 16, groups = SizeValidation.class)
     private String phoneNo;
 
     @Valid
-    private AccountBindingAdditionalInfoRequestDto additionalInfo;
+    private CardRegistrationAdditionalInfoRequestDto additionalInfo;
 
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AccountBindingAdditionalInfoRequestDto {
+    public static class CardRegistrationAdditionalInfoRequestDto {
         @NotNull(groups = MandatoryValidation.class)
         @SafeString(groups = SafeStringValidation.class)
         private String channel;
-
-        @SafeString(groups = SafeStringValidation.class)
-        @Size(max = 64, groups = SizeValidation.class)
-        private String custIdMerchant;
 
         @SafeString(groups = SafeStringValidation.class)
         @Size(max = 70, groups = SizeValidation.class)
@@ -69,44 +70,17 @@ public class AccountBindingRequestDto {
         private String address;
 
         @SafeString(groups = SafeStringValidation.class)
-        @Pattern(regexp = "^(19|20)\\d\\d(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$\n", groups = PatternValidation.class)
+        @Pattern(regexp = "[1-9][0-9][0-9]{2}([0][1-9]|[1][0-2])([1-2][0-9]|[0][1-9]|[3][0-1])", groups = PatternValidation.class)
         private String dateOfBirth;
 
         private String successRegistrationUrl;
 
         private String failedRegistrationUrl;
-
-        @SafeString(groups = SafeStringValidation.class)
-        private String deviceModel; // allo
-
-        @SafeString(groups = SafeStringValidation.class)
-        private String osType; // allo
-
-        @SafeString(groups = SafeStringValidation.class)
-        private String channelId; // allo
     }
 
-    public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {
-        if (!isValidChannel(accountBindingRequestDto.getAdditionalInfo().getChannel())) {
+    public void validateCardRegistrationRequest(CardRegistrationRequestDto cardRegistrationRequestDto) {
+        if (!isValidChannel(cardRegistrationRequestDto.getAdditionalInfo().getChannel())) {
             throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
-        }
-
-        if (accountBindingRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
-            if (accountBindingRequestDto.getAdditionalInfo().getDeviceModel().isEmpty() ||
-            accountBindingRequestDto.getAdditionalInfo().getOsType().isEmpty() ||
-            accountBindingRequestDto.getAdditionalInfo().getChannelId().isEmpty()) {
-                throw new BadRequestException("", "Value cannot be null for DIRECT_DEBIT_ALLO_SNAP");
-            }
-
-            if (!accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("ios") &&
-            !accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("android")) {
-                throw new BadRequestException("", "osType value can only be ios/android");
-            }
-
-            if (!accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("app") &&
-                    !accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("web")) {
-                throw new BadRequestException("", "channelId value can only be app/web");
-            }
         }
     }
 
