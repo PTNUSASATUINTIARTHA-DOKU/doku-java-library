@@ -77,13 +77,13 @@ public class AccountBindingRequestDto {
         private String failedRegistrationUrl;
 
         @SafeString(groups = SafeStringValidation.class)
-        private String deviceModel;
+        private String deviceModel; // allo
 
         @SafeString(groups = SafeStringValidation.class)
-        private String osType;
+        private String osType; // allo
 
         @SafeString(groups = SafeStringValidation.class)
-        private String channelId;
+        private String channelId; // allo
     }
 
     public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {
