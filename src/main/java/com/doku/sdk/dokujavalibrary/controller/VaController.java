@@ -91,7 +91,7 @@ public class VaController {
         return vaService.directInquiryRequestMapping(headerRequest, inquiryRequestBodyDto);
     }
 
-    public String vaPaymentNotificationConverter(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
-        return vaService.vaPaymentNotificationConverter(paymentNotificationRequestBodyDto);
+    public String vaPaymentNotificationConverter(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        return vaService.vaPaymentNotificationConverter(headerRequest, paymentNotificationRequestBodyDto);
     }
 }

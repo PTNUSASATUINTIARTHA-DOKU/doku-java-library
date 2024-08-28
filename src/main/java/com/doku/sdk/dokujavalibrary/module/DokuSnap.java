@@ -228,8 +228,8 @@ public class DokuSnap {
         return vaController.snapToV1Converter(headerRequest, inquiryRequestBodyDto);
     }
 
-    public String convertNotificationToV1(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
-        return vaController.vaPaymentNotificationConverter(paymentNotificationRequestBodyDto);
+    public String convertNotificationToV1(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        return vaController.vaPaymentNotificationConverter(headerRequest, paymentNotificationRequestBodyDto);
     }
 
     public AccountBindingResponseDto doAccountBinding(AccountBindingRequestDto accountBindingRequestDto,
