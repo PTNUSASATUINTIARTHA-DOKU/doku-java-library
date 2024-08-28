@@ -28,7 +28,6 @@ public class PaymentRequestDto {
 
     @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
-    @Size(min = 32, groups = SizeValidation.class)
     @Size(max = 64, groups = SizeValidation.class)
     private String partnerReferenceNo;
 
@@ -105,8 +104,8 @@ public class PaymentRequestDto {
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name())) {
             if (!paymentRequestDto.getFeeType().isEmpty()) {
-                if (!paymentRequestDto.getFeeType().equalsIgnoreCase("OUR") ||
-                        !paymentRequestDto.getFeeType().equalsIgnoreCase("BEN") ||
+                if (!paymentRequestDto.getFeeType().equalsIgnoreCase("OUR") &&
+                        !paymentRequestDto.getFeeType().equalsIgnoreCase("BEN") &&
                         !paymentRequestDto.getFeeType().equalsIgnoreCase("SHA")) {
                     throw new BadRequestException("", "Value can only be OUR/BEN/SHA for EMONEY_OVO_SNAP");
                 }

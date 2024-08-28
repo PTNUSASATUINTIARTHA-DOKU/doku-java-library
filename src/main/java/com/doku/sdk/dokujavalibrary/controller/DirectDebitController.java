@@ -40,7 +40,7 @@ public class DirectDebitController {
                                                       String deviceId,
                                                       String ipAddress,
                                                       String tokenB2b,
-                                                      boolean isProduction) {
+                                                      Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction);
         String requestBody = gson.toJson(accountBindingRequestDto);
 
@@ -58,7 +58,7 @@ public class DirectDebitController {
                                                           String clientId,
                                                           String ipAddress,
                                                           String tokenB2b,
-                                                          boolean isProduction) {
+                                                          Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitAccountUnbindingUrl(isProduction);
         String requestBody = gson.toJson(accountUnbindingRequestDto);
 
@@ -76,7 +76,7 @@ public class DirectDebitController {
                                                           String clientId,
                                                           String channelId,
                                                           String tokenB2b,
-                                                          boolean isProduction) {
+                                                          Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction);
         String requestBody = gson.toJson(cardRegistrationRequestDto);
 
@@ -96,7 +96,7 @@ public class DirectDebitController {
                                         String channelId,
                                         String tokenB2b2c,
                                         String tokenB2b,
-                                        boolean isProduction) {
+                                        Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
         String requestBody = gson.toJson(paymentRequestDto);
 
@@ -115,7 +115,7 @@ public class DirectDebitController {
                                                       String deviceId,
                                                       String ipAddress,
                                                       String tokenB2b,
-                                                      boolean isProduction) {
+                                                      Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
         String requestBody = gson.toJson(paymentJumpAppRequestDto);
 
@@ -134,7 +134,7 @@ public class DirectDebitController {
                                       String ipAddress,
                                       String tokenB2b,
                                       String tokenB2b2c,
-                                      boolean isProduction) {
+                                      Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitRefundUrl(isProduction);
         String requestBody = gson.toJson(refundRequestDto);
 
@@ -153,7 +153,7 @@ public class DirectDebitController {
                                                       String ipAddress,
                                                       String tokenB2b,
                                                       String tokenB2b2c,
-                                                      boolean isProduction) {
+                                                      Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitBalanceInquiryUrl(isProduction);
         String requestBody = gson.toJson(balanceInquiryRequestDto);
 
@@ -170,7 +170,7 @@ public class DirectDebitController {
                                                 String secretKey,
                                                 String clientId,
                                                 String tokenB2b,
-                                                boolean isProduction) {
+                                                Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitCheckStatusUrl(isProduction);
         String requestBody = gson.toJson(checkStatusRequestDto);
 
