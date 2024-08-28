@@ -11,6 +11,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.inquiry.request.InquiryRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseBodyDto;
+import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
@@ -88,5 +89,9 @@ public class VaController {
 
     public String snapToV1Converter(HttpServletRequest headerRequest, InquiryRequestBodyDto inquiryRequestBodyDto) {
         return vaService.directInquiryRequestMapping(headerRequest, inquiryRequestBodyDto);
+    }
+
+    public String vaPaymentNotificationConverter(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        return vaService.vaPaymentNotificationConverter(headerRequest, paymentNotificationRequestBodyDto);
     }
 }

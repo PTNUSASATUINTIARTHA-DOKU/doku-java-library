@@ -1,6 +1,7 @@
 package com.doku.sdk.dokujavalibrary.service;
 
 import com.doku.sdk.dokujavalibrary.common.ConnectionUtils;
+import com.doku.sdk.dokujavalibrary.common.ConverterUtils;
 import com.doku.sdk.dokujavalibrary.config.SdkConfig;
 import com.doku.sdk.dokujavalibrary.constant.SnapHeaderConstant;
 import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
@@ -18,6 +19,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.inquiry.request.InquiryRequestBodyDto
 import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.DirectInquiryMerchantResponseV1Dto;
 import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseVirtualAccountDataDto;
+import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
@@ -32,8 +34,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,20 +206,25 @@ public class VaService {
         snapToV1.put("STATUSTYPE", "/");
         snapToV1.put("OCOID", jsonRequest.getInquiryRequestId());
 
-        StringBuilder v1FormData = new StringBuilder();
-        for (Map.Entry<String, String> entry : snapToV1.entrySet()) {
-            if (v1FormData.length() > 0) {
-                v1FormData.append("&");
-            }
+        return ConverterUtils.toFormData(snapToV1);
+    }
 
-            try {
-                v1FormData.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.toString()))
-                        .append("=")
-                        .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()));
-            } catch (Exception e) {
-                throw new BadRequestException("", e.getMessage());
-            }
+    public String vaPaymentNotificationConverter(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        String paymentChannel = VaChannelEnum.findByV2Channel(headerRequest.getHeader(SnapHeaderConstant.CHANNEL_ID)).getOcoChannelId();
+        if (paymentNotificationRequestBodyDto.getPaidAmount().getCurrency().equals("IDR")) {
+            paymentNotificationRequestBodyDto.getPaidAmount().setCurrency("360");
         }
-        return v1FormData.toString();
+
+        Map<String, String> paymentNotificationV1 = new HashMap<>();
+        paymentNotificationV1.put("AMOUNT", paymentNotificationRequestBodyDto.getPaidAmount().getValue());
+        paymentNotificationV1.put("TRANSIDMERCHANT", paymentNotificationRequestBodyDto.getTrxId());
+        paymentNotificationV1.put("STATUSTYPE", "/");
+        paymentNotificationV1.put("PAYMENTCHANNEL", paymentChannel);
+        paymentNotificationV1.put("PAYMENTCODE", paymentNotificationRequestBodyDto.getVirtualAccountNo());
+        paymentNotificationV1.put("CURRENCY", paymentNotificationRequestBodyDto.getPaidAmount().getCurrency());
+        paymentNotificationV1.put("PURCHASECURRENCY", paymentNotificationRequestBodyDto.getPaidAmount().getCurrency());
+        paymentNotificationV1.put("CUSTOMERID", paymentNotificationRequestBodyDto.getCustomerNo());
+
+        return ConverterUtils.toFormData(paymentNotificationV1);
     }
 }
