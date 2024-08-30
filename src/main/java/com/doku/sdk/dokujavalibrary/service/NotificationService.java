@@ -1,6 +1,8 @@
 package com.doku.sdk.dokujavalibrary.service;
 
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
+import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
@@ -28,6 +30,14 @@ public class NotificationService {
                                 .paidAmount(TotalAmountDto.builder()
                                         .value(paymentNotificationRequestBodyDto.getPaidAmount().getValue())
                                         .currency(paymentNotificationRequestBodyDto.getPaidAmount().getCurrency())
+                                        .build())
+                                .virtualAccountTrxType(paymentNotificationRequestBodyDto.getVirtualAccountTrxType())
+                                .additionalInfo(AdditionalInfoDto.builder()
+                                        .channel(paymentNotificationRequestBodyDto.getAdditionalInfo().getChannel())
+                                        .virtualAccountConfig(VirtualAccountConfigDto.builder()
+                                                .minAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount())
+                                                .maxAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount())
+                                                .build())
                                         .build())
                                 .build())
                         .build())

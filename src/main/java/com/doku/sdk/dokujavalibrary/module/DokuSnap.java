@@ -236,14 +236,14 @@ public class DokuSnap {
         return vaController.snapToV1Converter(headerRequest, inquiryRequestBodyDto);
     }
 
-    public String convertNotificationToV1(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
-        return vaController.vaPaymentNotificationConverter(headerRequest, paymentNotificationRequestBodyDto);
+    public String convertNotificationToV1(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        return vaController.vaPaymentNotificationConverter(paymentNotificationRequestBodyDto);
     }
 
     public AccountBindingResponseDto doAccountBinding(AccountBindingRequestDto accountBindingRequestDto,
                                                       String privateKey,
                                                       String clientId,
-                                                      boolean isProduction,
+                                                      Boolean isProduction,
                                                       String deviceId,
                                                       String ipAddress) {
         try {
@@ -268,7 +268,7 @@ public class DokuSnap {
     public AccountUnbindingResponseDto doAccountUnbinding(AccountUnbindingRequestDto accountUnbindingRequestDto,
                                                         String privateKey,
                                                         String clientId,
-                                                        boolean isProduction,
+                                                        Boolean isProduction,
                                                         String ipAddress) {
         try {
             ValidationUtils.validateRequest(accountUnbindingRequestDto);
@@ -293,7 +293,7 @@ public class DokuSnap {
                                                           String privateKey,
                                                           String clientId,
                                                           String channelId,
-                                                          boolean isProduction) {
+                                                          Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(cardRegistrationRequestDto);
             cardRegistrationRequestDto.validateCardRegistrationRequest(cardRegistrationRequestDto);
@@ -319,7 +319,7 @@ public class DokuSnap {
                                         String ipAddress,
                                         String channelId,
                                         String authCode,
-                                        boolean isProduction) {
+                                        Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(paymentRequestDto);
             paymentRequestDto.validatePaymentRequest(paymentRequestDto);
@@ -350,7 +350,7 @@ public class DokuSnap {
                                                       String clientId,
                                                       String deviceId,
                                                       String ipAddress,
-                                                      boolean isProduction) {
+                                                      Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(paymentJumpAppRequestDto);
             paymentJumpAppRequestDto.validatePaymentJumpAppRequest(paymentJumpAppRequestDto);
@@ -375,7 +375,7 @@ public class DokuSnap {
                                       String clientId,
                                       String ipAddress,
                                       String authCode,
-                                      boolean isProduction) {
+                                      Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(refundRequestDto);
             refundRequestDto.validateRefundRequest(refundRequestDto);
@@ -406,7 +406,7 @@ public class DokuSnap {
                                                       String clientId,
                                                       String ipAddress,
                                                       String authCode,
-                                                      boolean isProduction) {
+                                                      Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(balanceInquiryRequestDto);
             balanceInquiryRequestDto.validateBalanceInquiryRequest(balanceInquiryRequestDto);
@@ -435,7 +435,7 @@ public class DokuSnap {
     public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto,
                                                 String privateKey,
                                                 String clientId,
-                                                boolean isProduction) {
+                                                Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(checkStatusRequestDto);
             checkStatusRequestDto.validateCheckStatusRequest(checkStatusRequestDto);

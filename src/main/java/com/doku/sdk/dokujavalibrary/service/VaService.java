@@ -209,8 +209,8 @@ public class VaService {
         return ConverterUtils.toFormData(snapToV1);
     }
 
-    public String vaPaymentNotificationConverter(HttpServletRequest headerRequest, PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
-        String paymentChannel = VaChannelEnum.findByV2Channel(headerRequest.getHeader(SnapHeaderConstant.CHANNEL_ID)).getOcoChannelId();
+    public String vaPaymentNotificationConverter(PaymentNotificationRequestBodyDto paymentNotificationRequestBodyDto) {
+        String paymentChannel = VaChannelEnum.findByV2Channel(paymentNotificationRequestBodyDto.getAdditionalInfo().getChannel()).getOcoChannelId();
         if (paymentNotificationRequestBodyDto.getPaidAmount().getCurrency().equals("IDR")) {
             paymentNotificationRequestBodyDto.getPaidAmount().setCurrency("360");
         }
