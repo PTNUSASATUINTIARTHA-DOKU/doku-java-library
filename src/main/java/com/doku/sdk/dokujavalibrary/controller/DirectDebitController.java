@@ -10,6 +10,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.response.CardUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
@@ -87,6 +89,23 @@ public class DirectDebitController {
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
 
         return directDebitService.doCardRegistrationProcess(requestHeader, cardRegistrationRequestDto, isProduction);
+    }
+
+    public CardUnbindingResponseDto doCardUnbinding(CardUnbindingRequestDto cardUnbindingRequestDto,
+                                                    String secretKey,
+                                                    String clientId,
+                                                    String tokenB2b,
+                                                    Boolean isProduction) {
+        String endpointUrl = SdkConfig.getDirectDebitCardUnbindingUrl(isProduction);
+        String requestBody = gson.toJson(cardUnbindingRequestDto);
+
+        String timestamp = tokenService.getTimestamp();
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
+        String externalId = snapUtils.generateExternalId();
+
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, null, null, tokenB2b);
+
+        return directDebitService.doCardUnbindingProcess(requestHeader, cardUnbindingRequestDto, isProduction);
     }
 
     public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,

@@ -12,6 +12,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.response.CardUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
@@ -85,6 +87,22 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(cardRegistrationRequestDto));
 
         return gson.fromJson(response.getBody(), CardRegistrationResponseDto.class);
+    }
+
+    public CardUnbindingResponseDto doCardUnbindingProcess(RequestHeaderDto requestHeaderDto, CardUnbindingRequestDto cardUnbindingRequestDto, boolean isProduction) {
+        var httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, requestHeaderDto.getXTimestamp());
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, requestHeaderDto.getXSignature());
+        httpHeaders.set(SnapHeaderConstant.X_PARTNER_ID, requestHeaderDto.getXPartnerId());
+        httpHeaders.set(SnapHeaderConstant.X_EXTERNAL_ID, requestHeaderDto.getXExternalId());
+        httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+
+        String url = SdkConfig.getDirectDebitCardUnbindingUrl(isProduction);
+        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(cardUnbindingRequestDto));
+
+        return gson.fromJson(response.getBody(), CardUnbindingResponseDto.class);
     }
 
     public PaymentResponseDto doPaymentProcess(RequestHeaderDto requestHeaderDto, PaymentRequestDto paymentRequestDto, boolean isProduction) {

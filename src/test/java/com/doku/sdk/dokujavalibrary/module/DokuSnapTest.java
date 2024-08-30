@@ -897,6 +897,23 @@ class DokuSnapTest extends TestUtil {
     }
 
     @Test
+    void directDebitCardUnbinding_Success() {
+        when(directDebitController.doCardUnbinding(any(), any(), any(), any(), any())).thenReturn(getCardUnbindingResponseDto());
+        var response = dokuSnap.doCardUnbinding(getCardUnbindingRequestDto(), PRIVATE_KEY, CLIENT_ID, false);
+
+        assertEquals("2000500", response.getResponseCode());
+    }
+
+    @Test
+    void directDebitCardUnbinding_Failed() {
+        var request = getCardUnbindingRequestDto();
+        request.getAdditionalInfo().setChannel(null);
+        var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, CLIENT_ID, false);
+
+        assertEquals("5000500", response.getResponseCode());
+    }
+
+    @Test
     void directDebitPayment_Success() {
         when(directDebitController.doPayment(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(getPaymentResponseDto());
         var response = dokuSnap.doPayment(getPaymentRequestDto(), PRIVATE_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", "authCode", false);

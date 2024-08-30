@@ -14,6 +14,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.response.CardUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
@@ -308,6 +310,29 @@ public class DokuSnap {
         } catch (BadRequestException e) {
             return CardRegistrationResponseDto.builder()
                     .responseCode("5000100")
+                    .responseMessage(e.getMessage())
+                    .build();
+        }
+    }
+
+    public CardUnbindingResponseDto doCardUnbinding(CardUnbindingRequestDto cardUnbindingRequestDto,
+                                                    String privateKey,
+                                                    String clientId,
+                                                    Boolean isProduction) {
+        try {
+            ValidationUtils.validateRequest(cardUnbindingRequestDto);
+            cardUnbindingRequestDto.validateCardUnbindingRequest(cardUnbindingRequestDto);
+
+            Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
+            if (tokenB2bInvalid) {
+                tokenB2bGeneratedTimestamp = Instant.now().getEpochSecond();
+                tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
+            }
+
+            return directDebitController.doCardUnbinding(cardUnbindingRequestDto, secretKey, clientId, tokenB2b, isProduction);
+        } catch (BadRequestException e) {
+            return CardUnbindingResponseDto.builder()
+                    .responseCode("5000500")
                     .responseMessage(e.getMessage())
                     .build();
         }

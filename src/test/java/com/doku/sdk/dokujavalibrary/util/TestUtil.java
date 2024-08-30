@@ -9,6 +9,8 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.Balan
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.response.CardUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
@@ -289,6 +291,24 @@ public class TestUtil {
                         .status("PENDING")
                         .authCode("authCode")
                         .build())
+                .build();
+    }
+
+    public CardUnbindingRequestDto getCardUnbindingRequestDto() {
+        return CardUnbindingRequestDto.builder()
+                .tokenId("eyJhbGciOiJSUzI1NiJ9.eyJleHAiOjE2OTg4MjI3NTQsImlzcyI6IkRPS1UiLCJjbGllbnRJZCI6IkJSTi0wMjAyLTE2OTAyNzUzNTM3OTgiLCJhY2NvdW50SWQiOiJjZTBhZWIyM2YyMmZhOTgxZWViNTE1MjFmZmNkYmUzNyJ9.QZ2z0p2PoCYbuBSId7LleLqTUwNyNIeM1PUSaV4DwGKO05l7xQ3EbpdAPK62hxKNcczKqQqGY2Om6rzS78s2Tj88dkDD2vl46o3xEPd_plqQW8ayFqS74Z_HcFJfdo-egqFv9rAX7qgiE5AJHSx_hFolET9B3o3Jx82lmQutnXOjYb5gW9PV0FCPIZRWOaXppOSJSVcmTvXZxF0KUID9-2QVmQ5aPZroHjShYJKGyUu-1tCPClD_CbZMCi3TxhKLnI3e2oIoK7VjXEsrJjuil8O1zZTT7_aXAGgTu5UcPCrc0U9_3Nj-wQlEjDpedMVypKAWATWBUVpMo2MAsBRDAw")
+                .additionalInfo(CardUnbindingRequestDto.CardUnbindingAdditionalInfoRequestDto.builder()
+                        .channel("DIRECT_DEBIT_BRI_SNAP")
+                        .build())
+                .build();
+    }
+
+    public CardUnbindingResponseDto getCardUnbindingResponseDto() {
+        return CardUnbindingResponseDto.builder()
+                .responseCode("2000500")
+                .responseMessage("Successful")
+                .referenceNo("UNB-0001")
+                .redirectUrl("redirectUrl")
                 .build();
     }
 
