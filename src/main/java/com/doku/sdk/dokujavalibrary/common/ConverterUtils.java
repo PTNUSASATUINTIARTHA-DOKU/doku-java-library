@@ -1,6 +1,6 @@
 package com.doku.sdk.dokujavalibrary.common;
 
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +20,7 @@ public class ConverterUtils {
                         .append("=")
                         .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()));
             } catch (Exception e) {
-                throw new BadRequestException("", e.getMessage());
+                throw new GeneralException("", "Failed converting to form data");
             }
         }
         return v1FormData.toString();

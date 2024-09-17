@@ -1,7 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request;
 
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
@@ -69,7 +69,7 @@ public class AccountBindingRequestDto {
         private String address;
 
         @SafeString(groups = SafeStringValidation.class)
-        @Pattern(regexp = "^(19|20)\\d\\d(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$\n", groups = PatternValidation.class)
+//        @Pattern(regexp = "^(19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$\n", groups = PatternValidation.class)
         private String dateOfBirth;
 
         private String successRegistrationUrl;
@@ -88,24 +88,24 @@ public class AccountBindingRequestDto {
 
     public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {
         if (!isValidChannel(accountBindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
         if (accountBindingRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
             if (accountBindingRequestDto.getAdditionalInfo().getDeviceModel().isEmpty() ||
             accountBindingRequestDto.getAdditionalInfo().getOsType().isEmpty() ||
             accountBindingRequestDto.getAdditionalInfo().getChannelId().isEmpty()) {
-                throw new BadRequestException("", "Value cannot be null for DIRECT_DEBIT_ALLO_SNAP");
+                throw new GeneralException("", "Value cannot be null for DIRECT_DEBIT_ALLO_SNAP");
             }
 
             if (!accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("ios") &&
             !accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("android")) {
-                throw new BadRequestException("", "osType value can only be ios/android");
+                throw new GeneralException("", "osType value can only be ios/android");
             }
 
             if (!accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("app") &&
                     !accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("web")) {
-                throw new BadRequestException("", "channelId value can only be app/web");
+                throw new GeneralException("", "channelId value can only be app/web");
             }
         }
     }

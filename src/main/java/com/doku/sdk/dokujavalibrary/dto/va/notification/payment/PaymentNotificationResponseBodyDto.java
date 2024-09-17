@@ -25,10 +25,11 @@ public class PaymentNotificationResponseBodyDto {
         private String customerNo;
         private String virtualAccountNo;
         private String virtualAccountName;
-        private String virtualAccountEmail;
+        private String trxId;
+//        private String virtualAccountEmail;
         private String paymentRequestId;
-        private TotalAmountDto paidAmount;
-        private String virtualAccountTrxType;
-        private AdditionalInfoDto additionalInfo;
+//        private TotalAmountDto paidAmount;
+//        private String virtualAccountTrxType;
+//        private AdditionalInfoDto additionalInfo;
     }
 }

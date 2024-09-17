@@ -272,3 +272,122 @@ This function will return the response in form data format.
  */
 dokuSnap.directInquiryResponseMapping(xmlString);
 ```
+
+#### b. Direct Debit
+#### Direct Debit Account Binding
+> You need to save the authCode from account binding response to access the other functions
+```java
+/**
+ * AccountBindingRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * isProduction -> boolean
+ * deviceId -> String
+ * ipAddress -> String
+ */
+dokuSnap.doAccountBinding(AccountBindingRequestDto, privateKey, clientId, isProduction, deviceId, ipAddress);
+```
+
+#### Direct Debit Account Unbinding
+```java
+/**
+ * AccountUnbindingRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * isProduction -> boolean
+ * ipAddress -> String
+ */
+dokuSnap.doAccountUnbinding(AccountUnbindingRequestDto, privateKey, clientId, isProduction, ipAddress);
+```
+
+#### Direct Debit Card Registration
+> You need to save the authCode from account binding response to access the other functions
+```java
+/**
+ * CardRegistrationRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * channelId -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doCardRegistration(CardRegistrationRequestDto, privateKey, clientId, channelId, isProduction);
+```
+
+#### Direct Debit Card Unbinding
+```java
+/**
+ * CardUnbindingRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doCardUnbinding(CardUnbindingRequestDto, privateKey, clientId, isProduction);
+```
+
+#### Direct Debit Payment
+> You need to save the authCode from account binding/card registration
+```java
+/**
+ * PaymentRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * ipAddress -> String
+ * channelId -> String
+ * authCode -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doPayment(PaymentRequestDto, privateKey, clientId, channelid, authCode, isProduction);
+```
+
+#### Direct Debit Payment Jump App
+> This function is only applicable for DANA & Shopee Pay acquirer
+```java
+/**
+ * PaymentJumpAppRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * deviceId -> String
+ * ipAddress -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doPaymentJumpApp(PaymentJumpAppRequestDto, privateKey, clientId, deviceId, ipAddress, isProduction);
+```
+
+#### Direct Debit Refund
+> You need to save the authCode from account binding/card registration
+```java
+/**
+ * RefundRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * ipAddress -> String
+ * authCode -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doRefund(RefundRequestDto, privateKey, clientId, ipAddress, authCode, isProduction);
+```
+
+#### Direct Debit Balance Inquiry (Check Balance)
+> You need to save the authCode from account binding/card registration
+```java
+/**
+ * BalanceInquiryRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * ipAddress -> String
+ * authCode -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doBalanceInquiry(BalanceInquiryRequestDto, privateKey, clientId, ipAddress, authCode, isProduction);
+```
+
+#### Direct Debit Check Status
+```java
+/**
+ * CheckStatusRequestDto -> object
+ * privateKey -> String
+ * clientId -> String
+ * isProduction -> boolean
+ */
+dokuSnap.doCheckStatus(CheckStatusRequestDto, privateKey, clientId, isProduction);
+```

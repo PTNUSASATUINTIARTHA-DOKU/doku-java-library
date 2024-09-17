@@ -1,7 +1,9 @@
 package com.doku.sdk.dokujavalibrary.dto.va.deleteva.request;
 
+import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseVirtualAccountDataDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
+import com.doku.sdk.dokujavalibrary.exception.SimulatorException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.LengthValidation;
@@ -58,16 +60,56 @@ public class DeleteVaRequestDto {
                 && !deleteVaRequestDto.getVirtualAccountNo().isEmpty()) {
             String target = deleteVaRequestDto.getPartnerServiceId() + deleteVaRequestDto.getCustomerNo();
             if (!deleteVaRequestDto.getVirtualAccountNo().equals(target)) {
-                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+                throw new GeneralException("4003101", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
             }
         }
 
         if (!isValidChannel(deleteVaRequestDto.getAdditionalInfo().getChannel())) {
-            throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
+            throw new GeneralException("4003101", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
     }
 
     private static boolean isValidChannel(String channel) {
-        return Arrays.stream(VaChannelEnum.values()).anyMatch(vaChannelEnum -> vaChannelEnum.name().equals(channel));
+        return Arrays.stream(VaChannelEnum.values()).anyMatch(vaChannelEnum -> vaChannelEnum.getV2Channel().equals(channel));
+    }
+
+    public void validateDeleteVaSimulator(DeleteVaRequestDto deleteVaRequestDto, Boolean isProduction) {
+        if (!isProduction) {
+            if (deleteVaRequestDto.getTrxId().startsWith("1118")) {
+                var object = DeleteVaResponseVirtualAccountDataDto.builder()
+                        .partnerServiceId("90341537")
+                        .customerNo("00000077")
+                        .virtualAccountNo("9034153700000077")
+                        .trxId("PGPWF167")
+                        .build();
+
+                throw new SimulatorException("2003100", "Success", object);
+            }
+            if (deleteVaRequestDto.getTrxId().startsWith("111")) {
+                throw new SimulatorException("4013101", "Access Token Invalid (B2B)", null);
+            } else if (deleteVaRequestDto.getTrxId().startsWith("112")) {
+                throw new SimulatorException("4013100", "Unauthorized . Signature Not Match", null);
+            } else if (deleteVaRequestDto.getTrxId().startsWith("113")) {
+                var object = DeleteVaResponseVirtualAccountDataDto.builder()
+                        .partnerServiceId("")
+                        .customerNo("00000077")
+                        .virtualAccountNo("9034153700000077")
+                        .trxId("PGPWF167")
+                        .build();
+
+                throw new SimulatorException("4003102", "Invalid Mandatory Field {partnerServiceId}", object);
+            } else if (deleteVaRequestDto.getTrxId().startsWith("114")) {
+                var object = DeleteVaResponseVirtualAccountDataDto.builder()
+                        .partnerServiceId("90341537")
+                        .customerNo("00000077")
+                        .virtualAccountNo("virtualAccountNo")
+                        .trxId("PGPWF167")
+                        .build();
+
+                throw new SimulatorException("4003101", "Invalid Field Format {virtualAccountNo}", object);
+            } else if (deleteVaRequestDto.getTrxId().startsWith("115")) {
+                throw new SimulatorException("4093100", "Conflict", null);
+            }
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.doku.sdk.dokujavalibrary.dto.va.updateva.request;
 
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.UpdateVaAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
+import com.doku.sdk.dokujavalibrary.exception.SimulatorException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
@@ -93,42 +95,105 @@ public class UpdateVaRequestDto {
                 && !updateVaRequestDto.getVirtualAccountNo().isEmpty()) {
             String target = updateVaRequestDto.getPartnerServiceId() + updateVaRequestDto.getCustomerNo();
             if (!updateVaRequestDto.getVirtualAccountNo().equals(target)) {
-                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+                throw new GeneralException("4002801", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
             }
         }
 
         if (!updateVaRequestDto.getTotalAmount().getCurrency().equals("IDR")) {
-            throw new BadRequestException("", "totalAmount.currency must be 'IDR'. Ensure that totalAmount.currency is 'IDR'. Example: 'IDR'.");
+            throw new GeneralException("4002801", "totalAmount.currency must be 'IDR'. Ensure that totalAmount.currency is 'IDR'. Example: 'IDR'.");
         }
 
         if (!updateVaRequestDto.getVirtualAccountTrxType().equals("C") &&
                 !updateVaRequestDto.getVirtualAccountTrxType().equals("O") &&
                 !updateVaRequestDto.getVirtualAccountTrxType().equals("V")) {
-            throw new BadRequestException("", "virtualAccountTrxType must be either 'C', 'O', or 'V'. Ensure that virtualAccountTrxType is one of these values. Example: 'C'.");
+            throw new GeneralException("4002801", "virtualAccountTrxType must be either 'C', 'O', or 'V'. Ensure that virtualAccountTrxType is one of these values. Example: 'C'.");
         }
 
         if (!updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("ACTIVE") &&
                 !updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getStatus().equals("INACTIVE")) {
-            throw new BadRequestException("", "status must be either ‘ACTIVE’ or ‘INACTIVE’. Ensure that status is one of these values. Example: ‘INACTIVE’.");
+            throw new GeneralException("4002801", "status must be either ‘ACTIVE’ or ‘INACTIVE’. Ensure that status is one of these values. Example: ‘INACTIVE’.");
         }
 
         if (!isValidChannel(updateVaRequestDto.getAdditionalInfo().getChannel())) {
-            throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
+            throw new GeneralException("4002801", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'VIRTUAL_ACCOUNT_MANDIRI'.");
         }
 
         if (updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount() != null &&
                 updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount() != null) {
             if (updateVaRequestDto.getVirtualAccountTrxType().equals("C")) {
-                throw new BadRequestException("", "Only supported for virtualAccountTrxType O and V only");
+                throw new GeneralException("4002801", "Only supported for virtualAccountTrxType O and V only");
             }
 
             if (updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount().compareTo(updateVaRequestDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount()) >= 0) {
-                throw new BadRequestException("", "maxAmount cannot be lesser than minAmount");
+                throw new GeneralException("4002801", "maxAmount cannot be lesser than minAmount");
             }
         }
     }
 
     private static boolean isValidChannel(String channel) {
-        return Arrays.stream(VaChannelEnum.values()).anyMatch(vaChannelEnum -> vaChannelEnum.name().equals(channel));
+        return Arrays.stream(VaChannelEnum.values()).anyMatch(vaChannelEnum -> vaChannelEnum.getV2Channel().equals(channel));
+    }
+
+    public void validateUpdateVaSimulator(UpdateVaRequestDto updateVaRequestDto, Boolean isProduction) {
+        if (!isProduction) {
+            if (updateVaRequestDto.getTrxId().startsWith("1115")) {
+                var object = VirtualAccountDataDto.builder()
+                        .partnerServiceId("90341589")
+                        .customerNo("00000077")
+                        .virtualAccountNo("9034153700000077")
+                        .virtualAccountName("Jokul Doe 001")
+                        .virtualAccountEmail("jokul@email.com")
+                        .trxId("PGPWF167")
+                        .totalAmount(TotalAmountDto.builder()
+                                .value("13000.00")
+                                .currency("IDR")
+                                .build())
+                        .virtualAccountTrxType("C")
+                        .expiredDate("2024-02-02T15:02:29+07:00")
+                        .build();
+
+                throw new SimulatorException("2002800", "Success", object);
+            } else if (updateVaRequestDto.getTrxId().startsWith("111")) {
+                throw new SimulatorException("4012801", "Access Token Invalid (B2B)", null);
+            } else if (updateVaRequestDto.getTrxId().startsWith("112")) {
+                throw new SimulatorException("4012800", "Unauthorized . Signature Not Match", null);
+            } else if (updateVaRequestDto.getTrxId().startsWith("113")) {
+                var object = VirtualAccountDataDto.builder()
+                        .partnerServiceId("")
+                        .customerNo("00000077")
+                        .virtualAccountNo("9034153700000077")
+                        .virtualAccountName("Jokul Doe 001")
+                        .virtualAccountEmail("jokul@email.com")
+                        .trxId("PGPWF167")
+                        .totalAmount(TotalAmountDto.builder()
+                                .value("13000.00")
+                                .currency("IDR")
+                                .build())
+                        .virtualAccountTrxType("C")
+                        .expiredDate("2024-02-02T15:02:29+07:00")
+                        .build();
+
+                throw new SimulatorException("4002802", "Invalid Mandatory Field {partnerServiceId}", object);
+            } else if (updateVaRequestDto.getTrxId().startsWith("114")) {
+                var object = VirtualAccountDataDto.builder()
+                        .partnerServiceId("90341537")
+                        .customerNo("00000077")
+                        .virtualAccountNo("9034153700000077")
+                        .virtualAccountName("Jokul Doe 001")
+                        .virtualAccountEmail("jokul@email.com")
+                        .trxId("PGPWF167")
+                        .totalAmount(TotalAmountDto.builder()
+                                .value("13000.00")
+                                .currency("1")
+                                .build())
+                        .virtualAccountTrxType("C")
+                        .expiredDate("2024-02-02T15:02:29+07:00")
+                        .build();
+
+                throw new SimulatorException("4002801", "Invalid Field Format {totalAmount.currency}", object);
+            } else if (updateVaRequestDto.getTrxId().startsWith("115")) {
+                throw new SimulatorException("4092800", "Conflict", null);
+            }
+        }
     }
 }

@@ -20,10 +20,10 @@ public class RestTemplateResponseErrorHandler extends DefaultResponseErrorHandle
     public void handleError(URI url, HttpMethod method, ClientHttpResponse httpResponse) throws IOException {
         if (httpResponse.getStatusCode().series() == SERVER_ERROR) {
             // handle SERVER_ERROR
-            log.warn("#HttpServerErrorException [{}], will be handle by business service ", httpResponse.getRawStatusCode());
+            log.warn("#HttpServerErrorException [{}]", httpResponse.getRawStatusCode());
         } else if (httpResponse.getStatusCode().series() == CLIENT_ERROR) {
             // handle CLIENT_ERROR
-            log.warn("#HttpClientErrorException [{}], will be handle by business service ", httpResponse.getRawStatusCode());
+            log.warn("#HttpClientErrorException [{}]", httpResponse.getRawStatusCode());
         }
     }
 }

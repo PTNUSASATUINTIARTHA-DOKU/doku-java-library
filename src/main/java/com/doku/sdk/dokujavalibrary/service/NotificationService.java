@@ -1,8 +1,7 @@
 package com.doku.sdk.dokujavalibrary.service;
 
-import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
-import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
-import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.notification.request.DirectDebitNotificationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.notification.response.DirectDebitNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
@@ -25,20 +24,8 @@ public class NotificationService {
                                 .customerNo(paymentNotificationRequestBodyDto.getCustomerNo())
                                 .virtualAccountNo(paymentNotificationRequestBodyDto.getVirtualAccountNo())
                                 .virtualAccountName(paymentNotificationRequestBodyDto.getVirtualAccountName())
-                                .virtualAccountEmail(paymentNotificationRequestBodyDto.getVirtualAccountEmail())
+                                .trxId(paymentNotificationRequestBodyDto.getTrxId())
                                 .paymentRequestId(paymentNotificationRequestBodyDto.getPaymentRequestId())
-                                .paidAmount(TotalAmountDto.builder()
-                                        .value(paymentNotificationRequestBodyDto.getPaidAmount().getValue())
-                                        .currency(paymentNotificationRequestBodyDto.getPaidAmount().getCurrency())
-                                        .build())
-                                .virtualAccountTrxType(paymentNotificationRequestBodyDto.getVirtualAccountTrxType())
-                                .additionalInfo(AdditionalInfoDto.builder()
-                                        .channel(paymentNotificationRequestBodyDto.getAdditionalInfo().getChannel())
-                                        .virtualAccountConfig(VirtualAccountConfigDto.builder()
-                                                .minAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMinAmount())
-                                                .maxAmount(paymentNotificationRequestBodyDto.getAdditionalInfo().getVirtualAccountConfig().getMaxAmount())
-                                                .build())
-                                        .build())
                                 .build())
                         .build())
                 .build();
@@ -50,6 +37,21 @@ public class NotificationService {
                         .responseCode("4012701")
                         .responseMessage("Invalid Token (B2B)")
                         .build())
+                .build();
+    }
+
+    public DirectDebitNotificationResponseDto generateDirectDebitNotificationResponse(DirectDebitNotificationRequestDto directDebitNotificationRequestDto) {
+        return DirectDebitNotificationResponseDto.builder()
+                .responseCode("2005600")
+                .approvalCode("201039000200") // tba
+                .responseMessage("Request has been processed successfully")
+                .build();
+    }
+
+    public DirectDebitNotificationResponseDto generateDirectDebitInvalidTokenNotificationResponse() {
+        return DirectDebitNotificationResponseDto.builder()
+                .responseCode("5005600")
+                .responseMessage("Invalid Token")
                 .build();
     }
 }

@@ -45,12 +45,13 @@ public class DirectDebitController {
                                                       Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction);
         String requestBody = gson.toJson(accountBindingRequestDto);
+        String authorization = "Bearer " + tokenB2b;
 
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
 
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, authorization);
 
         return directDebitService.doAccountBindingProcess(requestHeader, accountBindingRequestDto, isProduction);
     }

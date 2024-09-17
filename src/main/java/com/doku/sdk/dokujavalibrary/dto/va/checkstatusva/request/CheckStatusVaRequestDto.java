@@ -1,6 +1,10 @@
 package com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request;
 
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.CheckStatusVirtualAccountDataDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusResponsePaymentFlagReasonDto;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
+import com.doku.sdk.dokujavalibrary.exception.SimulatorException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.FixedLength;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.LengthValidation;
@@ -56,7 +60,29 @@ public class CheckStatusVaRequestDto {
                 && !checkStatusVaRequestDto.getVirtualAccountNo().isEmpty()) {
             String target = checkStatusVaRequestDto.getPartnerServiceId() + checkStatusVaRequestDto.getCustomerNo();
             if (!checkStatusVaRequestDto.getVirtualAccountNo().equals(target)) {
-                throw new BadRequestException("", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+                throw new GeneralException("4002601", "virtualAccountNo must be the concatenation of partnerServiceId and customerNo. Example: ' 88899400000000000000000001' (where partnerServiceId is ' 888994' and customerNo is '00000000000000000001').");
+            }
+        }
+    }
+
+    public void validateCheckStatusVaSimulator(CheckStatusVaRequestDto checkStatusVaRequestDto, Boolean isProduction) {
+        if (!isProduction) {
+            if (checkStatusVaRequestDto.getVirtualAccountNo().startsWith("1113") || checkStatusVaRequestDto.getVirtualAccountNo().startsWith("1116")) {
+                var object = CheckStatusVirtualAccountDataDto.builder()
+                        .paymentFlagReason(CheckStatusResponsePaymentFlagReasonDto.builder()
+                                .english("Pending")
+                                .indonesia("Belum Terbayar")
+                                .build())
+                        .partnerServiceId(checkStatusVaRequestDto.getPartnerServiceId())
+                        .customerNo(checkStatusVaRequestDto.getCustomerNo())
+                        .virtualAccountNo(checkStatusVaRequestDto.getVirtualAccountNo())
+                        .paidAmount(TotalAmountDto.builder()
+                                .value("12500.00")
+                                .currency("IDR")
+                                .build())
+                        .build();
+
+                throw new SimulatorException("2002600", "Success", object);
             }
         }
     }

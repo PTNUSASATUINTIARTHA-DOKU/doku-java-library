@@ -23,7 +23,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificat
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
@@ -192,7 +192,7 @@ public class VaService {
 
             return inquiryResponseBodyDto;
         } catch (JsonProcessingException e) {
-            throw new BadRequestException("", e.getMessage());
+            throw new GeneralException("", e.getMessage());
         }
     }
 

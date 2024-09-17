@@ -46,13 +46,13 @@ public class TokenController {
         }
     }
 
-    public Boolean validateAsymmetricSignature(String requestSignature, String requestTimestamp, String privateKey, String clientId) {
-        String newSignature = tokenService.generateAsymmetricSignature(privateKey, clientId, requestTimestamp);
-        return tokenService.compareSignatures(requestSignature, newSignature);
+    public Boolean validateSignature(String clientId, String requestTimestamp, String requestSignature, String publicKey) {
+        return tokenService.compareSignatures(clientId, requestTimestamp, requestSignature, publicKey);
     }
 
-    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
-        return tokenService.validateTokenB2b(requestTokenB2b, publicKey);
+    public Boolean validateToken(String requestToken, String publicKey) {
+        requestToken = requestToken.replace("Bearer ", "");
+        return tokenService.validateToken(requestToken, publicKey);
     }
 
     public NotificationTokenDto generateTokenB2b(long expiredIn, String issuer, String privateKey, String clientId, String timestamp) {

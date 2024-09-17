@@ -100,8 +100,12 @@ public class TokenService {
         return expiryTime < currentTime;
     }
 
-    public Boolean compareSignatures(String requestSignature, String newSignature) {
-        return requestSignature.equals(newSignature);
+    public Boolean compareSignatures(String clientId, String timestamp, String signature, String publicKey) {
+        StringBuilder strToSign = new StringBuilder();
+        strToSign.append(clientId).append("|");
+        strToSign.append(timestamp);
+
+        return SignatureUtils.verifySignatureAes256WithRsa(strToSign.toString(), signature, publicKey);
     }
 
     @SneakyThrows
@@ -142,14 +146,16 @@ public class TokenService {
                 .build();
     }
 
-    public Boolean validateTokenB2b(String requestTokenB2b, String publicKey) {
+    public Boolean validateToken(String requestToken, String publicKey) {
         try {
             Jws<Claims> jwt = Jwts.parserBuilder()
                     .setSigningKey(getPublicKey(publicKey))
                     .build()
-                    .parseClaimsJws(requestTokenB2b);
+                    .parseClaimsJws(requestToken);
+            log.debug("token valid");
             return true;
         } catch (Exception e) {
+            log.debug("token invalid. {}", e.getMessage());
             return false;
         }
     }

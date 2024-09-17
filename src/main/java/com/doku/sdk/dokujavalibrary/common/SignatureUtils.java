@@ -1,24 +1,33 @@
 package com.doku.sdk.dokujavalibrary.common;
 
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.http.HttpStatus;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import static com.doku.sdk.dokujavalibrary.common.RsaKeyUtils.getPrivateKey;
+import static org.apache.commons.codec.binary.Base64.decodeBase64;
 
+@Slf4j
 public class SignatureUtils {
 
     private SignatureUtils() {
@@ -79,5 +88,69 @@ public class SignatureUtils {
         hmacSha512.update(stringToSign.getBytes());
         byte[] hmacSha256DigestBytes = hmacSha512.doFinal();
         return Base64.getEncoder().encodeToString(hmacSha256DigestBytes);
+    }
+
+    public static boolean verifySignatureAes256WithRsa(String stringToSign, String signature, String stringPublicKey) {
+        boolean isSignatureValid = false;
+
+        log.debug("string public Key in PEM format {}", stringPublicKey);
+        stringPublicKey = stringPublicKey.replace("-----BEGIN PUBLIC KEY-----", "");
+        stringPublicKey = stringPublicKey.replace("-----END PUBLIC KEY-----", "");
+        stringPublicKey = stringPublicKey.replace("\n", "");
+        byte[] encoded = decodeBase64(stringPublicKey);
+
+        KeyFactory kf = null;
+        Signature publicSignature = null;
+        RSAPublicKey publicKey = null;
+
+        try {
+            kf = KeyFactory.getInstance("RSA");
+            publicSignature = Signature.getInstance("SHA256withRSA");
+            publicKey = (RSAPublicKey) kf.generatePublic(new X509EncodedKeySpec(encoded));
+            publicSignature.initVerify(publicKey);
+            publicSignature.update(stringToSign.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | SignatureException e) {
+            log.error(e.getMessage());
+            throw new GeneralException("", "");
+        }
+
+        try {
+            byte[] decodedSignature = Base64.getDecoder().decode(signature);
+            isSignatureValid = publicSignature.verify(decodedSignature);
+            log.debug("verifying signature: {}", isSignatureValid);
+            return isSignatureValid;
+        } catch (SignatureException | NullPointerException e) {
+            log.error(e.getMessage());
+            throw new GeneralException("", "Signature Invalid");
+        }
+    }
+
+    public static boolean verifySignatureHmacSha512(String strToSign, String signatureFromClient, String clientSecret) {
+        boolean isSignatureValid = false;
+
+        try {
+            log.debug("Expected component signature (header component): \n" + "{} ", strToSign);
+            byte[] decodedKey = clientSecret.getBytes();
+            SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA512");
+            Mac hmacSha512 = Mac.getInstance("HmacSHA512");
+            hmacSha512.init(originalKey);
+            hmacSha512.update(strToSign.getBytes());
+            byte[] hmacSha256DigestBytes = hmacSha512.doFinal();
+            String expectedSignature = Base64.getEncoder().encodeToString(hmacSha256DigestBytes);
+
+            if (!expectedSignature.equalsIgnoreCase(signatureFromClient)) {
+                log.debug("Expected Signature   : {}", expectedSignature);
+                log.debug("Client Signature     : {}", signatureFromClient);
+                throw new GeneralException(HttpStatus.UNAUTHORIZED.name(), "Signature Not Match");
+            }
+
+            isSignatureValid = true;
+
+        } catch (NullPointerException | NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error(e.getMessage());
+            throw new GeneralException(HttpStatus.UNAUTHORIZED.name(), "Signature Invalid");
+        }
+
+        return isSignatureValid;
     }
 }

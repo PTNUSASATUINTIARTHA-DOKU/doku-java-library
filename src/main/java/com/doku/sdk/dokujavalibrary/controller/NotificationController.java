@@ -1,5 +1,7 @@
 package com.doku.sdk.dokujavalibrary.controller;
 
+import com.doku.sdk.dokujavalibrary.dto.directdebit.notification.request.DirectDebitNotificationRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.notification.response.DirectDebitNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationRequestBodyDto;
 import com.doku.sdk.dokujavalibrary.dto.va.notification.payment.PaymentNotificationResponseDto;
 import com.doku.sdk.dokujavalibrary.service.NotificationService;
@@ -20,5 +22,13 @@ public class NotificationController {
 
     public PaymentNotificationResponseDto generateInvalidTokenResponse() {
         return notificationService.generateInvalidTokenNotificationResponse();
+    }
+
+    public DirectDebitNotificationResponseDto generateDirectDebitNotificationResponse(DirectDebitNotificationRequestDto directDebitNotificationRequestDto) {
+        return notificationService.generateDirectDebitNotificationResponse(directDebitNotificationRequestDto);
+    }
+
+    public DirectDebitNotificationResponseDto generateDirectDebitInvalidTokenResponse() {
+        return notificationService.generateDirectDebitInvalidTokenNotificationResponse();
     }
 }

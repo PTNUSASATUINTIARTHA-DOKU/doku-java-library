@@ -1,7 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request;
 
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
-import com.doku.sdk.dokujavalibrary.exception.BadRequestException;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
@@ -33,7 +33,7 @@ public class CardUnbindingRequestDto {
 
     public void validateCardUnbindingRequest(CardUnbindingRequestDto cardUnbindingRequestDto) {
         if (!isValidChannel(cardUnbindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new BadRequestException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
 
