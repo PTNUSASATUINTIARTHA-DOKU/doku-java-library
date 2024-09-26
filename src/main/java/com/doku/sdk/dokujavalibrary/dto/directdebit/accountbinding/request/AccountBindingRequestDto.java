@@ -88,24 +88,24 @@ public class AccountBindingRequestDto {
 
     public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {
         if (!isValidChannel(accountBindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4000701", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
         if (accountBindingRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
             if (accountBindingRequestDto.getAdditionalInfo().getDeviceModel().isEmpty() ||
             accountBindingRequestDto.getAdditionalInfo().getOsType().isEmpty() ||
             accountBindingRequestDto.getAdditionalInfo().getChannelId().isEmpty()) {
-                throw new GeneralException("", "Value cannot be null for DIRECT_DEBIT_ALLO_SNAP");
+                throw new GeneralException("4000701", "Value cannot be null for DIRECT_DEBIT_ALLO_SNAP");
             }
 
             if (!accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("ios") &&
             !accountBindingRequestDto.getAdditionalInfo().getOsType().equalsIgnoreCase("android")) {
-                throw new GeneralException("", "osType value can only be ios/android");
+                throw new GeneralException("4000701", "osType value can only be ios/android");
             }
 
             if (!accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("app") &&
                     !accountBindingRequestDto.getAdditionalInfo().getChannelId().equalsIgnoreCase("web")) {
-                throw new GeneralException("", "channelId value can only be app/web");
+                throw new GeneralException("4000701", "channelId value can only be app/web");
             }
         }
     }

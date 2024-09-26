@@ -24,7 +24,7 @@ public class AccountBindingResponseDto {
     @AllArgsConstructor
     public static class AccountBindingAdditionalInfoResponseDto {
         private String custIdMerchant;
-        private String status;
+        private String accountStatus;
         private String authCode;
     }
 }

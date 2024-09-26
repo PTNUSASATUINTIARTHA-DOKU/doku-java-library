@@ -81,17 +81,17 @@ public class PaymentJumpAppRequestDto {
 
     public void validatePaymentJumpAppRequest(PaymentJumpAppRequestDto paymentJumpAppRequestDto) {
         if (!isValidChannel(paymentJumpAppRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4005401", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
         if (!paymentJumpAppRequestDto.getPointOfInitiation().equalsIgnoreCase("app") &&
                 !paymentJumpAppRequestDto.getPointOfInitiation().equalsIgnoreCase("pc") &&
                 !paymentJumpAppRequestDto.getPointOfInitiation().equalsIgnoreCase("mweb")) {
-            throw new GeneralException("", "pointOfInitiation value can only be app/pc/mweb");
+            throw new GeneralException("4005401", "pointOfInitiation value can only be app/pc/mweb");
         }
 
         if (!paymentJumpAppRequestDto.getUrlParam().getType().equalsIgnoreCase("PAY_RETURN")) {
-            throw new GeneralException("", "urlParam.type must always be PAY_RETURN");
+            throw new GeneralException("4005401", "urlParam.type must always be PAY_RETURN");
         }
 
     }

@@ -83,7 +83,7 @@ public class PaymentRequestDto {
 
     public void validatePaymentRequest(PaymentRequestDto paymentRequestDto) {
         if (!isValidChannel(paymentRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4005401", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name())) {
@@ -91,35 +91,35 @@ public class PaymentRequestDto {
                 if (!paymentRequestDto.getFeeType().equalsIgnoreCase("OUR") &&
                         !paymentRequestDto.getFeeType().equalsIgnoreCase("BEN") &&
                         !paymentRequestDto.getFeeType().equalsIgnoreCase("SHA")) {
-                    throw new GeneralException("", "Value can only be OUR/BEN/SHA for EMONEY_OVO_SNAP");
+                    throw new GeneralException("4005401", "Value can only be OUR/BEN/SHA for EMONEY_OVO_SNAP");
                 }
             }
 
             if (paymentRequestDto.getPayOptionDetails().isEmpty()) {
-                throw new GeneralException("", "Pay Option Details cannot be empty for EMONEY_OVO_SNAP");
+                throw new GeneralException("4005401", "Pay Option Details cannot be empty for EMONEY_OVO_SNAP");
             }
 
             if (!paymentRequestDto.getAdditionalInfo().getPaymentType().isEmpty()) {
                 if (!paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("SALE") &&
                         !paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("RECURRING")) {
-                    throw new GeneralException("", "additionalInfo.paymentType cannot be empty for EMONEY_OVO_SNAP");
+                    throw new GeneralException("4005401", "additionalInfo.paymentType cannot be empty for EMONEY_OVO_SNAP");
                 }
             }
         }
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
             if (paymentRequestDto.getAdditionalInfo().getLineItems().isEmpty()) {
-                throw new GeneralException("", "additionalInfo.lineItems cannot be empty for DIRECT_DEBIT_ALLO_SNAP");
+                throw new GeneralException("4005401", "additionalInfo.lineItems cannot be empty for DIRECT_DEBIT_ALLO_SNAP");
             }
 
             if (paymentRequestDto.getAdditionalInfo().getRemarks().isEmpty()) {
-                throw new GeneralException("", "additionalInfo.remarks cannot be empty for DIRECT_DEBIT_ALLO_SNAP");
+                throw new GeneralException("4005401", "additionalInfo.remarks cannot be empty for DIRECT_DEBIT_ALLO_SNAP");
             }
         }
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name())) {
             if (paymentRequestDto.getAdditionalInfo().getRemarks().isEmpty()) {
-                throw new GeneralException("", "additionalInfo.remarks cannot be empty for DIRECT_DEBIT_CIMB_SNAP");
+                throw new GeneralException("4005401", "additionalInfo.remarks cannot be empty for DIRECT_DEBIT_CIMB_SNAP");
             }
         }
 
@@ -127,7 +127,7 @@ public class PaymentRequestDto {
             if (!paymentRequestDto.getAdditionalInfo().getPaymentType().isEmpty()) {
                 if (!paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("SALE") &&
                         !paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("RECURRING")) {
-                    throw new GeneralException("", "additionalInfo.paymentType cannot be empty for DIRECT_DEBIT_BRI_SNAP");
+                    throw new GeneralException("4005401", "additionalInfo.paymentType cannot be empty for DIRECT_DEBIT_BRI_SNAP");
                 }
             }
         }

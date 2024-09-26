@@ -34,7 +34,7 @@ public class BalanceInquiryRequestDto {
 
     public void validateBalanceInquiryRequest(BalanceInquiryRequestDto balanceInquiryRequestDto) {
         if (!isValidChannel(balanceInquiryRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4001101", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
     }

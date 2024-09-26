@@ -23,8 +23,8 @@ public class TokenController {
     public TokenB2BResponseDto getTokenB2B(String privateKey, String clientId, Boolean isProduction) {
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
-        TokenB2BRequestDto tokenB2BRequestDTO = tokenService.createTokenB2BRequestDTO(signature, clientId, timestamp);
-        return tokenService.createTokenB2B(tokenB2BRequestDTO, isProduction);
+        TokenB2BRequestDto tokenB2BRequestDTO = tokenService.createTokenB2BRequestDTO();
+        return tokenService.createTokenB2B(tokenB2BRequestDTO, timestamp, clientId, signature, isProduction);
     }
 
     public TokenB2B2CResponseDto getTokenB2B2C(String authCode, String privateKey, String clientId, Boolean isProduction) {

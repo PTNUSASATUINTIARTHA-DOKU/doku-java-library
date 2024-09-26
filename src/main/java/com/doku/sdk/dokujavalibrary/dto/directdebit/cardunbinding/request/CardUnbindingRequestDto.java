@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
@@ -18,7 +19,11 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CardUnbindingRequestDto {
+    @NotNull(groups = MandatoryValidation.class)
+    @SafeString(groups = SafeStringValidation.class)
     private String tokenId;
+
+    @Valid
     private CardUnbindingAdditionalInfoRequestDto additionalInfo;
 
     @Data
@@ -33,7 +38,7 @@ public class CardUnbindingRequestDto {
 
     public void validateCardUnbindingRequest(CardUnbindingRequestDto cardUnbindingRequestDto) {
         if (!isValidChannel(cardUnbindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4000501", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
 

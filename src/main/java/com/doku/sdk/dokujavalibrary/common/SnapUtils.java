@@ -1,19 +1,18 @@
 package com.doku.sdk.dokujavalibrary.common;
 
 import com.doku.sdk.dokujavalibrary.dto.RequestHeaderDto;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Component
 public class SnapUtils {
 
     public String generateExternalId() {
-        UUID uuid = UUID.randomUUID();
         long timestamp = Instant.now().getEpochSecond();
 
-        return uuid.toString() + timestamp;
+        return RandomStringUtils.randomNumeric(16) + timestamp;
     }
 
     public RequestHeaderDto generateRequestHeaderDto(String timestamp,
@@ -34,7 +33,7 @@ public class SnapUtils {
                 .xIpAddress(ipAddress)
                 .channelId(channelId)
                 .authorizationCustomer(tokenB2b2c)
-                .authorization(tokenB2b)
+                .authorization("Bearer " + tokenB2b)
                 .build();
     }
 }

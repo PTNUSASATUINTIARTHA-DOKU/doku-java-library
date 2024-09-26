@@ -13,15 +13,5 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenB2BRequestDto {
-
-    private String signature;
-
-    @SafeString
-    @NotEmpty
-    private String timestamp;
-
-    @SafeString
-    @NotEmpty
-    private String clientId;
     private String grantType;
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
 
 import javax.crypto.Mac;
@@ -38,8 +37,11 @@ public class SignatureUtils {
         StringBuilder component = new StringBuilder();
         component.append(clientId).append("|");
         component.append(timestamp);
+        log.debug("stringToSign: {}", component);
+        String hashResult = SHA256withRSA(component.toString(), getPrivateKey(privateKey));
+        log.debug("asymmetric signature: {}", hashResult);
 
-        return SHA256withRSA(component.toString(), getPrivateKey(privateKey));
+        return hashResult;
     }
 
     private static String SHA256withRSA(String stringToSign, PrivateKey privateKey) throws Exception {
@@ -64,19 +66,19 @@ public class SignatureUtils {
         component.append(accessToken).append(":");
         component.append(sha256HexJsonMinify(requestBody)).append(":");
         component.append(timestamp);
+        log.debug("stringToSign: {}", component);
+        String hashResult = hmacSHA512(component.toString(), secretKey);
+        log.debug("symmetric signature: {}", hashResult);
 
-        return hmacSHA512(component.toString(), secretKey);
+        return hashResult;
     }
 
     @SneakyThrows
-    private static String sha256HexJsonMinify(String requestBody) {
-        var bodyString = requestBody;
-        if (Strings.isNotEmpty(requestBody)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readValue(requestBody, JsonNode.class);
-            bodyString = jsonNode.toString();
-        }
-        String digestHex = DigestUtils.sha256Hex(bodyString.getBytes(StandardCharsets.UTF_8));
+    public static String sha256HexJsonMinify(String requestBody) {
+        log.debug("Expected component json body (payload component): \n{} ", requestBody);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = (JsonNode)objectMapper.readValue(requestBody, JsonNode.class);
+        String digestHex = DigestUtils.sha256Hex(jsonNode.toString().getBytes(StandardCharsets.UTF_8));
         return digestHex.toLowerCase();
     }
 
@@ -150,6 +152,7 @@ public class SignatureUtils {
             log.error(e.getMessage());
             throw new GeneralException(HttpStatus.UNAUTHORIZED.name(), "Signature Invalid");
         }
+        log.debug("verifying signature: {}", isSignatureValid);
 
         return isSignatureValid;
     }

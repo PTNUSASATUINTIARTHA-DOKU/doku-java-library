@@ -69,7 +69,7 @@ public class CheckStatusRequestDto {
 
     public void validateCheckStatusRequest(CheckStatusRequestDto checkStatusRequestDto) {
         if (!isValidChannel(checkStatusRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4005501", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
 

@@ -58,22 +58,19 @@ public class TokenService {
         return SignatureUtils.createSymmetricSignature(httpMethod, endpointUrl, accessToken, requestBody, timestamp, secretKey);
     }
 
-    public TokenB2BRequestDto createTokenB2BRequestDTO(String signature, String clientId, String timestamp) {
+    public TokenB2BRequestDto createTokenB2BRequestDTO() {
         return TokenB2BRequestDto.builder()
-                .signature(signature)
-                .timestamp(timestamp)
-                .clientId(clientId)
                 .grantType("client_credentials")
                 .build();
     }
 
-    public TokenB2BResponseDto createTokenB2B(TokenB2BRequestDto tokenB2BRequestDTO, Boolean isProduction) {
+    public TokenB2BResponseDto createTokenB2B(TokenB2BRequestDto tokenB2BRequestDTO, String timestamp, String clientId, String signature, Boolean isProduction) {
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, tokenB2BRequestDTO.getTimestamp());
-        httpHeaders.set(SnapHeaderConstant.X_CLIENT_KEY, tokenB2BRequestDTO.getClientId());
-        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, tokenB2BRequestDTO.getSignature());
+        httpHeaders.set(SnapHeaderConstant.X_TIMESTAMP, timestamp);
+        httpHeaders.set(SnapHeaderConstant.X_CLIENT_KEY, clientId);
+        httpHeaders.set(SnapHeaderConstant.X_SIGNATURE, signature);
 
         String url = SdkConfig.getAccessTokenUrl(isProduction);
 

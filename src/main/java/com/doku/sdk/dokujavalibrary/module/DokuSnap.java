@@ -105,7 +105,7 @@ public class DokuSnap {
         }
     }
 
-    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, Boolean isProduction) {
+    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, String secretKey, Boolean isProduction) {
         try {
             ValidationUtils.validateRequest(createVaRequestDto, "27");
             createVaRequestDto.validateCreateVaSimulator(createVaRequestDto, isProduction);
@@ -117,7 +117,7 @@ public class DokuSnap {
                 tokenB2b = tokenController.getTokenB2B(privateKey, clientId, isProduction).getAccessToken();
             }
 
-            return vaController.createVa(createVaRequestDto, privateKey, clientId, tokenB2b, isProduction);
+            return vaController.createVa(createVaRequestDto, clientId, tokenB2b, secretKey, isProduction);
         } catch (SimulatorException se) {
             return CreateVaResponseDto.builder()
                     .responseCode(se.getResponseCode())
@@ -135,7 +135,7 @@ public class DokuSnap {
     public CreateVaResponseDto createVaV1(CreateVaRequestDtoV1 createVaRequestDtoV1) {
         CreateVaRequestDto createVaRequestDto = vaController.convertToCreateVaRequestDto(createVaRequestDtoV1);
 
-        return createVa(createVaRequestDto, privateKey, clientId, isProduction);
+        return createVa(createVaRequestDto, privateKey, clientId, secretKey, isProduction);
     }
 
     public Boolean validateToken(String requestToken, String publicKey) {
@@ -296,16 +296,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doAccountBinding(accountBindingRequestDto, secretKey, clientId, deviceId, ipAddress, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return AccountBindingResponseDto.builder()
-                    .responseCode("5000700")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public AccountUnbindingResponseDto doAccountUnbinding(AccountUnbindingRequestDto accountUnbindingRequestDto,
                                                         String privateKey,
+                                                        String secretKey,
                                                         String clientId,
                                                         Boolean isProduction,
                                                         String ipAddress) {
@@ -320,10 +321,10 @@ public class DokuSnap {
             }
 
             return directDebitController.doAccountUnbinding(accountUnbindingRequestDto, secretKey, clientId, ipAddress, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return AccountUnbindingResponseDto.builder()
-                    .responseCode("5000900")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
@@ -344,10 +345,10 @@ public class DokuSnap {
             }
 
             return directDebitController.doCardRegistration(cardRegistrationRequestDto, secretKey, clientId, channelId, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return CardRegistrationResponseDto.builder()
-                    .responseCode("5000100")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
@@ -367,16 +368,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doCardUnbinding(cardUnbindingRequestDto, secretKey, clientId, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return CardUnbindingResponseDto.builder()
-                    .responseCode("5000500")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public PaymentResponseDto doPayment(PaymentRequestDto paymentRequestDto,
                                         String privateKey,
+                                        String secretKey,
                                         String clientId,
                                         String ipAddress,
                                         String channelId,
@@ -399,16 +401,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doPayment(paymentRequestDto, secretKey, clientId, ipAddress, channelId, tokenB2b2c, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return PaymentResponseDto.builder()
-                    .responseCode("5005400")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public PaymentJumpAppResponseDto doPaymentJumpApp(PaymentJumpAppRequestDto paymentJumpAppRequestDto,
                                                       String privateKey,
+                                                      String secretKey,
                                                       String clientId,
                                                       String deviceId,
                                                       String ipAddress,
@@ -424,16 +427,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doPaymentJumpApp(paymentJumpAppRequestDto, secretKey, clientId, deviceId, ipAddress, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return PaymentJumpAppResponseDto.builder()
-                    .responseCode("5005400")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public RefundResponseDto doRefund(RefundRequestDto refundRequestDto,
                                       String privateKey,
+                                      String secretKey,
                                       String clientId,
                                       String ipAddress,
                                       String authCode,
@@ -455,16 +459,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doRefund(refundRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return RefundResponseDto.builder()
-                    .responseCode("5005800")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public BalanceInquiryResponseDto doBalanceInquiry(BalanceInquiryRequestDto balanceInquiryRequestDto,
                                                       String privateKey,
+                                                      String secretKey,
                                                       String clientId,
                                                       String ipAddress,
                                                       String authCode,
@@ -486,16 +491,17 @@ public class DokuSnap {
             }
 
             return directDebitController.doBalanceInquiry(balanceInquiryRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return BalanceInquiryResponseDto.builder()
-                    .responseCode("5001100")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }
 
     public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto,
                                                 String privateKey,
+                                                String secretKey,
                                                 String clientId,
                                                 Boolean isProduction) {
         try {
@@ -509,10 +515,10 @@ public class DokuSnap {
             }
 
             return directDebitController.doCheckStatus(checkStatusRequestDto, secretKey, clientId, tokenB2b, isProduction);
-        } catch (GeneralException e) {
+        } catch (GeneralException ge) {
             return CheckStatusResponseDto.builder()
-                    .responseCode("5005500")
-                    .responseMessage(e.getMessage())
+                    .responseCode(ge.getResponseCode())
+                    .responseMessage(ge.getMessage())
                     .build();
         }
     }

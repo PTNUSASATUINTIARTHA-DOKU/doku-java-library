@@ -2,11 +2,16 @@ package com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request;
 
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
+import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
+import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
+import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
 @Data
@@ -14,7 +19,11 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountUnbindingRequestDto {
+    @NotNull(groups = MandatoryValidation.class)
+    @SafeString(groups = SafeStringValidation.class)
     private String tokenId;
+
+    @Valid
     private AccountUnbindingAdditionalInfoRequestDto additionalInfo;
 
     @Data
@@ -22,12 +31,14 @@ public class AccountUnbindingRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AccountUnbindingAdditionalInfoRequestDto {
+        @NotNull(groups = MandatoryValidation.class)
+        @SafeString(groups = SafeStringValidation.class)
         private String channel;
     }
 
     public void validateAccountUnbindingRequest(AccountUnbindingRequestDto accountUnbindingRequestDto) {
         if (!isValidChannel(accountUnbindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("4000901", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
 

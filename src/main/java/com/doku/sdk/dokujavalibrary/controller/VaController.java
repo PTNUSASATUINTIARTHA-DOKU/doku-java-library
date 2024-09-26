@@ -34,9 +34,11 @@ public class VaController {
     private final SnapUtils snapUtils;
     private final Gson gson;
 
-    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String privateKey, String clientId, String tokenB2b, Boolean isProduction) {
+    public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
+        String endpointUrl = SdkConfig.getCreateVaUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        String requestBody = gson.toJson(createVaRequestDto);
         String timestamp = tokenService.getTimestamp();
-        String signature = tokenService.generateAsymmetricSignature(privateKey, clientId, timestamp);
+        String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
         String channelId = "SDK";
         var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, null, channelId, null, tokenB2b);
@@ -49,7 +51,7 @@ public class VaController {
     }
 
     public UpdateVaResponseDto doUpdateVa(UpdateVaRequestDto updateVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
-        String endpointUrl = SdkConfig.getUpdateVaUrl(isProduction);
+        String endpointUrl = SdkConfig.getUpdateVaUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(updateVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.PUT.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
@@ -61,7 +63,7 @@ public class VaController {
     }
 
     public DeleteVaResponseDto doDeletePaymentCode(DeleteVaRequestDto deleteVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDeleteVaUrl(isProduction);
+        String endpointUrl = SdkConfig.getDeleteVaUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(deleteVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.DELETE.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
@@ -73,7 +75,7 @@ public class VaController {
     }
 
     public CheckStatusVaResponseDto doCheckStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
-        String endpointUrl = SdkConfig.getCheckStatusVaUrl(isProduction);
+        String endpointUrl = SdkConfig.getCheckStatusVaUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(checkStatusVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);

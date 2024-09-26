@@ -238,7 +238,7 @@ public class TestUtil {
                 .redirectUrl("redirectUrl")
                 .additionalInfo(AccountBindingResponseDto.AccountBindingAdditionalInfoResponseDto.builder()
                         .custIdMerchant("CUST-001")
-                        .status("PENDING")
+                        .accountStatus("PENDING")
                         .authCode("authCode")
                         .build())
                 .build();

@@ -43,15 +43,14 @@ public class DirectDebitController {
                                                       String ipAddress,
                                                       String tokenB2b,
                                                       Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(accountBindingRequestDto);
-        String authorization = "Bearer " + tokenB2b;
 
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
 
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, authorization);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, null, tokenB2b);
 
         return directDebitService.doAccountBindingProcess(requestHeader, accountBindingRequestDto, isProduction);
     }
@@ -62,7 +61,7 @@ public class DirectDebitController {
                                                           String ipAddress,
                                                           String tokenB2b,
                                                           Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitAccountUnbindingUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitAccountUnbindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(accountUnbindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -80,7 +79,7 @@ public class DirectDebitController {
                                                           String channelId,
                                                           String tokenB2b,
                                                           Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(cardRegistrationRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -97,7 +96,7 @@ public class DirectDebitController {
                                                     String clientId,
                                                     String tokenB2b,
                                                     Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitCardUnbindingUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitCardUnbindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(cardUnbindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -117,7 +116,7 @@ public class DirectDebitController {
                                         String tokenB2b2c,
                                         String tokenB2b,
                                         Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(paymentRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -136,7 +135,7 @@ public class DirectDebitController {
                                                       String ipAddress,
                                                       String tokenB2b,
                                                       Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(paymentJumpAppRequestDto);
 
         String timestamp = tokenService.getTimestamp();

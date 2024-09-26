@@ -15,6 +15,7 @@ Get started by installing the library:
 Put the following dependency to your `pom.xml`:
 
 ```xml
+<!--SDK dependency-->
 <dependency>
     <groupId>com.doku.sdk</groupId>
     <artifactId>doku-java-library</artifactId>
