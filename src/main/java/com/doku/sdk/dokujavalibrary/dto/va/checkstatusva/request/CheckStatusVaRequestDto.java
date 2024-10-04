@@ -67,7 +67,7 @@ public class CheckStatusVaRequestDto {
 
     public void validateCheckStatusVaSimulator(CheckStatusVaRequestDto checkStatusVaRequestDto, Boolean isProduction) {
         if (!isProduction) {
-            if (checkStatusVaRequestDto.getVirtualAccountNo().startsWith("1113") || checkStatusVaRequestDto.getVirtualAccountNo().startsWith("1116")) {
+            if (checkStatusVaRequestDto.getVirtualAccountNo().trim().startsWith("1113") || checkStatusVaRequestDto.getVirtualAccountNo().trim().startsWith("1116")) {
                 var object = CheckStatusVirtualAccountDataDto.builder()
                         .paymentFlagReason(CheckStatusResponsePaymentFlagReasonDto.builder()
                                 .english("Pending")

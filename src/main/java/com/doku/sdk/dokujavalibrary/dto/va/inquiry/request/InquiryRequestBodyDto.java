@@ -32,7 +32,7 @@ public class InquiryRequestBodyDto {
 
     public void validateInquiryVaSimulator(InquiryRequestBodyDto inquiryRequestBodyDto, Boolean isProduction) {
         if (!isProduction) {
-            if (inquiryRequestBodyDto.getVirtualAccountNo().startsWith("1117") || inquiryRequestBodyDto.getVirtualAccountNo().startsWith("116")) {
+            if (inquiryRequestBodyDto.getVirtualAccountNo().trim().startsWith("1117") || inquiryRequestBodyDto.getVirtualAccountNo().trim().startsWith("116")) {
                 var object = InquiryResponseBodyDto.builder()
                         .responseCode("2002400")
                         .responseMessage("Success")
@@ -67,11 +67,11 @@ public class InquiryRequestBodyDto {
                         .build();
 
                 throw new SimulatorException("2002400", "Success", object);
-            } else if (inquiryRequestBodyDto.getVirtualAccountNo().startsWith("117")) {
+            } else if (inquiryRequestBodyDto.getVirtualAccountNo().trim().startsWith("117")) {
                 throw new SimulatorException("4042414", "Bill has been paid", null);
-            } else if (inquiryRequestBodyDto.getVirtualAccountNo().startsWith("118")) {
+            } else if (inquiryRequestBodyDto.getVirtualAccountNo().trim().startsWith("118")) {
                 throw new SimulatorException("4042419", "Bill expired", null);
-            } else if (inquiryRequestBodyDto.getVirtualAccountNo().startsWith("119")) {
+            } else if (inquiryRequestBodyDto.getVirtualAccountNo().trim().startsWith("119")) {
                 throw new SimulatorException("4042412", "Bill not found", null);
             }
         }
