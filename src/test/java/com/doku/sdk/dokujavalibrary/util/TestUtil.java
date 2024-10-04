@@ -25,6 +25,7 @@ import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountConfigDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.CheckStatusVirtualAccountDataDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.BillAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusResponseAdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
@@ -207,13 +208,12 @@ public class TestUtil {
                                 .value("10000.00")
                                 .currency("IDR")
                                 .build())
-                        .billAmount(TotalAmountDto.builder()
-                                .value("10000.00")
-                                .currency("IDR")
-                                .build())
-                        .additionalInfo(CheckStatusResponseAdditionalInfoDto.builder()
-                                .acquirer("BANK_CIMB")
-                                .build())
+                        .billDetails(List.of(BillAmountDto.builder()
+                                .billAmount(TotalAmountDto.builder().value("1000.00").currency("IDR").build())
+                                .build()))
+                        .build())
+                .additionalInfo(CheckStatusResponseAdditionalInfoDto.builder()
+                        .acquirer("BANK_CIMB")
                         .build())
                 .build();
     }

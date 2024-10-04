@@ -16,4 +16,5 @@ public class CheckStatusVaResponseDto {
     private String responseCode;
     private String responseMessage;
     private CheckStatusVirtualAccountDataDto virtualAccountData;
+    private CheckStatusResponseAdditionalInfoDto additionalInfo;
 }
