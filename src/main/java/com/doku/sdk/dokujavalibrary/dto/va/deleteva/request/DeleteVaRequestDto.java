@@ -75,7 +75,7 @@ public class DeleteVaRequestDto {
 
     public void validateDeleteVaSimulator(DeleteVaRequestDto deleteVaRequestDto, Boolean isProduction) {
         if (!isProduction) {
-            if (deleteVaRequestDto.getTrxId().startsWith("1118")) {
+            if (deleteVaRequestDto.getTrxId().startsWith("1118") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("1118")) {
                 var object = DeleteVaResponseVirtualAccountDataDto.builder()
                         .partnerServiceId("90341537")
                         .customerNo("00000077")
@@ -85,11 +85,11 @@ public class DeleteVaRequestDto {
 
                 throw new SimulatorException("2003100", "Success", object);
             }
-            if (deleteVaRequestDto.getTrxId().startsWith("111")) {
+            if (deleteVaRequestDto.getTrxId().startsWith("111") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("111")) {
                 throw new SimulatorException("4013101", "Access Token Invalid (B2B)", null);
-            } else if (deleteVaRequestDto.getTrxId().startsWith("112")) {
+            } else if (deleteVaRequestDto.getTrxId().startsWith("112") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("112")) {
                 throw new SimulatorException("4013100", "Unauthorized . Signature Not Match", null);
-            } else if (deleteVaRequestDto.getTrxId().startsWith("113")) {
+            } else if (deleteVaRequestDto.getTrxId().startsWith("113") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("113")) {
                 var object = DeleteVaResponseVirtualAccountDataDto.builder()
                         .partnerServiceId("")
                         .customerNo("00000077")
@@ -98,7 +98,7 @@ public class DeleteVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4003102", "Invalid Mandatory Field {partnerServiceId}", object);
-            } else if (deleteVaRequestDto.getTrxId().startsWith("114")) {
+            } else if (deleteVaRequestDto.getTrxId().startsWith("114") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("114")) {
                 var object = DeleteVaResponseVirtualAccountDataDto.builder()
                         .partnerServiceId("90341537")
                         .customerNo("00000077")
@@ -107,7 +107,7 @@ public class DeleteVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4003101", "Invalid Field Format {virtualAccountNo}", object);
-            } else if (deleteVaRequestDto.getTrxId().startsWith("115")) {
+            } else if (deleteVaRequestDto.getTrxId().startsWith("115") || deleteVaRequestDto.getVirtualAccountNo().trim().startsWith("115")) {
                 throw new SimulatorException("4093100", "Conflict", null);
             }
         }
