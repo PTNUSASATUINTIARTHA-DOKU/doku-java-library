@@ -150,7 +150,7 @@ public class CreateVaRequestDto {
 
     public void validateCreateVaSimulator(CreateVaRequestDto createVaRequestDto, Boolean isProduction) {
         if (!isProduction) {
-            if (createVaRequestDto.getTrxId().startsWith("1110") || createVaRequestDto.getTrxId().startsWith("1114")) {
+            if (createVaRequestDto.getTrxId().startsWith("1110") || createVaRequestDto.getTrxId().startsWith("1114") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("1110") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("1114")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("90341589")
                         .customerNo("00000077")
@@ -167,15 +167,15 @@ public class CreateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("2002700", "Successful", object);
-            } else if (createVaRequestDto.getTrxId().startsWith("1111")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("1111") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("1111")) {
                 throw new SimulatorException("4042512", "Bill not found", null);
-            } else if (createVaRequestDto.getTrxId().startsWith("1112")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("1112") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("1112")) {
                 throw new SimulatorException("4042513", "Invalid Amount", null);
-            } else if (createVaRequestDto.getTrxId().startsWith("111")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("111") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("111")) {
                 throw new SimulatorException("4012701", "Access Token Invalid (B2B)", null);
-            } else if (createVaRequestDto.getTrxId().startsWith("112")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("112") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("112")) {
                 throw new SimulatorException("4012700", "Unauthorized . Signature Not Match", null);
-            } else if (createVaRequestDto.getTrxId().startsWith("113")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("113") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("113")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("")
                         .customerNo("00000077")
@@ -192,7 +192,7 @@ public class CreateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4002702", "Invalid Mandatory Field {partnerServiceId}", object);
-            } else if (createVaRequestDto.getTrxId().startsWith("114")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("114") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("114")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("90341537")
                         .customerNo("00000077")
@@ -209,7 +209,7 @@ public class CreateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4002701", "Invalid Field Format {totalAmount.currency}", object);
-            } else if (createVaRequestDto.getTrxId().startsWith("115")) {
+            } else if (createVaRequestDto.getTrxId().startsWith("115") || createVaRequestDto.getVirtualAccountNo().trim().startsWith("115")) {
                 throw new SimulatorException("4092700", "Conflict", null);
             }
         }

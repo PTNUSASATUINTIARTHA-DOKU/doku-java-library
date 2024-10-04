@@ -136,7 +136,7 @@ public class UpdateVaRequestDto {
 
     public void validateUpdateVaSimulator(UpdateVaRequestDto updateVaRequestDto, Boolean isProduction) {
         if (!isProduction) {
-            if (updateVaRequestDto.getTrxId().startsWith("1115")) {
+            if (updateVaRequestDto.getTrxId().startsWith("1115") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("1115")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("90341589")
                         .customerNo("00000077")
@@ -153,11 +153,11 @@ public class UpdateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("2002800", "Success", object);
-            } else if (updateVaRequestDto.getTrxId().startsWith("111")) {
+            } else if (updateVaRequestDto.getTrxId().startsWith("111") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("111")) {
                 throw new SimulatorException("4012801", "Access Token Invalid (B2B)", null);
-            } else if (updateVaRequestDto.getTrxId().startsWith("112")) {
+            } else if (updateVaRequestDto.getTrxId().startsWith("112") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("112")) {
                 throw new SimulatorException("4012800", "Unauthorized . Signature Not Match", null);
-            } else if (updateVaRequestDto.getTrxId().startsWith("113")) {
+            } else if (updateVaRequestDto.getTrxId().startsWith("113") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("113")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("")
                         .customerNo("00000077")
@@ -174,7 +174,7 @@ public class UpdateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4002802", "Invalid Mandatory Field {partnerServiceId}", object);
-            } else if (updateVaRequestDto.getTrxId().startsWith("114")) {
+            } else if (updateVaRequestDto.getTrxId().startsWith("114") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("114")) {
                 var object = VirtualAccountDataDto.builder()
                         .partnerServiceId("90341537")
                         .customerNo("00000077")
@@ -191,7 +191,7 @@ public class UpdateVaRequestDto {
                         .build();
 
                 throw new SimulatorException("4002801", "Invalid Field Format {totalAmount.currency}", object);
-            } else if (updateVaRequestDto.getTrxId().startsWith("115")) {
+            } else if (updateVaRequestDto.getTrxId().startsWith("115") || updateVaRequestDto.getVirtualAccountNo().trim().startsWith("115")) {
                 throw new SimulatorException("4092800", "Conflict", null);
             }
         }
