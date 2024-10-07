@@ -12,12 +12,7 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.SignatureException;
+import java.security.*;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -75,9 +70,9 @@ public class SignatureUtils {
 
     @SneakyThrows
     public static String sha256HexJsonMinify(String requestBody) {
-        log.debug("Expected component json body (payload component): \n{} ", requestBody);
+        log.debug("Expected component json body (payload component): \n {} ", requestBody);
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = (JsonNode)objectMapper.readValue(requestBody, JsonNode.class);
+        JsonNode jsonNode = objectMapper.readValue(requestBody, JsonNode.class);
         String digestHex = DigestUtils.sha256Hex(jsonNode.toString().getBytes(StandardCharsets.UTF_8));
         return digestHex.toLowerCase();
     }

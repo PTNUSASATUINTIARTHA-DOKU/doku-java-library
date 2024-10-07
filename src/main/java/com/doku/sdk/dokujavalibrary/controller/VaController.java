@@ -36,6 +36,13 @@ public class VaController {
 
     public CreateVaResponseDto createVa(CreateVaRequestDto createVaRequestDto, String clientId, String tokenB2b, String secretKey, Boolean isProduction) {
         String endpointUrl = SdkConfig.getCreateVaUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        createVaRequestDto.setOrigin(CreateVaRequestDto.OriginDto.builder()
+                .product("SDK")
+                .source("Java")
+                .sourceVersion("1.0.0")
+                .system("doku-java-library")
+                .apiFormat("SNAP")
+                .build());
         String requestBody = gson.toJson(createVaRequestDto);
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);

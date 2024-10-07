@@ -56,14 +56,6 @@ public class VaService {
         httpHeaders.set(SnapHeaderConstant.CHANNEL_ID, requestHeaderDto.getChannelId());
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
 
-        createVaRequestDto.setOrigin(CreateVaRequestDto.OriginDto.builder()
-                        .product("SDK")
-                        .source("Java")
-                        .sourceVersion("1.0.0")
-                        .system("doku-java-library")
-                        .apiFormat("SNAP")
-                .build());
-
         String url = SdkConfig.getCreateVaUrl(isProduction);
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(createVaRequestDto));
 
