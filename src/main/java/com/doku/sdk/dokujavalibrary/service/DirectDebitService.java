@@ -38,6 +38,7 @@ public class DirectDebitService {
     private final Gson gson;
 
     public AccountBindingResponseDto doAccountBindingProcess(RequestHeaderDto requestHeaderDto, AccountBindingRequestDto accountBindingRequestDto, boolean isProduction) {
+        requestHeaderDto.validateAccountBindingHeader(accountBindingRequestDto.getAdditionalInfo().getChannel());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -56,6 +57,7 @@ public class DirectDebitService {
     }
 
     public AccountUnbindingResponseDto doAccountUnbindingProcess(RequestHeaderDto requestHeaderDto, AccountUnbindingRequestDto accountUnbindingRequestDto, boolean isProduction) {
+        requestHeaderDto.validateAccountUnbindingHeader(accountUnbindingRequestDto.getAdditionalInfo().getChannel());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -106,6 +108,7 @@ public class DirectDebitService {
     }
 
     public PaymentResponseDto doPaymentProcess(RequestHeaderDto requestHeaderDto, PaymentRequestDto paymentRequestDto, boolean isProduction) {
+        requestHeaderDto.validatePaymentHeader(paymentRequestDto.getAdditionalInfo().getChannel());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -143,6 +146,7 @@ public class DirectDebitService {
     }
 
     public RefundResponseDto doRefundProcess(RequestHeaderDto requestHeaderDto, RefundRequestDto refundRequestDto, boolean isProduction) {
+        requestHeaderDto.validateRefundHeader(refundRequestDto.getAdditionalInfo().getChannel());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -161,6 +165,7 @@ public class DirectDebitService {
     }
 
     public BalanceInquiryResponseDto doBalanceInquiryProcess(RequestHeaderDto requestHeaderDto, BalanceInquiryRequestDto balanceInquiryRequestDto, boolean isProduction) {
+        requestHeaderDto.validateBalanceInquiryHeader(balanceInquiryRequestDto.getAdditionalInfo().getChannel());
         var httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
