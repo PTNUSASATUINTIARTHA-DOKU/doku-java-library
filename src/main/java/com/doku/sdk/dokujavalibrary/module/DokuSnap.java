@@ -523,19 +523,16 @@ public class DokuSnap {
         }
     }
 
-    public DirectDebitNotificationResponseDto directDebitPaymentNotification(String requestTokenB2b,
-                                                                             String requestTokenB2b2c,
+    public DirectDebitNotificationResponseDto directDebitPaymentNotification(String requestTokenB2b2c,
                                                                              DirectDebitNotificationRequestDto directDebitNotificationRequestDto,
                                                                              String publicKey) {
-        Boolean isTokenB2bValid = validateToken(requestTokenB2b, publicKey);
         Boolean isTokenB2b2cValid = validateToken(requestTokenB2b2c, publicKey);
-        return generateDirectDebitNotificationResponse(isTokenB2bValid, isTokenB2b2cValid, directDebitNotificationRequestDto);
+        return generateDirectDebitNotificationResponse(isTokenB2b2cValid, directDebitNotificationRequestDto);
     }
 
-    private DirectDebitNotificationResponseDto generateDirectDebitNotificationResponse(Boolean isTokenB2bValid,
-                                                                                       Boolean isTokenB2b2cValid,
+    private DirectDebitNotificationResponseDto generateDirectDebitNotificationResponse(Boolean isTokenB2b2cValid,
                                                                                        DirectDebitNotificationRequestDto directDebitNotificationRequestDto) {
-        if (isTokenB2bValid && isTokenB2b2cValid) {
+        if (isTokenB2b2cValid) {
             if (directDebitNotificationRequestDto != null) {
                 return notificationController.generateDirectDebitNotificationResponse(directDebitNotificationRequestDto);
             } else {
