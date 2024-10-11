@@ -30,6 +30,10 @@ public class PaymentRequestDto {
     @Size(max = 64, groups = SizeValidation.class)
     private String partnerReferenceNo;
 
+    @NotNull(groups = MandatoryValidation.class)
+    @Size(max = 32, groups = SizeValidation.class)
+    private  String chargeToken;
+
     @SafeString(groups = SafeStringValidation.class)
     private String feeType; // ovo
 
