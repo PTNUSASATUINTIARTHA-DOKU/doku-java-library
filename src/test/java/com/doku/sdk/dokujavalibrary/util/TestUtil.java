@@ -316,6 +316,7 @@ public class TestUtil {
         return PaymentRequestDto.builder()
                 .partnerReferenceNo("INV-0001")
                 .feeType("OUR")
+                .chargeToken("")
                 .amount(TotalAmountDto.builder()
                         .value("10000.00")
                         .currency("IDR")
