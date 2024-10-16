@@ -16,4 +16,5 @@ public class PaymentResponseDto {
     private String responseMessage;
     private String webRedirectUrl;
     private String partnerReferenceNo;
+    private String referenceNo;
 }
