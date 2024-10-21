@@ -331,6 +331,7 @@ public class DokuSnap {
 
     public CardRegistrationResponseDto doCardRegistration(CardRegistrationRequestDto cardRegistrationRequestDto,
                                                           String privateKey,
+                                                          String secretKey,
                                                           String clientId,
                                                           String channelId,
                                                           Boolean isProduction) {

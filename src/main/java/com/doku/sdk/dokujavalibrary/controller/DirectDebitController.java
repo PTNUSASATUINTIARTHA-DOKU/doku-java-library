@@ -23,7 +23,10 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundRespon
 import com.doku.sdk.dokujavalibrary.service.DirectDebitService;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +34,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DirectDebitController {
 
+    private static final Log log = LogFactory.getLog(DirectDebitController.class);
     private final DirectDebitService directDebitService;
     private final TokenService tokenService;
     private final SnapUtils snapUtils;
@@ -79,8 +83,11 @@ public class DirectDebitController {
                                                           String channelId,
                                                           String tokenB2b,
                                                           Boolean isProduction) {
+        Gson gsonSystem = new GsonBuilder().disableHtmlEscaping().create();
+        String minifiedCardData = gsonSystem.toJson(cardRegistrationRequestDto.getCardData());
+        cardRegistrationRequestDto.setCardData(directDebitService.encryptCbc(minifiedCardData, secretKey));
         String endpointUrl = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
-        String requestBody = gson.toJson(cardRegistrationRequestDto);
+        String requestBody = gsonSystem.toJson(cardRegistrationRequestDto);
 
         String timestamp = tokenService.getTimestamp();
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);

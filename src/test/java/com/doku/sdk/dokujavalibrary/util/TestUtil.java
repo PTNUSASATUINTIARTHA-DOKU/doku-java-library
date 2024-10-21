@@ -7,6 +7,7 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.Acc
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.BalanceInquiryRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.BankCardData;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
@@ -263,7 +264,7 @@ public class TestUtil {
 
     public CardRegistrationRequestDto getCardRegistrationRequestDto() {
         return CardRegistrationRequestDto.builder()
-                .cardData("5cg2G2719+jxU1RfcGmeCyQrLagUaAWJWWhLpm/mbkiTIrb9qA5kQgAZ4jTsMWOgMxB7lJX6k1hiv5Mq4ltG5g==|GbD2PwzJIgpPijLs14BwZQ==")
+                .cardData(BankCardData.builder().bankCardNo("12345").bankCardType("D").expiryDate("2025").build())
                 .custIdMerchant("cust001")
                 .phoneNo("628238748728423")
                 .additionalInfo(CardRegistrationRequestDto.CardRegistrationAdditionalInfoRequestDto.builder()

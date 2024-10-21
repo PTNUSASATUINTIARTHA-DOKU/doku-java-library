@@ -882,7 +882,7 @@ class DokuSnapTest extends TestUtil {
     @Test
     void directDebitCardRegistration_Success() {
         when(directDebitController.doCardRegistration(any(), any(), any(), any(), any(), any())).thenReturn(getCardRegistrationResponseDto());
-        var response = dokuSnap.doCardRegistration(getCardRegistrationRequestDto(), PRIVATE_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+        var response = dokuSnap.doCardRegistration(getCardRegistrationRequestDto(), PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP",false);
 
         assertEquals("2000100", response.getResponseCode());
     }
@@ -891,7 +891,7 @@ class DokuSnapTest extends TestUtil {
     void directDebitCardRegistration_Failed() {
         var request = getCardRegistrationRequestDto();
         request.getAdditionalInfo().setChannel(null);
-        var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+        var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
 
         assertEquals("4000102", response.getResponseCode());
     }

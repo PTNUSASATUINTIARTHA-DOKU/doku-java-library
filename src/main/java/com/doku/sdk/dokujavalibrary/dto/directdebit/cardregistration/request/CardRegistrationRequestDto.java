@@ -24,7 +24,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CardRegistrationRequestDto {
-    private String cardData;
+    private Object cardData;
 
     @SafeString(groups = SafeStringValidation.class)
     @Size(max = 64, groups = SizeValidation.class)
