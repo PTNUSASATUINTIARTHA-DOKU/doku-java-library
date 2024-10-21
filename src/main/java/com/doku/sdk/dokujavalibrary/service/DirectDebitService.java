@@ -23,17 +23,28 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResp
 import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.util.Base64;
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
 public class DirectDebitService {
 
+    private static final Log log = LogFactory.getLog(DirectDebitService.class);
     private final ConnectionUtils connectionUtils;
     private final Gson gson;
 
@@ -86,8 +97,8 @@ public class DirectDebitService {
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
 
         String url = SdkConfig.getDirectDebitCardRegistrationUrl(isProduction);
-        var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(cardRegistrationRequestDto));
-
+        Gson gsonSystem = new GsonBuilder().disableHtmlEscaping().create();
+        var response = connectionUtils.httpPost(url, httpHeaders, gsonSystem.toJson(cardRegistrationRequestDto));
         return gson.fromJson(response.getBody(), CardRegistrationResponseDto.class);
     }
 
@@ -197,5 +208,40 @@ public class DirectDebitService {
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(checkStatusRequestDto));
 
         return gson.fromJson(response.getBody(), CheckStatusResponseDto.class);
+    }
+
+    public String encryptCbc(String input, String secretKey) {
+        String AES = "AES";
+        String AES_CBC_PADDING = "AES/CBC/PKCS5Padding";
+        try {
+            secretKey = getSecretKey(secretKey);
+            IvParameterSpec ivParameterSpec = generateIv();
+            SecretKey key = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), AES);
+            Cipher cipher = Cipher.getInstance(AES_CBC_PADDING); //NOSONAR
+            cipher.init(Cipher.ENCRYPT_MODE, key, ivParameterSpec);
+            byte[] cipherText = cipher.doFinal(input.getBytes());
+            String chiperString = Base64.getEncoder().encodeToString(cipherText);
+            String ivString = Base64.getEncoder().encodeToString(ivParameterSpec.getIV());
+            return chiperString + "|" + ivString;
+        } catch(GeneralSecurityException ex) {
+            // throw error
+        }
+        return "";
+    }
+
+    private String getSecretKey(String secretKey) {
+        if(secretKey.length() > 16){
+            return secretKey.substring(0, 16);
+        } else if(secretKey.length() < 16){
+            return StringUtils.rightPad(secretKey, 16, '-');
+        } else {
+            return secretKey;
+        }
+    }
+
+    private IvParameterSpec generateIv() {
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        return new IvParameterSpec(iv);
     }
 }
