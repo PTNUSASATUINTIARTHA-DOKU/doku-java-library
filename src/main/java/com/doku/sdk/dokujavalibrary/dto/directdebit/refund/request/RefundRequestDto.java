@@ -62,6 +62,12 @@ public class RefundRequestDto {
             throw new GeneralException("4005801", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
+            if(refundRequestDto.partnerRefundNo.length() < 32 || refundRequestDto.partnerRefundNo.length() > 64) {
+                throw new GeneralException("4005801", "partnerRefundNo must be 64 characters and at least 32 characters. Ensure that partnerRefundNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.");
+            }
+        }
+
     }
 
     private static boolean isValidChannel(String channel) {
