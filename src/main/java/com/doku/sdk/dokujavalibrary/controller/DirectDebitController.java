@@ -180,7 +180,7 @@ public class DirectDebitController {
                                                       String tokenB2b,
                                                       String tokenB2b2c,
                                                       Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitBalanceInquiryUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitBalanceInquiryUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         String requestBody = gson.toJson(balanceInquiryRequestDto);
 
         String timestamp = tokenService.getTimestamp();
