@@ -68,10 +68,15 @@ public class CheckStatusRequestDto {
     }
 
     public void validateCheckStatusRequest(CheckStatusRequestDto checkStatusRequestDto) {
+        if (checkStatusRequestDto.getServiceCode() == null || !checkStatusRequestDto.getServiceCode().equals("55")) {
+            throw new GeneralException("4005502", "serviceCode must be '55'");
+        }
+    
         if (!isValidChannel(checkStatusRequestDto.getAdditionalInfo().getChannel())) {
             throw new GeneralException("4005501", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
+    
 
     private static boolean isValidChannel(String channel) {
         return Arrays.stream(DirectDebitChannelEnum.values()).anyMatch(ddChannelEnum -> ddChannelEnum.name().equals(channel));
