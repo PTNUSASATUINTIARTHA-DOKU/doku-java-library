@@ -73,9 +73,9 @@ public class PaymentRequestDto {
         @SafeString(groups = SafeStringValidation.class)
         @Size(max = 40, groups = SizeValidation.class)
         private String remarks; // allo, cimb
-
+        @NotNull(groups = MandatoryValidation.class)
         private String successPaymentUrl;
-
+        @NotNull(groups = MandatoryValidation.class)
         private String failedPaymentUrl;
 
         @Valid

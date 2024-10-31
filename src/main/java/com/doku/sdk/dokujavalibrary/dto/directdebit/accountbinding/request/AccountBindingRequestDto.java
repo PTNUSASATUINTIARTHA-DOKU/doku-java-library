@@ -25,10 +25,6 @@ import java.util.Arrays;
 @AllArgsConstructor
 public class AccountBindingRequestDto {
 
-    @NotNull(groups = MandatoryValidation.class)
-    @SafeString(groups = SafeStringValidation.class)
-    @Size(min = 9, groups = SizeValidation.class)
-    @Size(max = 16, groups = SizeValidation.class)
     private String phoneNo;
 
     @Valid
@@ -39,12 +35,9 @@ public class AccountBindingRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class AccountBindingAdditionalInfoRequestDto {
-        @NotNull(groups = MandatoryValidation.class)
         @SafeString(groups = SafeStringValidation.class)
         private String channel;
 
-        @SafeString(groups = SafeStringValidation.class)
-        @Size(max = 64, groups = SizeValidation.class)
         private String custIdMerchant;
 
         @SafeString(groups = SafeStringValidation.class)
@@ -87,10 +80,37 @@ public class AccountBindingRequestDto {
     }
 
     public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {
+        if (accountBindingRequestDto.getPhoneNo() == null || accountBindingRequestDto.getPhoneNo().isEmpty()) {
+            throw new GeneralException("4000701", "phoneNo cannot be null. Please provide a phoneNo. Example: '62813941306101'.");
+        }
+        if (accountBindingRequestDto.getPhoneNo().length() < 9) {
+            throw new GeneralException("4000701", "phoneNo must be at least 9 digits. Ensure that phoneNo is not empty. Example: '62813941306101'.");
+        }
+        if (accountBindingRequestDto.getPhoneNo().length() > 16) {
+            throw new GeneralException("4000701", "phoneNo must be 16 characters or fewer. Ensure that phoneNo is no longer than 16 characters. Example: '62813941306101'.");
+        }
+        if (accountBindingRequestDto.getAdditionalInfo().getChannel() == null || accountBindingRequestDto.getAdditionalInfo().getChannel().isEmpty() ) {
+            throw new GeneralException("4000704", "additionalInfo.channel cannot be null. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+        }else
         if (!isValidChannel(accountBindingRequestDto.getAdditionalInfo().getChannel())) {
             throw new GeneralException("4000701", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
+        if (accountBindingRequestDto.getAdditionalInfo().getCustIdMerchant() == null || accountBindingRequestDto.getAdditionalInfo().getCustIdMerchant().isEmpty()) {
+            throw new GeneralException("4000701", "additionalInfo.custIdMerchant cannot be null or empty. Please provide a additionalInfo.custIdMerchant. Example: 'cust-001'.");
+        }
+        if (accountBindingRequestDto.getAdditionalInfo().getCustIdMerchant().length() > 64 ) {
+            throw new GeneralException("4000701", "additionalInfo.custIdMerchant must be 64 characters or fewer. Ensure that additionalInfo.custIdMerchant is no longer than 64 characters. Example: 'cust-001'.");
+        }
 
+        if (accountBindingRequestDto.getAdditionalInfo().getSuccessRegistrationUrl() == null) {
+            throw new GeneralException("4000702", "additionalInfo.successRegistrationUrl cannot be null. Please provide a additionalInfo.successRegistrationUrl. Example: 'https://www.doku.com'.");
+        }
+        
+        if (accountBindingRequestDto.getAdditionalInfo().getFailedRegistrationUrl() == null) {
+            throw new GeneralException("4000703", "additionalInfo.failedRegistrationUrl cannot be null. Please provide a additionalInfo.failedRegistrationUrl. Example: 'https://www.doku.com'.");
+        }
+        
+       
         if (accountBindingRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
             if (accountBindingRequestDto.getAdditionalInfo().getDeviceModel().isEmpty() ||
             accountBindingRequestDto.getAdditionalInfo().getOsType().isEmpty() ||

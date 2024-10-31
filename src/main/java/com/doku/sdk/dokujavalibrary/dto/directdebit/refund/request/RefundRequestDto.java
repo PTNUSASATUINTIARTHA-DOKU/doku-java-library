@@ -25,7 +25,6 @@ public class RefundRequestDto {
 
     @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
-    @Size(max = 12, groups = SizeValidation.class)
     private String originalPartnerReferenceNo;
 
     @SafeString(groups = SafeStringValidation.class)
@@ -41,7 +40,6 @@ public class RefundRequestDto {
 
     @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
-    @Size(max = 12, groups = SizeValidation.class)
     private String partnerRefundNo;
 
     @Valid
@@ -63,8 +61,31 @@ public class RefundRequestDto {
         }
 
         if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
-            if(refundRequestDto.partnerRefundNo.length() < 32 || refundRequestDto.partnerRefundNo.length() > 64) {
-                throw new GeneralException("4005801", "partnerRefundNo must be 64 characters and at least 32 characters. Ensure that partnerRefundNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.");
+            if(refundRequestDto.originalPartnerReferenceNo.length() < 32 || refundRequestDto.originalPartnerReferenceNo.length() > 64) {
+                throw new GeneralException("4005801", "originalPartnerReferenceNo must be 64 characters and at least 32 characters. Ensure that originalPartnerReferenceNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.");
+            }
+        }
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())) {
+            if(refundRequestDto.originalPartnerReferenceNo.length() > 12) {
+                throw new GeneralException("4005801", "originalPartnerReferenceNo max 12 characters. Ensure that originalPartnerReferenceNo is no longer than 12 characters. Example: 'INV-001'.");
+            }
+        }
+
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name()) || refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.EMONEY_DANA_SNAP.name())) {
+            if(refundRequestDto.originalPartnerReferenceNo.length() > 64) {
+                throw new GeneralException("4005801", "originalPartnerReferenceNo must be 64 characters or fewer. Ensure that originalPartnerReferenceNo is no longer than 64 characters. Example: 'INV-001'.");
+            }
+        }
+
+        
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name()) || refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.EMONEY_DANA_SNAP.name()) || refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name())) {
+            if(refundRequestDto.partnerRefundNo.length() > 64) {
+                throw new GeneralException("4005801", "partnerRefundNo must be 64 characters or fewer. Ensure that partnerRefundNo is no longer than 64 characters. Example: 'INV-REF-001'.");
+            }
+        }
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
+            if(refundRequestDto.partnerRefundNo.length() > 12) {
+                throw new GeneralException("4005801", "partnerRefundNo must be 12 characters or fewer. Ensure that partnerRefundNo is no longer than 12 characters. Example: 'INV-REF-001'.");
             }
         }
 

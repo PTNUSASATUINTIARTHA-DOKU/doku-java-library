@@ -1,10 +1,14 @@
 package com.doku.sdk.dokujavalibrary.module;
 
+import java.util.Collections;
+
 import com.doku.sdk.dokujavalibrary.controller.DirectDebitController;
 import com.doku.sdk.dokujavalibrary.controller.NotificationController;
 import com.doku.sdk.dokujavalibrary.controller.TokenController;
 import com.doku.sdk.dokujavalibrary.controller.VaController;
+import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
 import com.doku.sdk.dokujavalibrary.util.TestUtil;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,10 +16,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
+import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 
 @ExtendWith(MockitoExtension.class)
 class DokuSnapTest extends TestUtil {
@@ -30,6 +41,8 @@ class DokuSnapTest extends TestUtil {
     private DirectDebitController directDebitController;
     @Mock
     private NotificationController notificationController;
+
+    private static final Logger logger = LoggerFactory.getLogger(DokuSnapTest.class);
 
     @BeforeEach
     void setup() {
@@ -859,7 +872,7 @@ class DokuSnapTest extends TestUtil {
         request.setPhoneNo(null);
         var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
 
-        assertEquals("4000702", response.getResponseCode());
+        assertEquals("4000701", response.getResponseCode());
     }
 
     @Test
@@ -997,4 +1010,357 @@ class DokuSnapTest extends TestUtil {
 
         assertEquals("4005502", response.getResponseCode());
     }
+
+    @Test
+    void directDebitAccountBinding_PhoneNoCannotBeNull() {
+    
+
+        var request = getAccountBindingRequestDto();
+        request.setPhoneNo(null);
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("phoneNo cannot be null. Please provide a phoneNo. Example: '62813941306101'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_PhoneNoCannotLessThan9() {
+    
+
+        var request = getAccountBindingRequestDto();
+        request.setPhoneNo("121");
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("phoneNo must be at least 9 digits. Ensure that phoneNo is not empty. Example: '62813941306101'.", response.getResponseMessage());
+    }
+    @Test
+    void directDebitAccountBinding_PhoneNoCannotMoreThan16() {
+    
+
+        var request = getAccountBindingRequestDto();
+        request.setPhoneNo("6281223948928374983749328");
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("phoneNo must be 16 characters or fewer. Ensure that phoneNo is no longer than 16 characters. Example: '62813941306101'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_CustomerIdMerchantCannotBeNull() {
+    
+
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setCustIdMerchant(null);
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.custIdMerchant cannot be null or empty. Please provide a additionalInfo.custIdMerchant. Example: 'cust-001'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_CustomerIdMerchantCannotMoreThan16() {
+    
+
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setCustIdMerchant("18726387298374982739487398475983479587394857938475984576984579687459867498576987239487298374982739482793847928344682736487163847234234");
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.custIdMerchant must be 64 characters or fewer. Ensure that additionalInfo.custIdMerchant is no longer than 64 characters. Example: 'cust-001'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_SuccessRegistrationUrlCannotBeNull() {
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setSuccessRegistrationUrl(null); // Set successRegistrationUrl to null
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.successRegistrationUrl cannot be null. Please provide a additionalInfo.successRegistrationUrl. Example: 'https://www.doku.com'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_FailedRegistrationUrlCannotBeNull() {
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setFailedRegistrationUrl(null); // Set failedRegistrationUrl to null
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.failedRegistrationUrl cannot be null. Please provide a additionalInfo.failedRegistrationUrl. Example: 'https://www.doku.com'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_ChannelCannotBeNull() {
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setChannel(null); // Set channel to null
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.channel cannot be null. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitAccountBinding_ChannelCannotOutsideEnum() {
+        var request = getAccountBindingRequestDto();
+        request.getAdditionalInfo().setChannel("bri"); // Set channel to null
+        var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
+        assertEquals("additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitRefund_ChannelCannotBeNull() {
+        var request = getRefundRequestDto();
+        request.getAdditionalInfo().setChannel(null); // Set channel to null
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        assertEquals("Invalid Mandatory Field additionalInfo.channel", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitRefund_ChannelNotInEnum() {
+        var request = getRefundRequestDto();
+        request.getAdditionalInfo().setChannel("bri"); // Set channel to null
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        assertEquals("additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.", response.getResponseMessage());
+    }
+
+    @Test
+    void directDebitRefund_originalPartnerReferenceNoCannotBeNuLL() {
+        var request = getRefundRequestDto();
+        request.setOriginalPartnerReferenceNo(null); // Set channel to null
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        assertEquals("Invalid Mandatory Field originalPartnerReferenceNo", response.getResponseMessage());
+    }
+
+    @Test
+void directDebitRefund_originalPartnerReferenceNoMustBeBetween32And64Characters_ForAlloSnap() {
+    var request = getRefundRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name());
+    request.setOriginalPartnerReferenceNo("12345"); // Less than 32 characters
+
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_ALLO_SNAP", false);
+    assertEquals("originalPartnerReferenceNo must be 64 characters and at least 32 characters. Ensure that originalPartnerReferenceNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
+}
+
+@Test
+void directDebitRefund_originalPartnerReferenceNoMustBeMax12Characters_ForCimbSnapOrBriSnap() {
+    var request = getRefundRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name());
+    request.setOriginalPartnerReferenceNo("1234567890123"); // More than 12 characters
+
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false);
+    assertEquals("originalPartnerReferenceNo max 12 characters. Ensure that originalPartnerReferenceNo is no longer than 12 characters. Example: 'INV-001'.", response.getResponseMessage());
+}
+
+@Test
+void directDebitRefund_originalPartnerReferenceNoMustBeMax64Characters_ForEmoneyShopeeOrDana() {
+    var request = getRefundRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name());
+    request.setOriginalPartnerReferenceNo("1234567890123456789012345678901234567890123456789012345678901234567890"); // More than 64 characters
+
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false);
+    assertEquals("originalPartnerReferenceNo must be 64 characters or fewer. Ensure that originalPartnerReferenceNo is no longer than 64 characters. Example: 'INV-001'.", response.getResponseMessage());
+}
+
+@Test
+void directDebitRefund_partnerRefundNoMustBeMax64Characters_ForEmoneyChannels() {
+    var request = getRefundRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name());
+    request.setPartnerRefundNo("1234567890123456789012345678901234567890123456789012345678901234567890"); // More than 64 characters
+
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false);
+    assertEquals("partnerRefundNo must be 64 characters or fewer. Ensure that partnerRefundNo is no longer than 64 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
+}
+
+@Test
+void directDebitRefund_partnerRefundNoMustBeMax12Characters_ForCimbBriOrAlloSnap() {
+    var request = getRefundRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name());
+    request.setPartnerRefundNo("1234567890123"); // More than 12 characters
+
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false);
+    assertEquals("partnerRefundNo must be 12 characters or fewer. Ensure that partnerRefundNo is no longer than 12 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
+}
+
+@Test
+void directDebitPayment_ChannelCannotBeNull() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(null);
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.channel", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_ChannelMustBeValid() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel("INVALID_CHANNEL");
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "INVALID_CHANNEL", "authCode", false);
+    assertEquals("additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_FeeTypeMustBeValid_ForEmoneyOvoSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name());
+    request.setFeeType("INVALID_FEE_TYPE"); // Invalid fee type
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", "authCode", false);
+    assertEquals("Value can only be OUR/BEN/SHA for EMONEY_OVO_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_PayOptionDetailsCannotBeEmpty_ForEmoneyOvoSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name());
+    request.setPayOptionDetails(Collections.emptyList()); // Empty pay option details
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", "authCode", false);
+    assertEquals("Pay Option Details cannot be empty for EMONEY_OVO_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_PaymentTypeMustBeValid_ForEmoneyOvoSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name());
+    request.getAdditionalInfo().setPaymentType("INVALID_TYPE"); // Invalid payment type
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", "authCode", false);
+    assertEquals("additionalInfo.paymentType cannot be empty for EMONEY_OVO_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_LineItemsCannotBeEmpty_ForDirectDebitAlloSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name());
+    request.getAdditionalInfo().setLineItems(Collections.emptyList()); // Empty line items
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_ALLO_SNAP", "authCode", false);
+    assertEquals("additionalInfo.lineItems cannot be empty for DIRECT_DEBIT_ALLO_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_RemarksCannotBeEmpty_ForDirectDebitAlloSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name());
+    request.getAdditionalInfo().setRemarks(""); // Empty remarks
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_ALLO_SNAP", "authCode", false);
+    assertEquals("additionalInfo.remarks cannot be empty for DIRECT_DEBIT_ALLO_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_RemarksCannotBeEmpty_ForDirectDebitCimbSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name());
+    request.getAdditionalInfo().setRemarks(""); // Empty remarks
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", "authCode", false);
+    assertEquals("additionalInfo.remarks cannot be empty for DIRECT_DEBIT_CIMB_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_PaymentTypeMustBeValid_ForDirectDebitBriSnap() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name());
+    request.getAdditionalInfo().setPaymentType("INVALID_TYPE"); // Invalid payment type
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
+    assertEquals("additionalInfo.paymentType cannot be empty for DIRECT_DEBIT_BRI_SNAP", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_SuccessPaymentUrlCannotBeNull() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setSuccessPaymentUrl(null); // Set successPaymentUrl to null
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.successPaymentUrl", response.getResponseMessage());
+}
+
+@Test
+void paymentRequest_FailedPaymentUrlCannotBeNull() {
+    var request = getPaymentRequestDto();
+    request.getAdditionalInfo().setFailedPaymentUrl(null); // Set failedPaymentUrl to null
+
+    var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.failedPaymentUrl", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_ChannelCannotBeNull() {
+    var request = getCardRegistrationRequestDto();
+    request.getAdditionalInfo().setChannel(null); // Set channel to null
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.channel", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_CustIdMerchantMustNotBeNull() {
+    var request = getCardRegistrationRequestDto();
+    request.setCustIdMerchant(null); // Set custIdMerchant to null
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Mandatory Field custIdMerchant", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_CustIdMerchantMustNotExceedMaxLength() {
+    var request = getCardRegistrationRequestDto();
+    request.setCustIdMerchant("ThisIsAReallyLongCustIdMerchantThatExceedsTheMaxLength8jskdhfishbdfjsgidfgisjdhfisdjhfisjdfkjsdbfsd"); // Exceeding max length
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Field Format custIdMerchant", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_CustIdMerchantMustMatchPattern() {
+    var request = getCardRegistrationRequestDto();
+    request.setCustIdMerchant("Invalid#MerchantID"); // Invalid format
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Field Format custIdMerchant", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_SuccessRegistrationUrlCannotBeNull() {
+    var request = getCardRegistrationRequestDto();
+    request.getAdditionalInfo().setSuccessRegistrationUrl(null); // Set successRegistrationUrl to null
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.successRegistrationUrl", response.getResponseMessage());
+}
+
+
+@Test
+void cardRegistration_FailedRegistrationUrlCannotBeNull() {
+    var request = getCardRegistrationRequestDto();
+    request.getAdditionalInfo().setFailedRegistrationUrl(null); // Set failedRegistrationUrl to null
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.failedRegistrationUrl", response.getResponseMessage());
+}
+
+@Test
+void cardRegistration_CardDataCannotBeNull() {
+    var request = getCardRegistrationRequestDto();
+    request.setCardData(null); // Set cardData to null
+
+    var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
+    assertEquals("Invalid Mandatory Field cardData", response.getResponseMessage());
+}
+
+@Test
+void cardUnregistration_tokenIdCannotBeNull() {
+    var request = getCardUnbindingRequestDto();
+    request.setTokenId(null); // Set tokenId to null
+
+    var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, CLIENT_ID, false);
+    assertEquals("Invalid Mandatory Field tokenId", response.getResponseMessage());
+}
+@Test
+void balanceInquiry_ChannelCannotBeNull() {
+    var request = getBalanceInquiryRequestDto();
+    request.getAdditionalInfo().setChannel(null); // Set channel to null
+
+    var response = dokuSnap.doBalanceInquiry(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+    assertEquals("Invalid Mandatory Field additionalInfo.channel", response.getResponseMessage());
+}
+
+@Test
+void checkstatuslanceInquiry_ServiceCodeMust55() {
+    var request = getCheckStatusRequestDto();
+    request.setServiceCode("22"); // Set channel to null
+
+    var response = dokuSnap.doCheckStatus(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false);
+     assertEquals("serviceCode must be '55'", response.getResponseMessage());
+}
+    
+
 }

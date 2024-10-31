@@ -1,5 +1,7 @@
 package com.doku.sdk.dokujavalibrary.util;
 
+import java.util.Arrays;
+
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
@@ -41,6 +43,8 @@ import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
 
 import java.util.List;
+
+import com.doku.sdk.dokujavalibrary.dto.directdebit.LineItemsDto;
 
 public class TestUtil {
 
@@ -338,6 +342,18 @@ public class TestUtil {
                         .successPaymentUrl("www.merchant.com/success")
                         .failedPaymentUrl("www.merchant.com/failed")
                         .paymentType("SALE")
+                        .lineItems(Arrays.asList(
+                                LineItemsDto.builder()
+                                        .name("Product 1")
+                                        .quantity("1")
+                                        .price("10000.00")
+                                        .build(),
+                                LineItemsDto.builder()
+                                        .name("Product 2")
+                                        .quantity("1")
+                                        .price("20000.00")
+                                        .build()
+                        ))
                         .build())
                 .build();
     }
@@ -505,4 +521,5 @@ public class TestUtil {
                         .build())
                 .build();
     }
+    
 }

@@ -7,6 +7,7 @@ import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.PatternValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,8 +25,11 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CardRegistrationRequestDto {
+
+    @NotNull(groups = MandatoryValidation.class)
     private Object cardData;
 
+    @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
     @Size(max = 64, groups = SizeValidation.class)
     @Pattern(regexp = "^[a-zA-Z0-9]+$")
@@ -73,8 +77,10 @@ public class CardRegistrationRequestDto {
         @Pattern(regexp = "[1-9][0-9][0-9]{2}([0][1-9]|[1][0-2])([1-2][0-9]|[0][1-9]|[3][0-1])", groups = PatternValidation.class)
         private String dateOfBirth;
 
+        @NotNull(groups = MandatoryValidation.class)
         private String successRegistrationUrl;
-
+        
+        @NotNull(groups = MandatoryValidation.class)
         private String failedRegistrationUrl;
     }
 
