@@ -4,7 +4,7 @@ public class SdkConfig {
 
 //    private static final String SANDBOX_BASE_URL = "https://api-uat.doku.com";
     private static final String SANDBOX_BASE_URL = "https://api-sandbox.doku.com";
-    private static final String PRODUCTION_BASE_URL = "https://dashboard.doku.com";
+    private static final String PRODUCTION_BASE_URL = "https://api.doku.com";
     private static final String ACCESS_TOKEN_B2B = "/authorization/v1/access-token/b2b";
     private static final String ACCESS_TOKEN_B2B2C = "/authorization/v1/access-token/b2b2c";
     private static final String CREATE_VA = "/virtual-accounts/bi-snap-va/v1.1/transfer-va/create-va";
