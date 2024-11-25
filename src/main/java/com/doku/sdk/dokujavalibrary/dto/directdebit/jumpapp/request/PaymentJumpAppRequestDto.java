@@ -1,6 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request;
 
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
@@ -77,6 +78,8 @@ public class PaymentJumpAppRequestDto {
 
         @SafeString(groups = SafeStringValidation.class)
         private String metadata; // shopee pay
+
+        private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validatePaymentJumpAppRequest(PaymentJumpAppRequestDto paymentJumpAppRequestDto) {

@@ -1,6 +1,7 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request;
 
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.DateIso8601;
@@ -65,6 +66,8 @@ public class CheckStatusRequestDto {
 
         @SafeString(groups = SafeStringValidation.class)
         private String channel;
+
+        private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validateCheckStatusRequest(CheckStatusRequestDto checkStatusRequestDto) {

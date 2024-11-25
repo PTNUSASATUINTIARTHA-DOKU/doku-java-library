@@ -2,6 +2,7 @@ package com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request;
 
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.LineItemsDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
@@ -83,6 +84,8 @@ public class PaymentRequestDto {
 
         @SafeString(groups = SafeStringValidation.class)
         private String paymentType; // bri, ovo
+
+        private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validatePaymentRequest(PaymentRequestDto paymentRequestDto) {
