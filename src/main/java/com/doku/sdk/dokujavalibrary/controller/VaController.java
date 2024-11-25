@@ -39,7 +39,7 @@ public class VaController {
         createVaRequestDto.setOrigin(CreateVaRequestDto.OriginDto.builder()
                 .product("SDK")
                 .source("Java")
-                .sourceVersion("1.0.0")
+                .sourceVersion(SdkConfig.SDK_VERSION)
                 .system("doku-java-library")
                 .apiFormat("SNAP")
                 .build());

@@ -1,5 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request;
 
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
@@ -82,6 +83,8 @@ public class CardRegistrationRequestDto {
         
         @NotNull(groups = MandatoryValidation.class)
         private String failedRegistrationUrl;
+
+        private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validateCardRegistrationRequest(CardRegistrationRequestDto cardRegistrationRequestDto) {

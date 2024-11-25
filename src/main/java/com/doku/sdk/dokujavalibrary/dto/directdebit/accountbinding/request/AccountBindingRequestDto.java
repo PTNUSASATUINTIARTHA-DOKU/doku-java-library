@@ -1,5 +1,6 @@
 package com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request;
 
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.enums.DirectDebitChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
@@ -77,6 +78,8 @@ public class AccountBindingRequestDto {
 
         @SafeString(groups = SafeStringValidation.class)
         private String channelId; // allo
+
+        private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validateAccountBindingRequest(AccountBindingRequestDto accountBindingRequestDto) {

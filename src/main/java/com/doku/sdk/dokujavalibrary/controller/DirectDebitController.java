@@ -20,6 +20,7 @@ import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentReque
 import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
 import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
+import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
 import com.doku.sdk.dokujavalibrary.service.DirectDebitService;
 import com.doku.sdk.dokujavalibrary.service.TokenService;
 import com.google.gson.Gson;
@@ -48,6 +49,14 @@ public class DirectDebitController {
                                                       String tokenB2b,
                                                       Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitAccountBindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        accountBindingRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build());
         String requestBody = gson.toJson(accountBindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -66,6 +75,15 @@ public class DirectDebitController {
                                                           String tokenB2b,
                                                           Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitAccountUnbindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        accountUnbindingRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(accountUnbindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -83,6 +101,15 @@ public class DirectDebitController {
                                                           String channelId,
                                                           String tokenB2b,
                                                           Boolean isProduction) {
+        cardRegistrationRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         Gson gsonSystem = new GsonBuilder().disableHtmlEscaping().create();
         String minifiedCardData = gsonSystem.toJson(cardRegistrationRequestDto.getCardData());
         cardRegistrationRequestDto.setCardData(directDebitService.encryptCbc(minifiedCardData, secretKey));
@@ -104,6 +131,15 @@ public class DirectDebitController {
                                                     String tokenB2b,
                                                     Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitCardUnbindingUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        cardUnbindingRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(cardUnbindingRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -124,6 +160,15 @@ public class DirectDebitController {
                                         String tokenB2b,
                                         Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        paymentRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(paymentRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -143,6 +188,15 @@ public class DirectDebitController {
                                                       String tokenB2b,
                                                       Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitPaymentUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        paymentJumpAppRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(paymentJumpAppRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -162,6 +216,15 @@ public class DirectDebitController {
                                       String tokenB2b2c,
                                       Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitRefundUrl(isProduction);
+        refundRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(refundRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -181,6 +244,15 @@ public class DirectDebitController {
                                                       String tokenB2b2c,
                                                       Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitBalanceInquiryUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
+        balanceInquiryRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(balanceInquiryRequestDto);
 
         String timestamp = tokenService.getTimestamp();
@@ -198,6 +270,15 @@ public class DirectDebitController {
                                                 String tokenB2b,
                                                 Boolean isProduction) {
         String endpointUrl = SdkConfig.getDirectDebitCheckStatusUrl(isProduction);
+        checkStatusRequestDto.getAdditionalInfo().setOrigin(
+                CreateVaRequestDto.OriginDto.builder()
+                        .product("SDK")
+                        .source("Java")
+                        .sourceVersion(SdkConfig.SDK_VERSION)
+                        .system("doku-java-library")
+                        .apiFormat("SNAP")
+                        .build()
+        );
         String requestBody = gson.toJson(checkStatusRequestDto);
 
         String timestamp = tokenService.getTimestamp();

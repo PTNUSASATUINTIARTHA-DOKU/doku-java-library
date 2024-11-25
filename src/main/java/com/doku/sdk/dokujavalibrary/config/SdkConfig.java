@@ -19,6 +19,7 @@ public class SdkConfig {
     private static final String DIRECT_DEBIT_REFUND = "/direct-debit/core/v1/debit/refund";
     private static final String DIRECT_DEBIT_BALANCE_INQUIRY = "/direct-debit/core/v1/balance-inquiry";
     private static final String DIRECT_DEBIT_CHECK_STATUS = "/orders/v1.0/debit/status";
+    public static final String SDK_VERSION = "1.0.4";
 
     public static String getBaseUrl(boolean isProduction) {
         return isProduction ? PRODUCTION_BASE_URL : SANDBOX_BASE_URL;
