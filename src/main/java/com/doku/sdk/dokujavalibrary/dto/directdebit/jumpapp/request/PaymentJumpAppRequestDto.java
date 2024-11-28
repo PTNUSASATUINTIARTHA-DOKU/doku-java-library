@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Arrays;
+import java.util.List;
 
 @Data
 @Builder
@@ -37,7 +38,7 @@ public class PaymentJumpAppRequestDto {
     private String pointOfInitiation;
 
     @Valid
-    private UrlParamDto urlParam;
+    private List<UrlParamDto> urlParam;
 
     @Valid
     private TotalAmountDto amount;
@@ -79,6 +80,8 @@ public class PaymentJumpAppRequestDto {
         @SafeString(groups = SafeStringValidation.class)
         private String metadata; // shopee pay
 
+        private boolean supportDeepLinkCheckoutUrl;
+
         private CreateVaRequestDto.OriginDto origin;
     }
 
@@ -93,7 +96,9 @@ public class PaymentJumpAppRequestDto {
             throw new GeneralException("4005401", "pointOfInitiation value can only be app/pc/mweb");
         }
 
-        if (!paymentJumpAppRequestDto.getUrlParam().getType().equalsIgnoreCase("PAY_RETURN")) {
+        boolean isTypeValid = paymentJumpAppRequestDto.getUrlParam().stream()
+                .anyMatch(class1 -> "PAY_RETURN".equalsIgnoreCase(class1.getType()));
+        if(!isTypeValid) {
             throw new GeneralException("4005401", "urlParam.type must always be PAY_RETURN");
         }
 
