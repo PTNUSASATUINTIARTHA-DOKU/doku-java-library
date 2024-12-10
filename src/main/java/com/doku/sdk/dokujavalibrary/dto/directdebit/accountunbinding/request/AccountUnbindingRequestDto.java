@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
@@ -20,7 +21,6 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountUnbindingRequestDto {
-    @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
     private String tokenId;
 
@@ -33,14 +33,20 @@ public class AccountUnbindingRequestDto {
     @AllArgsConstructor
     public static class AccountUnbindingAdditionalInfoRequestDto {
         @NotNull(groups = MandatoryValidation.class)
+        @NotEmpty(groups = MandatoryValidation.class)
         @SafeString(groups = SafeStringValidation.class)
         private String channel;
         private CreateVaRequestDto.OriginDto origin;
     }
 
     public void validateAccountUnbindingRequest(AccountUnbindingRequestDto accountUnbindingRequestDto) {
+        if(accountUnbindingRequestDto.tokenId == null ||
+        accountUnbindingRequestDto.tokenId.isEmpty()){
+            throw new GeneralException("4010902", "Invalid Mandatory Field tokenId.");
+        }
+
         if (!isValidChannel(accountUnbindingRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("4000901", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("5000900", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
     }
 

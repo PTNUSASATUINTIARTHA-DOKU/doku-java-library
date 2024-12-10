@@ -53,6 +53,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.time.Instant;
 
 @Service
@@ -442,9 +444,10 @@ public class DokuSnap {
                                       String clientId,
                                       String ipAddress,
                                       String authCode,
-                                      Boolean isProduction) {
+                                      Boolean isProduction,
+                                      String deviceId) {
         try {
-            ValidationUtils.validateRequest(refundRequestDto, "58");
+            ValidationUtils.validateRequest(refundRequestDto, "07");
             refundRequestDto.validateRefundRequest(refundRequestDto);
 
             Boolean tokenB2bInvalid = tokenController.isTokenInvalid(tokenB2b, tokenB2bExpiresIn, tokenB2bGeneratedTimestamp);
@@ -459,7 +462,7 @@ public class DokuSnap {
                 tokenB2b2c = tokenController.getTokenB2B2C(authCode, privateKey, clientId, isProduction).getAccessToken();
             }
 
-            return directDebitController.doRefund(refundRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction);
+            return directDebitController.doRefund(refundRequestDto, secretKey, clientId, ipAddress, tokenB2b, tokenB2b2c, isProduction, deviceId);
         } catch (GeneralException ge) {
             return RefundResponseDto.builder()
                     .responseCode(ge.getResponseCode())

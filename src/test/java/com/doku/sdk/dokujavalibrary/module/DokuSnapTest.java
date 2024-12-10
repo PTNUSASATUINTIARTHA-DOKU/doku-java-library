@@ -83,7 +83,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -92,7 +92,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("123456789");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -101,7 +101,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("1234567z");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -110,7 +110,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789012345678901");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -119,7 +119,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789z");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -128,7 +128,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountNo(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -146,7 +146,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountName(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -155,7 +155,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountName("");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -164,7 +164,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountName("ImCyDjTlTqJu9Rrq1uSuKxNNqcNdcD8EuXigmUMZsge3fvkSOyZ8FwMfyDGeOXxaDENzXzHrnXTfHIqXaKLz5Uq7zaGkjNL0DiTRn7vnBEigFFkJlhftfqiT2ml82pYI1ZUmuuR3N1zaAQNYZvg3asANmoDVGmJYnMdGTyWtD3PPb2t8Nwm57Qd1BfSZIiC7A4cGFSyzYZNp2ObxP4zUeMoa0TPV2WbnLKJ761qP594vMXt9Om4pzdcwK3aAWHQd");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -173,7 +173,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountEmail("");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -182,7 +182,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountEmail("ImCyDjTlTqJu9Rrq1uSuKxNNqcNdcD8EuXigmUMZsge3fvkSOyZ8FwMfyDGeOXxaDENzXzHrnXTfHIqXaKLz5Uq7zaGkjNL0DiTRn7vnBEigFFkJlhftfqiT2ml82pYI1ZUmuuR3N1zaAQNYZvg3asANmoDVGmJYnMdGTyWtD3PPb2t8Nwm57Qd1BfSZIiC7A4cGFSyzYZNp2ObxP4zUeMoa0TPV2WbnLKJ761qP594vMXt9Om4pzdcwK3aAWHQd");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -191,7 +191,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountEmail("sdk@emailcom");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -200,7 +200,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountPhone("12345678");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -209,7 +209,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountPhone("1234567890123456789012345678901");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -218,7 +218,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -227,7 +227,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -236,7 +236,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("FcGcsrqYNNQotmv7b2dSFdVbUmiexl0s1wE7H23gpXsFzcXUHXXnRLBUuREMuWxVx");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -245,7 +245,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -254,7 +254,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue("100");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -263,7 +263,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue("12345678901234567890");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -272,7 +272,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setCurrency("ID");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -290,7 +290,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -299,7 +299,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -308,7 +308,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("VIRTUAL_ACCOUNT_BANK_MANDIRI_TEST");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -326,7 +326,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountTrxType(null);
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002702", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -335,7 +335,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountTrxType("CC");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -353,7 +353,7 @@ class DokuSnapTest extends TestUtil {
         request.setExpiredDate("2024-07-11");
         var response = dokuSnap.createVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002701", response.getResponseCode());
+        assertEquals("5002700", response.getResponseCode());
     }
 
     @Test
@@ -370,7 +370,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -379,7 +379,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("123456789");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -388,7 +388,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("1234567z");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -397,7 +397,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789012345678901");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -406,7 +406,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789z");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -415,7 +415,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountNo(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -433,7 +433,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountName("ImCyDjTlTqJu9Rrq1uSuKxNNqcNdcD8EuXigmUMZsge3fvkSOyZ8FwMfyDGeOXxaDENzXzHrnXTfHIqXaKLz5Uq7zaGkjNL0DiTRn7vnBEigFFkJlhftfqiT2ml82pYI1ZUmuuR3N1zaAQNYZvg3asANmoDVGmJYnMdGTyWtD3PPb2t8Nwm57Qd1BfSZIiC7A4cGFSyzYZNp2ObxP4zUeMoa0TPV2WbnLKJ761qP594vMXt9Om4pzdcwK3aAWHQd");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -442,7 +442,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountEmail("ImCyDjTlTqJu9Rrq1uSuKxNNqcNdcD8EuXigmUMZsge3fvkSOyZ8FwMfyDGeOXxaDENzXzHrnXTfHIqXaKLz5Uq7zaGkjNL0DiTRn7vnBEigFFkJlhftfqiT2ml82pYI1ZUmuuR3N1zaAQNYZvg3asANmoDVGmJYnMdGTyWtD3PPb2t8Nwm57Qd1BfSZIiC7A4cGFSyzYZNp2ObxP4zUeMoa0TPV2WbnLKJ761qP594vMXt9Om4pzdcwK3aAWHQd@email.com");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -451,7 +451,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountEmail("sdk@emailcom");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -460,7 +460,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountPhone("12345678");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -469,7 +469,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountPhone("1234567890123456789012345678901");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -478,7 +478,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -487,7 +487,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -496,7 +496,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("PXXT0awNv2lE3Jq6dYT1Vc4cNcdEMxbrtxDtAIzFAzieO7K9kRL2Wpenh6mBxu1Sn");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -505,7 +505,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -514,7 +514,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue("100");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -523,7 +523,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setValue("12345678901234567890");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -532,7 +532,7 @@ class DokuSnapTest extends TestUtil {
         request.getTotalAmount().setCurrency("ID");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -550,7 +550,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -559,7 +559,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -568,7 +568,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("VIRTUAL_ACCOUNT_BANK_MANDIRI_TEST");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -586,7 +586,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().getVirtualAccountConfig().setStatus(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -595,7 +595,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().getVirtualAccountConfig().setStatus("");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -604,7 +604,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().getVirtualAccountConfig().setStatus("9KtgA3YWn1aDEEGE1gWZp");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -622,7 +622,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountTrxType(null);
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002802", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -631,7 +631,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountTrxType("12");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -649,7 +649,7 @@ class DokuSnapTest extends TestUtil {
         request.setExpiredDate("2024-07-11");
         var response = dokuSnap.updateVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002801", response.getResponseCode());
+        assertEquals("5002800", response.getResponseCode());
     }
 
     @Test
@@ -666,7 +666,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId(null);
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003102", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -675,7 +675,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("123456789");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -684,7 +684,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789012345678901");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -693,7 +693,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("1234567z");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -702,7 +702,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountNo(null);
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003102", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -720,7 +720,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId(null);
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003102", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -729,7 +729,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -738,7 +738,7 @@ class DokuSnapTest extends TestUtil {
         request.setTrxId("CIwxu2v0XgURbX2RYclSfsw4N6fd29YIgvgv1LJpkmSPItG7jrC8ARlKyRhfkgiVnSJvKWRBAu8u0wPyGg0N8mWA8vcSCEvcYsVWut7NNctBkNLT6Le2rBRiEMchWfv4z");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -747,7 +747,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003102", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -756,7 +756,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
     @Test
@@ -765,7 +765,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel("CIwxu2v0XgURbX2RYclSfsw4N6fd29YIgvgv1LJpkmSPItG7jrC8ARlKyRhfkgiVnSJvKWRBAu8u0wPyGg0N8mWA8vcSCEvcYsVWut7NNctBkNLT6Le2rBRiEMchWfv4z");
         var response = dokuSnap.deletePaymentCode(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4003101", response.getResponseCode());
+        assertEquals("5003100", response.getResponseCode());
     }
 
 
@@ -783,7 +783,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId(null);
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002602", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -792,7 +792,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("1234567");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -801,7 +801,7 @@ class DokuSnapTest extends TestUtil {
         request.setPartnerServiceId("1234567z");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -810,7 +810,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("123456789012345678901");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -819,7 +819,7 @@ class DokuSnapTest extends TestUtil {
         request.setCustomerNo("1234567z");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -828,7 +828,7 @@ class DokuSnapTest extends TestUtil {
         request.setVirtualAccountNo(null);
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002602", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -846,7 +846,7 @@ class DokuSnapTest extends TestUtil {
         request.setInquiryRequestId("CIwxu2v0XgURbX2RYclSfsw4N6fd29YIgvgv1LJpkmSPItG7jrC8ARlKyRhfkgiVnSJvKWRBAu8u0wPyGg0N8mWA8vcSCEvcYsVWut7NNctBkNLT6Le2rBRiEMchWfv4z");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -855,7 +855,7 @@ class DokuSnapTest extends TestUtil {
         request.setPaymentRequestId("CIwxu2v0XgURbX2RYclSfsw4N6fd29YIgvgv1LJpkmSPItG7jrC8ARlKyRhfkgiVnSJvKWRBAu8u0wPyGg0N8mWA8vcSCEvcYsVWut7NNctBkNLT6Le2rBRiEMchWfv4z");
         var response = dokuSnap.checkStatusVa(request, PRIVATE_KEY, CLIENT_ID, SECRET_KEY, false);
 
-        assertEquals("4002601", response.getResponseCode());
+        assertEquals("5002600", response.getResponseCode());
     }
 
     @Test
@@ -872,7 +872,7 @@ class DokuSnapTest extends TestUtil {
         request.setPhoneNo(null);
         var response = dokuSnap.doAccountBinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, DEVICE_ID, IP_ADDRESS);
 
-        assertEquals("4000701", response.getResponseCode());
+        assertEquals("5000700", response.getResponseCode());
     }
 
     @Test
@@ -889,7 +889,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doAccountUnbinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false, IP_ADDRESS);
 
-        assertEquals("4000902", response.getResponseCode());
+        assertEquals("5000900", response.getResponseCode());
     }
 
     @Test
@@ -906,7 +906,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doCardRegistration(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, "DIRECT_DEBIT_BRI_SNAP", false);
 
-        assertEquals("4000102", response.getResponseCode());
+        assertEquals("5000100", response.getResponseCode());
     }
 
     @Test
@@ -923,7 +923,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, CLIENT_ID, false);
 
-        assertEquals("4000502", response.getResponseCode());
+        assertEquals("5000500", response.getResponseCode());
     }
 
     @Test
@@ -940,7 +940,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doPayment(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_BRI_SNAP", "authCode", false);
 
-        assertEquals("4005402", response.getResponseCode());
+        assertEquals("5005400", response.getResponseCode());
     }
 
     @Test
@@ -957,7 +957,7 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doPaymentJumpApp(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
 
-        assertEquals("4005402", response.getResponseCode());
+        assertEquals("5005400", response.getResponseCode());
     }
 
     @Test
@@ -974,13 +974,13 @@ class DokuSnapTest extends TestUtil {
         request.getAdditionalInfo().setChannel(null);
         var response = dokuSnap.doBalanceInquiry(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
 
-        assertEquals("4001102", response.getResponseCode());
+        assertEquals("5001100", response.getResponseCode());
     }
 
     @Test
     void directDebitRefund_Success() {
-        when(directDebitController.doRefund(any(), any(), any(), any(), any(), any(), any())).thenReturn(getRefundResponseDto());
-        var response = dokuSnap.doRefund(getRefundRequestDto(), PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        when(directDebitController.doRefund(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(getRefundResponseDto());
+        var response = dokuSnap.doRefund(getRefundRequestDto(), PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false,"test");
 
         assertEquals("2005800", response.getResponseCode());
     }
@@ -989,9 +989,9 @@ class DokuSnapTest extends TestUtil {
     void directDebitRefund_Failed() {
         var request = getRefundRequestDto();
         request.getAdditionalInfo().setChannel(null);
-        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false, "test");
 
-        assertEquals("4005802", response.getResponseCode());
+        assertEquals("5000700", response.getResponseCode());
     }
 
     @Test
@@ -1008,7 +1008,7 @@ class DokuSnapTest extends TestUtil {
         request.setServiceCode(null);
         var response = dokuSnap.doCheckStatus(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false);
 
-        assertEquals("4005502", response.getResponseCode());
+        assertEquals("5005500", response.getResponseCode());
     }
 
     @Test
@@ -1096,7 +1096,7 @@ class DokuSnapTest extends TestUtil {
     void directDebitRefund_ChannelCannotBeNull() {
         var request = getRefundRequestDto();
         request.getAdditionalInfo().setChannel(null); // Set channel to null
-        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false,"test");
         assertEquals("Invalid Mandatory Field additionalInfo.channel", response.getResponseMessage());
     }
 
@@ -1104,7 +1104,7 @@ class DokuSnapTest extends TestUtil {
     void directDebitRefund_ChannelNotInEnum() {
         var request = getRefundRequestDto();
         request.getAdditionalInfo().setChannel("bri"); // Set channel to null
-        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false,"test");
         assertEquals("additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.", response.getResponseMessage());
     }
 
@@ -1112,7 +1112,7 @@ class DokuSnapTest extends TestUtil {
     void directDebitRefund_originalPartnerReferenceNoCannotBeNuLL() {
         var request = getRefundRequestDto();
         request.setOriginalPartnerReferenceNo(null); // Set channel to null
-        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false);
+        var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_OVO_SNAP", false,"test");
         assertEquals("Invalid Mandatory Field originalPartnerReferenceNo", response.getResponseMessage());
     }
 
@@ -1122,7 +1122,7 @@ void directDebitRefund_originalPartnerReferenceNoMustBeBetween32And64Characters_
     request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name());
     request.setOriginalPartnerReferenceNo("12345"); // Less than 32 characters
 
-    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_ALLO_SNAP", false);
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_ALLO_SNAP", false,"test");
     assertEquals("originalPartnerReferenceNo must be 64 characters and at least 32 characters. Ensure that originalPartnerReferenceNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
 }
 
@@ -1132,7 +1132,7 @@ void directDebitRefund_originalPartnerReferenceNoMustBeMax12Characters_ForCimbSn
     request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name());
     request.setOriginalPartnerReferenceNo("1234567890123"); // More than 12 characters
 
-    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false);
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false,"test");
     assertEquals("originalPartnerReferenceNo max 12 characters. Ensure that originalPartnerReferenceNo is no longer than 12 characters. Example: 'INV-001'.", response.getResponseMessage());
 }
 
@@ -1142,7 +1142,7 @@ void directDebitRefund_originalPartnerReferenceNoMustBeMax64Characters_ForEmoney
     request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name());
     request.setOriginalPartnerReferenceNo("1234567890123456789012345678901234567890123456789012345678901234567890"); // More than 64 characters
 
-    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false);
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false,"test");
     assertEquals("originalPartnerReferenceNo must be 64 characters or fewer. Ensure that originalPartnerReferenceNo is no longer than 64 characters. Example: 'INV-001'.", response.getResponseMessage());
 }
 
@@ -1152,7 +1152,7 @@ void directDebitRefund_partnerRefundNoMustBeMax64Characters_ForEmoneyChannels() 
     request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.EMONEY_SHOPEE_PAY_SNAP.name());
     request.setPartnerRefundNo("1234567890123456789012345678901234567890123456789012345678901234567890"); // More than 64 characters
 
-    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false);
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "EMONEY_SHOPEE_PAY_SNAP", false,"test");
     assertEquals("partnerRefundNo must be 64 characters or fewer. Ensure that partnerRefundNo is no longer than 64 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
 }
 
@@ -1162,7 +1162,7 @@ void directDebitRefund_partnerRefundNoMustBeMax12Characters_ForCimbBriOrAlloSnap
     request.getAdditionalInfo().setChannel(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name());
     request.setPartnerRefundNo("1234567890123"); // More than 12 characters
 
-    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false);
+    var response = dokuSnap.doRefund(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, IP_ADDRESS, "DIRECT_DEBIT_CIMB_SNAP", false,"test");
     assertEquals("partnerRefundNo must be 12 characters or fewer. Ensure that partnerRefundNo is no longer than 12 characters. Example: 'INV-REF-001'.", response.getResponseMessage());
 }
 

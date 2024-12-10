@@ -214,8 +214,9 @@ public class DirectDebitController {
                                       String ipAddress,
                                       String tokenB2b,
                                       String tokenB2b2c,
-                                      Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitRefundUrl(isProduction);
+                                      Boolean isProduction,
+                                      String deviceId) {
+        String endpointUrl = SdkConfig.getDirectDebitRefundUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         refundRequestDto.getAdditionalInfo().setOrigin(
                 CreateVaRequestDto.OriginDto.builder()
                         .product("SDK")
@@ -231,7 +232,7 @@ public class DirectDebitController {
         String signature = tokenService.generateSymmetricSignature(HttpMethod.POST.name(), endpointUrl, tokenB2b, requestBody, timestamp, secretKey);
         String externalId = snapUtils.generateExternalId();
 
-        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, null, ipAddress, null, tokenB2b2c, tokenB2b);
+        var requestHeader = snapUtils.generateRequestHeaderDto(timestamp, signature, clientId, externalId, deviceId, ipAddress, null, tokenB2b2c, tokenB2b);
 
         return directDebitService.doRefundProcess(requestHeader, refundRequestDto, isProduction);
     }
@@ -269,7 +270,7 @@ public class DirectDebitController {
                                                 String clientId,
                                                 String tokenB2b,
                                                 Boolean isProduction) {
-        String endpointUrl = SdkConfig.getDirectDebitCheckStatusUrl(isProduction);
+        String endpointUrl = SdkConfig.getDirectDebitCheckStatusUrl(isProduction).replace(SdkConfig.getBaseUrl(isProduction), "");
         checkStatusRequestDto.getAdditionalInfo().setOrigin(
                 CreateVaRequestDto.OriginDto.builder()
                         .product("SDK")
