@@ -912,7 +912,7 @@ class DokuSnapTest extends TestUtil {
     @Test
     void directDebitCardUnbinding_Success() {
         when(directDebitController.doCardUnbinding(any(), any(), any(), any(), any())).thenReturn(getCardUnbindingResponseDto());
-        var response = dokuSnap.doCardUnbinding(getCardUnbindingRequestDto(), PRIVATE_KEY, CLIENT_ID, false);
+        var response = dokuSnap.doCardUnbinding(getCardUnbindingRequestDto(), PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false);
 
         assertEquals("2000500", response.getResponseCode());
     }
@@ -921,7 +921,7 @@ class DokuSnapTest extends TestUtil {
     void directDebitCardUnbinding_Failed() {
         var request = getCardUnbindingRequestDto();
         request.getAdditionalInfo().setChannel(null);
-        var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, CLIENT_ID, false);
+        var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false);
 
         assertEquals("5000500", response.getResponseCode());
     }
@@ -1341,7 +1341,7 @@ void cardUnregistration_tokenIdCannotBeNull() {
     var request = getCardUnbindingRequestDto();
     request.setTokenId(null); // Set tokenId to null
 
-    var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, CLIENT_ID, false);
+    var response = dokuSnap.doCardUnbinding(request, PRIVATE_KEY, SECRET_KEY, CLIENT_ID, false);
     assertEquals("Invalid Mandatory Field tokenId", response.getResponseMessage());
 }
 @Test

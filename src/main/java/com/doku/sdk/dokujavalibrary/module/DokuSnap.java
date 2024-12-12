@@ -358,6 +358,7 @@ public class DokuSnap {
 
     public CardUnbindingResponseDto doCardUnbinding(CardUnbindingRequestDto cardUnbindingRequestDto,
                                                     String privateKey,
+                                                    String secretKey,
                                                     String clientId,
                                                     Boolean isProduction) {
         try {

@@ -147,7 +147,7 @@ public class PaymentRequestDto {
         }
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())) {
-            if (!paymentRequestDto.getAdditionalInfo().getPaymentType().isEmpty()) {
+            if (ObjectUtils.isNotEmpty(paymentRequestDto.getAdditionalInfo().getPaymentType())) {
                 if (!paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("SALE") &&
                         !paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("RECURRING")) {
                     throw new GeneralException("4005401", "additionalInfo.paymentType cannot be empty for DIRECT_DEBIT_BRI_SNAP");
