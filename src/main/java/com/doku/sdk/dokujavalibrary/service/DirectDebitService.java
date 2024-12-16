@@ -168,6 +168,7 @@ public class DirectDebitService {
         httpHeaders.set(SnapHeaderConstant.X_IP_ADDRESS, requestHeaderDto.getXIpAddress());
         httpHeaders.set(SnapHeaderConstant.BEARER_CUSTOMER, requestHeaderDto.getAuthorizationCustomer());
         httpHeaders.set(SnapHeaderConstant.BEARER, requestHeaderDto.getAuthorization());
+        httpHeaders.set(SnapHeaderConstant.X_DEVICE_ID, requestHeaderDto.getXDeviceId());
 
         String url = SdkConfig.getDirectDebitRefundUrl(isProduction);
         var response = connectionUtils.httpPost(url, httpHeaders, gson.toJson(refundRequestDto));

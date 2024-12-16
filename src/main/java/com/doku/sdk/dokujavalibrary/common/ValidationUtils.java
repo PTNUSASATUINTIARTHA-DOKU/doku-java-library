@@ -29,7 +29,7 @@ public class ValidationUtils {
             if ("NotBlank".equals(fieldError.getCode()) ||
                     "NotNull".equals(fieldError.getCode()) ||
                     "NotEmpty".equals(fieldError.getCode())) {
-                throw new GeneralException(HttpStatus.BAD_REQUEST.value() + serviceCode + SnapResponseEnum.INVALID_MANDATORY_FIELD.getResponseCode(),
+                throw new GeneralException(HttpStatus.INTERNAL_SERVER_ERROR.value() + serviceCode + SnapResponseEnum.SUCCESSFUL.getResponseCode(),
                         SnapResponseEnum.INVALID_MANDATORY_FIELD.getResponseMessage() + fieldError.getField());
             } else if ("Size".equals(fieldError.getCode()) ||
                     "Pattern".equals(fieldError.getCode()) ||
@@ -37,7 +37,7 @@ public class ValidationUtils {
                     "FixedLength".equals(fieldError.getCode()) ||
                     "Email".equals(fieldError.getCode()) ||
                     "DateIso8601".equals(fieldError.getCode())) {
-                throw new GeneralException(HttpStatus.BAD_REQUEST.value() + serviceCode + SnapResponseEnum.INVALID_FIELD_FORMAT.getResponseCode(),
+                throw new GeneralException(HttpStatus.INTERNAL_SERVER_ERROR.value() + serviceCode + SnapResponseEnum.SUCCESSFUL.getResponseCode(),
                         SnapResponseEnum.INVALID_FIELD_FORMAT.getResponseMessage() + fieldError.getField());
             } else {
                 throw new GeneralException(HttpStatus.INTERNAL_SERVER_ERROR.value() + serviceCode + SnapResponseEnum.GENERAL_ERROR.getResponseCode(),

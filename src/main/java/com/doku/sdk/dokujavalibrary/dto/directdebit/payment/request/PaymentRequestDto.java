@@ -9,14 +9,19 @@ import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +29,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentRequestDto {
 
-    @NotNull(groups = MandatoryValidation.class)
     @SafeString(groups = SafeStringValidation.class)
     @Size(max = 64, groups = SizeValidation.class)
     private String partnerReferenceNo;
@@ -89,12 +94,23 @@ public class PaymentRequestDto {
     }
 
     public void validatePaymentRequest(PaymentRequestDto paymentRequestDto) {
+        if(ObjectUtils.isEmpty(paymentRequestDto.getPartnerReferenceNo())){
+            throw new GeneralException("4005402", "Invalid Mandatory Field partnerReferenceNo");
+        }
+
+        if(paymentRequestDto.getPartnerReferenceNo().length() < 3 || paymentRequestDto.getPartnerReferenceNo().length() > 12){
+            throw new GeneralException("4045418", "Inconsistent Request");
+        }
         if (!isValidChannel(paymentRequestDto.getAdditionalInfo().getChannel())) {
             throw new GeneralException("4005401", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
+        if(!isValidURL(paymentRequestDto.getAdditionalInfo().getSuccessPaymentUrl())){
+            throw new GeneralException("4045418", "Inconsistent Request");
+        }
+
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.EMONEY_OVO_SNAP.name())) {
-            if (!paymentRequestDto.getFeeType().isEmpty()) {
+            if (ObjectUtils.isNotEmpty(paymentRequestDto.getFeeType())) {
                 if (!paymentRequestDto.getFeeType().equalsIgnoreCase("OUR") &&
                         !paymentRequestDto.getFeeType().equalsIgnoreCase("BEN") &&
                         !paymentRequestDto.getFeeType().equalsIgnoreCase("SHA")) {
@@ -106,7 +122,7 @@ public class PaymentRequestDto {
                 throw new GeneralException("4005401", "Pay Option Details cannot be empty for EMONEY_OVO_SNAP");
             }
 
-            if (!paymentRequestDto.getAdditionalInfo().getPaymentType().isEmpty()) {
+            if (ObjectUtils.isNotEmpty(paymentRequestDto.getAdditionalInfo().getPaymentType())) {
                 if (!paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("SALE") &&
                         !paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("RECURRING")) {
                     throw new GeneralException("4005401", "additionalInfo.paymentType cannot be empty for EMONEY_OVO_SNAP");
@@ -131,7 +147,7 @@ public class PaymentRequestDto {
         }
 
         if (paymentRequestDto.getAdditionalInfo().getChannel().equals(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())) {
-            if (!paymentRequestDto.getAdditionalInfo().getPaymentType().isEmpty()) {
+            if (ObjectUtils.isNotEmpty(paymentRequestDto.getAdditionalInfo().getPaymentType())) {
                 if (!paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("SALE") &&
                         !paymentRequestDto.getAdditionalInfo().getPaymentType().equalsIgnoreCase("RECURRING")) {
                     throw new GeneralException("4005401", "additionalInfo.paymentType cannot be empty for DIRECT_DEBIT_BRI_SNAP");
@@ -142,5 +158,11 @@ public class PaymentRequestDto {
 
     private static boolean isValidChannel(String channel) {
         return Arrays.stream(DirectDebitChannelEnum.values()).anyMatch(ddChannelEnum -> ddChannelEnum.name().equals(channel));
+    }
+
+    private static boolean isValidURL(String url){
+            String regex = "^[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+            //^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]
+            return url.matches(regex);
     }
 }

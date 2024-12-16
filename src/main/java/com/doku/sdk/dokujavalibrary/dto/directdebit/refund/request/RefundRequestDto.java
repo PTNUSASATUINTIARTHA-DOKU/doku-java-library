@@ -8,12 +8,14 @@ import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SizeValidation;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Arrays;
@@ -22,10 +24,11 @@ import java.util.Arrays;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RefundRequestDto {
 
     @NotNull(groups = MandatoryValidation.class)
-    @SafeString(groups = SafeStringValidation.class)
+    @NotEmpty(groups = MandatoryValidation.class)
     private String originalPartnerReferenceNo;
 
     @SafeString(groups = SafeStringValidation.class)
@@ -59,7 +62,7 @@ public class RefundRequestDto {
 
     public void validateRefundRequest(RefundRequestDto refundRequestDto) {
         if (!isValidChannel(refundRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("4005801", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("5000700", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
         if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
@@ -89,6 +92,9 @@ public class RefundRequestDto {
             if(refundRequestDto.partnerRefundNo.length() > 12) {
                 throw new GeneralException("4005801", "partnerRefundNo must be 12 characters or fewer. Ensure that partnerRefundNo is no longer than 12 characters. Example: 'INV-REF-001'.");
             }
+        }
+        if(originalPartnerReferenceNo == null){
+            throw new GeneralException("5000700", "originalPartnerReferenceNo cannot be null. Please provide an originalPartnerReferenceNo. Example: 'INV-0001");
         }
 
     }

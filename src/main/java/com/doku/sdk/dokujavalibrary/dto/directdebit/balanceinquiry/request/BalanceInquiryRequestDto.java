@@ -6,12 +6,14 @@ import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.validation.annotation.SafeString;
 import com.doku.sdk.dokujavalibrary.validation.group.MandatoryValidation;
 import com.doku.sdk.dokujavalibrary.validation.group.SafeStringValidation;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
@@ -19,6 +21,7 @@ import java.util.Arrays;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BalanceInquiryRequestDto {
     @Valid
     private BalanceInquiryAdditionalInfoRequestDto additionalInfo;
@@ -29,6 +32,7 @@ public class BalanceInquiryRequestDto {
     @AllArgsConstructor
     public static class BalanceInquiryAdditionalInfoRequestDto {
         @NotNull(groups = MandatoryValidation.class)
+        @NotEmpty(groups = MandatoryValidation.class)
         @SafeString(groups = SafeStringValidation.class)
         private String channel;
 
@@ -37,7 +41,7 @@ public class BalanceInquiryRequestDto {
 
     public void validateBalanceInquiryRequest(BalanceInquiryRequestDto balanceInquiryRequestDto) {
         if (!isValidChannel(balanceInquiryRequestDto.getAdditionalInfo().getChannel())) {
-            throw new GeneralException("4001101", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
+            throw new GeneralException("5001100", "additionalInfo.channel is not valid. Ensure that additionalInfo.channel is one of the valid channels. Example: 'DIRECT_DEBIT_ALLO_SNAP'.");
         }
 
     }
