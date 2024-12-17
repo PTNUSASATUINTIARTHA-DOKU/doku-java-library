@@ -98,7 +98,7 @@ public class PaymentRequestDto {
             throw new GeneralException("4005402", "Invalid Mandatory Field partnerReferenceNo");
         }
 
-        if(paymentRequestDto.getPartnerReferenceNo().length() < 3 || paymentRequestDto.getPartnerReferenceNo().length() > 12){
+        if(paymentRequestDto.getPartnerReferenceNo().length() > 64){
             throw new GeneralException("4045418", "Inconsistent Request");
         }
         if (!isValidChannel(paymentRequestDto.getAdditionalInfo().getChannel())) {
