@@ -11,7 +11,7 @@
 
 	<groupId>com.doku.sdk</groupId>
 	<artifactId>doku-java-library</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 	<name>doku-java-library</name>
 	<description>DOKU Java Library</description>
 

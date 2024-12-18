@@ -88,9 +88,14 @@ public class RefundRequestDto {
                 throw new GeneralException("4005801", "partnerRefundNo must be 64 characters or fewer. Ensure that partnerRefundNo is no longer than 64 characters. Example: 'INV-REF-001'.");
             }
         }
-        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_CIMB_SNAP.name())||refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_BRI_SNAP.name())) {
             if(refundRequestDto.partnerRefundNo.length() > 12) {
                 throw new GeneralException("4005801", "partnerRefundNo must be 12 characters or fewer. Ensure that partnerRefundNo is no longer than 12 characters. Example: 'INV-REF-001'.");
+            }
+        }
+        if(refundRequestDto.getAdditionalInfo().getChannel().equalsIgnoreCase(DirectDebitChannelEnum.DIRECT_DEBIT_ALLO_SNAP.name())) {
+            if(refundRequestDto.partnerRefundNo.length() > 64 || refundRequestDto.partnerRefundNo.length() < 32) {
+                throw new GeneralException("4005801", "partnerRefundNo must be 64 characters and at least 32 characters. Ensure that partnerRefundNo is no longer than 64 characters and at least 32 characters. Example: 'INV-REF-001'.");
             }
         }
         if(originalPartnerReferenceNo == null){
