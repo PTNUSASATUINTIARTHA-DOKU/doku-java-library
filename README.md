@@ -1,394 +1,759 @@
+# DOKU JAVA SDK Documentation
 
-# DOKU Java Library
-Welcome to the DOKU Java library! This powerful tool simplifies access to the DOKU API for your server-side Java Spring Boot applications.
+## Introduction
+Welcome to the DOKU JAVA SDK! This SDK simplifies access to the DOKU API for your server-side PHP applications, enabling seamless integration with payment and virtual account services.
 
-## Documentation
-For detailed information, visit the full [DOKU API Docs](https://developers.doku.com/accept-payment/direct-api/snap).
+If your looking for another language  [Node.js](https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-nodejs-library), [Go](https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-golang-library), [Python](https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-python-library), [PHP](https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-php-library)
 
-## Requirements
-- Java 11 or higher.
+## Table of Contents
+- [DOKU JAVA SDK Documentation](#doku-php-sdk-documentation)
+  - [1. Getting Started](#1-getting-started)
+  - [2. Usage](#2-usage)
+    - [Virtual Account](#virtual-account)
+      - [I. Virtual Account (DGPC \& MGPC)](#i-virtual-account-dgpc--mgpc)
+      - [II. Virtual Account (DIPC)](#ii-virtual-account-dipc)
+      - [III. Check Virtual Account Status](#iii-check-virtual-account-status)
+    - [B. Binding / Registration Operations](#b-binding--registration-operations)
+      - [I. Account Binding](#i-account-binding)
+      - [II. Card Registration](#ii-card-registration)
+    - [C. Direct Debit and E-Wallet](#c-direct-debit-and-e-wallet)
+      - [I. Request Payment](#i-request-payment)
+      - [I. Request Payment Jump APP ](#ii-request-payment-jump-app)
+  - [3. Other Operation](#3-other-operation)
+    - [Check Transaction Status](#a-check-transaction-status)
+    - [Refund](#b-refund)
+    - [Balance Inquiry](#c-balance-inquiry)
+  - [4. Error Handling and Troubleshooting](#4-error-handling-and-troubleshooting)
 
-## Installation
+
+
+
+## 1. Getting Started
+
+### Requirements
+- Java 11 or higher
+- Composer installed
+
+### Installation
 Get started by installing the library:
-
 ### Maven
-Put the following dependency to your `pom.xml`:
-
-```xml
+Put the following dependency to your pom.xml:
+```
 <!--SDK dependency-->
 <dependency>
     <groupId>com.doku.sdk</groupId>
     <artifactId>doku-java-library</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
 </dependency>
 ```
+### Configuration
+Before using the Doku Snap SDK, you need to initialize it with your credentials:
 
-### SpringBoot Configuration
-If you use Spring Boot, you might want to add these package into your main Apps:
+1. **Client ID** and **Secret Key**: Retrieve these from the Integration menu in your Doku Dashboard
+2. **Private Key**: Generate your Private Key following 
 
-`@SpringBootApplication(scanBasePackages = {"your-project-package","com.doku.sdk.dokujavalibrary"})`
+The encryption model applied to messages involves both asymmetric and symmetric encryption, utilizing a combination of Private Key and Public Key, adhering to the following standards:
 
+  1. Standard Asymmetric Encryption Signature: SHA256withRSA dengan Private Key ( Kpriv ) dan Public Key ( Kpub ) (256 bits)
+  2. Standard Symmetric Encryption Signature HMAC_SHA512 (512 bits)
+  3. Standard Symmetric Encryption AES-256 dengan client secret sebagai encryption key.
 
-## Usage
-This section will guide you through setting up the DOKU Java library, creating payment requests, and handling notifications. Let’s get started!
+| **Parameter**       | **Description**                                    | **Required** |
+|-----------------|----------------------------------------------------|--------------|
+| `privateKey`    | The private key for the partner service.           | ✅          |
+| `publicKey`     | The public key for the partner service.            | ✅           |
+| `clientId`      | The client ID associated with the service.         | ✅           |
+| `secretKey`     | The secret key for the partner service.            | ✅           |
+| `isProduction`  | Set to true for production environment             | ✅           |
+| `issuer`        | Optional issuer for advanced configurations.       | ❌           |
+| `authCode`      | Optional authorization code for advanced use.      | ❌           |
 
-### 1. Configuration
-To configure the library, you'll need your account's Client ID, Secret Key, and Private Key. Here’s how:
-
-1. **Client ID and Secret Key:** Retrieve these from the Integration menu in your [DOKU Dashboard](https://dashboard.doku.com/bo/login).
-2. **Private Key:** Generate your Private Key following DOKU’s guide and insert the corresponding Public Key into the same menu.
-
-> Your private key will not be transmitted or shared with DOKU. It remains on your server and is only used to sign the requests you send to DOKU.
 
 ```java
 private final DokuSnap dokuSnap;
 
+private final Boolean isProduction = false;
+
 @Value("${merchant.private-key}") // your private key
 private String privateKey;
+@Value("${merchant.public-key}") // your public key
+private String publicKey;
+@Value("${doku.public-key}") // doku public key
+private String dokuPublicKey;
 @Value("${merchant.client-id}") // your client id
 private String clientId;
 @Value("${merchant.secret-key}") // your secret key
 private String secretKey;
 ```
 
-### 2. Payment Flow
-This section guides you through the steps to process payments using the DOKU Java library. You'll learn how to create a payment request and call the payment function.
-#### a. Virtual Account
-DOKU offers three ways to use a virtual account: DOKU-Generated Payment Code (DGPC), Merchant-Generated Payment Code (MGPC), and Direct Inquiry Payment Code (DIPC). You can find the full details [here](https://developers.doku.com/accept-payment/direct-api/snap/integration-guide/virtual-account).
+## 2. Usage
 
-> [!Important!]
->Each transaction can use only one feature at a time, but you can use multiple features across different transactions.
+### Virtual Account
+#### I. Virtual Account (DGPC & MGPC)
+##### DGPC
+- **Description:** A pre-generated virtual account provided by DOKU.
+- **Use Case:** Recommended for one-time transactions.
+##### MGPC
+- **Description:** Merchant generated virtual account.
+- **Use Case:** Recommended for top up business model.
 
-##### Create VA DGPC and MGPC
-###### CreateVaRequestDto Model
-Create the request object to generate a VA number. Specify the acquirer in the request object. This function is applicable for DGPC and MGPC.
+Parameters for **createVA** and **updateVA**
+<table>
+  <thead>
+    <tr>
+      <th><strong>Parameter</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Required</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>partnerServiceId</code></td>
+      <td colspan="2">The unique identifier for the partner service.</td>
+      <td>String(20)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>customerNo</code></td>
+      <td colspan="2">The customer's identification number.</td>
+      <td>String(20)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>virtualAccountNo</code></td>
+      <td colspan="2">The virtual account number associated with the customer.</td>
+      <td>String(20)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>virtualAccountName</code></td>
+      <td colspan="2">The name of the virtual account associated with the customer.</td>
+      <td>String(255)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>virtualAccountEmail</code></td>
+      <td colspan="2">The email address associated with the virtual account.</td>
+      <td>String(255)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>virtualAccountPhone</code></td>
+      <td colspan="2">The phone number associated with the virtual account.</td>
+      <td>String(9-30)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>trxId</code></td>
+      <td colspan="2">Invoice number in Merchants system.</td>
+      <td>String(64)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><code>totalAmount</code></td>
+      <td colspan="2"><code>value</code>: Transaction Amount (ISO 4217) <br> <small>Example: "11500.00"</small></td>
+      <td>String(16.2)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>Currency</code>: Currency <br> <small>Example: "IDR"</small></td>
+      <td>String(3)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><code>additionalInfo</code></td>
+      <td colspan="2"><code>channel</code>: Channel that will be applied for this VA <br> <small>Example: VIRTUAL_ACCOUNT_BANK_CIMB</small></td>
+      <td>String(20)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><code>virtualAccountConfig</code></td>
+      <td><code>reusableStatus</code>: Reusable Status For Virtual Account Transaction <br><small>value TRUE or FALSE</small></td>
+      <td>Boolean</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>minAmount</code>: Minimum Amount can be used only if <code>virtualAccountTrxType</code> is Open Amount (O). <br><small>Example: "10000.00"</small></td>
+      <td>String(16.2)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>maxAmount</code>: Maximum Amount can be used only if <code>virtualAccountTrxType</code> is Open Amount (O). <br><small>Example: "5000000.00"</small></td>
+      <td>String(16.2)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>virtualAccountTrxType</code></td>
+      <td colspan="2">Transaction type for this transaction. C (Closed Amount), O (Open Amount)</td>
+      <td>String(1)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>expiredDate</code></td>
+      <td colspan="2">Expiration date for Virtual Account. ISO-8601 <br><small>Example: "2023-01-01T10:55:00+07:00"</small></td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+  </tbody>
+</table>
+
+
+1. **Create Virtual Account**
+    - **Function:** `createVa`
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.va.createva.request.CreateVaRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.va.createva.response.CreateVaResponseDto;
+
+   public CreateVaResponseDto doCreateVa(CreateVaRequestDto createVaRequestDto) {
+        return dokuSnap.createVa(createVaRequestDto, privateKey, clientId, secretKey, false);
+   }
+    ```
+
+2. **Update Virtual Account**
+    - **Function:** `updateVa`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.va.updateva.request.UpdateVaRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.va.updateva.response.UpdateVaResponseDto;
+    
+    public UpdateVaResponseDto doUpdateVa(UpdateVaRequestDto updateVaRequestDto) {
+        return dokuSnap.updateVa(updateVaRequestDto, privateKey, clientId, secretKey, false);
+    }
+    ```
+
+3. **Delete Virtual Account**
+
+    | **Parameter**        | **Description**                                                             | **Data Type**       | **Required** |
+    |-----------------------|----------------------------------------------------------------------------|---------------------|--------------|
+    | `partnerServiceId`    | The unique identifier for the partner service.                             | String(8)        | ✅           |
+    | `customerNo`          | The customer's identification number.                                      | String(20)       | ✅           |
+    | `virtualAccountNo`    | The virtual account number associated with the customer.                   | String(20)       | ✅           |
+    | `trxId`               | Invoice number in Merchant's system.                                       | String(64)       | ✅           |
+    | `additionalInfo`      | `channel`: Channel applied for this VA.<br><small>Example: VIRTUAL_ACCOUNT_BANK_CIMB</small> | String(30)       | ✅    |
+
+    
+  - **Function:** `deletePaymentCode`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.va.deleteva.request.DeleteVaRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.va.deleteva.response.DeleteVaResponseDto;
+    
+    public DeleteVaResponseDto doDeleteVa(DeleteVaRequestDto deleteVaRequestDto) {
+        return dokuSnap.deletePaymentCode(deleteVaRequestDto, privateKey, clientId, secretKey, false);
+    }
+    ```
+
+
+#### II. Virtual Account (DIPC)
+- **Description:** The VA number is registered on merchant side and DOKU will forward Acquirer inquiry request to merchant side when the customer make payment at the acquirer channel
+
+- **Function:** `directInquiryVa`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseBodyDto;
+    import com.doku.sdk.dokujavalibrary.dto.va.inquiry.response.InquiryResponseVirtualAccountDataDto;
+    import com.doku.sdk.dokujavalibrary.dto.va.inquiry.request.InquiryRequestDto;
+    
+       @SneakyThrows
+        public InquiryResponseBodyDto doDirectInquiry(InquiryRequestDto inquiryRequestDto) {
+        String tokenB2b = inquiryRequestDto.getHeader().getAuthorization();
+
+        if (dokuSnap.validateToken(tokenB2b, publicKey)) {
+            //example validate vaNumber to db 
+            String vaNumber = inquiryRequestDto.getBody().getVirtualAccountNo();
+            var directInquiryVa = directInquiryVaService.findByVaNumber(vaNumber);
+
+            if (directInquiryVa != null) {
+                log.debug("va number found {}", directInquiryVa.getVaNumber());
+                if (directInquiryVa.getStatusVa().equalsIgnoreCase("pending")) {
+                    String timestamp = dateTimeUtils.getTimestamp();
+                    directInquiryVaService.updateVaStatus(directInquiryVa, timestamp);
+                }
+                var inquiryResult = directInquiryService.findByInquiryRequestId(inquiryRequestDto.getBody().getVirtualAccountNo()).orElseThrow(() -> new GeneralException("4002400", "Inquiry not found"));
+                var inquiryResultVirtualAccountData = mapper.treeToValue(inquiryResult.getInquiryJsonObject(), InquiryResponseVirtualAccountDataDto.class);
+
+
+                return InquiryResponseBodyDto.builder()
+                        .responseCode("2002400")
+                        .responseMessage("Successful")
+                        .virtualAccountData(inquiryResultVirtualAccountData)
+                        .build();
+            }
+            return InquiryResponseBodyDto.builder()
+                    .responseCode("4042400")
+                    .responseMessage("VA number is invalid or not found")
+                    .build();
+
+        }
+
+        return InquiryResponseBodyDto.builder()
+                .responseCode("4002401")
+                .responseMessage("Failed to validate token")
+                .build();
+    }
+    ```
+
+#### III. Check Virtual Account Status
+ | **Parameter**        | **Description**                                                             | **Data Type**       | **Required** |
+|-----------------------|----------------------------------------------------------------------------|---------------------|--------------|
+| `partnerServiceId`    | The unique identifier for the partner service.                             | String(8)        | ✅           |
+| `customerNo`          | The customer's identification number.                                      | String(20)       | ✅           |
+| `virtualAccountNo`    | The virtual account number associated with the customer.                   | String(20)       | ✅           |
+| `inquiryRequestId`    | The customer's identification number.                                      | String(128)       | ❌           |
+| `paymentRequestId`    | The virtual account number associated with the customer.                   | String(128)       | ❌           |
+| `additionalInfo`      | The virtual account number associated with the customer.                   | String      | ❌           |
+
+  - **Function:** `checkStatusVa`
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.request.CheckStatusVaRequestDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusVaResponseDto;
+
+    public CheckStatusVaResponseDto doCheckStatusVa(CheckStatusVaRequestDto checkStatusVaRequestDto) {
+        return dokuSnap.checkStatusVa(checkStatusVaRequestDto, privateKey, clientId, secretKey, false);
+    }
+    ```
+
+### B. Binding / Registration Operations
+The card registration/account binding process must be completed before payment can be processed. The merchant will send the card registration request from the customer to DOKU.
+
+Each card/account can only registered/bind to one customer on one merchant. Customer needs to verify OTP and input PIN.
+
+| **Services**     | **Binding Type**      | **Details**                        |
+|-------------------|-----------------------|-----------------------------------|
+| Direct Debit      | Account Binding       | Supports **Allo Bank** and **CIMB** |
+| Direct Debit      | Card Registration     | Supports **BRI**                    |
+| E-Wallet          | Account Binding       | Supports **OVO**                    |
+
+#### I. Account Binding 
+1. **Binding**
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Parameter</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Required</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>phoneNo</code></td>
+      <td colspan="2">Phone Number Customer. <br> <small>Format: 628238748728423</small> </td>
+      <td>String(9-16)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="13"><code>additionalInfo</code></td>
+      <td colspan="2"><code>channel</code>: Payment Channel<br></td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>custIdMerchant</code>: Customer id from merchant</td>
+      <td>String(64)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>customerName</code>: Customer name from merchant</td>
+      <td>String(70)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>email</code>: Customer email from merchant </td>
+      <td>String(64)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>idCard</code>: Customer id card from merchant</td>
+      <td>String(20)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>country</code>: Customer country </td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>address</code>: Customer Address</td>
+      <td>String(255)</td>
+      <td>❌</td>
+    </tr>
+        <tr>
+      <td colspan="2"><code>dateOfBirth</code> </td>
+      <td>String(YYYYMMDD)</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>successRegistrationUrl</code>: Redirect URL when binding is success </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>failedRegistrationUrl</code>: Redirect URL when binding is success fail</td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>deviceModel</code>: Device Model customer </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>osType</code>: Format: ios/android </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>channelId</code>: Format: app/web </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    </tbody>
+  </table> 
+
+  - **Function:** `doAccountBinding`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.request.AccountBindingRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.accountbinding.response.AccountBindingResponseDto;
+    
+    public AccountBindingResponseDto doAccountBinding(AccountBindingRequestDto accountBindingRequestDto) {
+        return dokuSnap.doAccountBinding(accountBindingRequestDto, privateKey, secretKey, clientId, isProduction, deviceId, ipAddress);
+    }
+    ```
+
+1. **Unbinding**
+     - **Function:** `getTokenB2B2C`
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
+    
+    public TokenB2B2CResponseDto getTokenB2b2c(String authCode) {
+        return dokuSnap.getB2b2cToken(authCode, privateKey, clientId, false);
+    }
+   ```
+    - **Function:** `doAccountUnbinding`
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.request.AccountUnbindingRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.accountunbinding.response.AccountUnbindingResponseDto;
+
+    public AccountUnbindingResponseDto doAccountUnbinding(AccountUnbindingRequestDto accountUnbindingRequestDto) {
+        return dokuSnap.doAccountUnbinding(accountUnbindingRequestDto, privateKey, secretKey, clientId, isProduction, ipAddress);
+    }
+    ```
+
+#### II. Card Registration
+1. **Registration**
+    - **Function:** `doCardRegistration`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.request.CardRegistrationRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.cardregistration.response.CardRegistrationResponseDto;
+    
+    public CardRegistrationResponseDto doCardRegistration(CardRegistrationRequestDto cardRegistrationRequestDto) {
+        return dokuSnap.doCardRegistration(cardRegistrationRequestDto, privateKey, secretKey, clientId, "DH", isProduction);
+    }
+    ```
+
+2. **UnRegistration**
+    - **Function:** `getTokenB2B2C`
+     ```java
+    import com.doku.sdk.dokujavalibrary.dto.token.response.TokenB2B2CResponseDto;
+    
+    public TokenB2B2CResponseDto getTokenB2b2c(String authCode) {
+        return dokuSnap.getB2b2cToken(authCode, privateKey, clientId, false);
+    }
+   ```
+    - **Function:** `doCardUnbinding`
+
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.request.CardUnbindingRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.cardunbinding.response.CardUnbindingResponseDto;
+
+    public CardUnbindingResponseDto doCardUnbinding(CardUnbindingRequestDto cardUnbindingRequestDto){
+        return dokuSnap.doCardUnbinding(cardUnbindingRequestDto, privateKey, clientId, isProduction);
+    }
+    ```
+
+### C. Direct Debit and E-Wallet 
+
+#### I. Request Payment
+  Once a customer’s account or card is successfully register/bind, the merchant can send a payment request. This section describes how to send a unified request that works for both Direct Debit and E-Wallet channels.
+
+| **Acquirer**       | **Channel Name**         | 
+|-------------------|--------------------------|
+| Allo Bank         | DIRECT_DEBIT_ALLO_SNAP   | 
+| BRI               | DIRECT_DEBIT_BRI_SNAP    | 
+| CIMB              | DIRECT_DEBIT_CIMB_SNAP   |
+| OVO               | EMONEY_OVO_SNAP   | 
+
+##### Common parameter
+<table>
+  <thead>
+    <tr>
+      <th><strong>Parameter</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Required</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>partnerReferenceNo</code></td>
+      <td colspan="2"> Reference No From Partner <br> <small>Format: 628238748728423</small> </td>
+      <td>String(9-16)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><code>amount</code></td>
+      <td colspan="2"><code>value</code>: Transaction Amount (ISO 4217) <br> <small>Example: "11500.00"</small></td>
+      <td>String(16.2)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>Currency</code>: Currency <br> <small>Example: "IDR"</small></td>
+      <td>String(3)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><code>additionalInfo</code> </td>
+      <td colspan = "2" ><code>channel</code>: payment channel</td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>remarks</code>:Remarks from Partner</td>
+      <td>String(40)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>successPaymentUrl</code>: Redirect Url if payment success</td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+        <tr>
+      <td colspan="2"><code>failedPaymentUrl</code>: Redirect Url if payment fail
+      </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    </tbody>
+  </table> 
+
+ ##### Allo Bank Specific Parameters
+
+| **Parameter**                        | **Description**                                               | **Required** |
+|--------------------------------------|---------------------------------------------------------------|--------------|
+| `additionalInfo.remarks`             | Remarks from the partner                                      | ✅           |
+| `additionalInfo.lineItems.name`      | Item name (String)                                            | ✅           |
+| `additionalInfo.lineItems.price`     | Item price (ISO 4217)                                         | ✅           |
+| `additionalInfo.lineItems.quantity`  | Item quantity (Integer)                                      | ✅           |
+| `payOptionDetails.payMethod`         | Balance type (options: BALANCE/POINT/PAYLATER)                | ✅           |
+| `payOptionDetails.transAmount.value` | Transaction amount                                            | ✅           |
+| `payOptionDetails.transAmount.currency` | Currency (ISO 4217, e.g., "IDR")                             | ✅           |
+
+
+#####  CIMB Specific Parameters
+
+| **Parameter**                        | **Description**                                               | **Required** |
+|--------------------------------------|---------------------------------------------------------------|--------------|
+| `additionalInfo.remarks`             | Remarks from the partner                                      | ✅           |
+
+
+#####  OVO Specific Parameters
+
+| **Parameter**                           | **Description**                                                | **Required** |
+|------------------------------------------|---------------------------------------------------------------|--------------|
+| `feeType`                                | Fee type from partner (values: OUR, BEN, SHA)                  | ❌           |
+| `payOptionDetails.payMethod`             | Payment method format: CASH, POINTS                            | ✅           |
+| `payOptionDetails.transAmount.value`    | Transaction amount (ISO 4217)                                  | ✅           |
+| `payOptionDetails.transAmount.currency` | Currency (ISO 4217, e.g., "IDR")                               | ✅           |
+| `payOptionDetails.feeAmount.value`      | Fee amount (if applicable)                                     | ✅           |
+| `payOptionDetails.feeAmount.currency`   | Currency for the fee                                          | ✅           |
+| `additionalInfo.paymentType`            | Transaction type (values: SALE, RECURRING)                     | ✅           |
+
+  
+Here’s how you can use the `doPayment` function for both payment types:
+  - **Function:** `doPayment`
+    
+    ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.request.PaymentRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.payment.response.PaymentResponseDto;
+
+    public PaymentResponseDto doPaymentHostToHost(PaymentRequestDto paymentRequestDto, String authCode) {
+        return dokuSnap.doPayment(paymentRequestDto, privateKey, secretKey, clientId, ipAddress, "DH", authCode, isProduction);
+    }
+      ```
+
+#### II. Request Payment Jump APP
+| **Acquirer**       | **Channel Name**        | 
+|-------------------|--------------------------|
+| DANA              | EMONEY_DANA_SNAP   | 
+| OVO               | EMONEY_OVO_SNAP   | 
+| ShopeePay         | EMONEY_SHOPEE_PAY_SNAP  |
+
+The following fields are common across **DANA and ShopeePay** requests:
+<table>
+  <thead>
+    <tr>
+      <th><strong>Parameter</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Required</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>partnerReferenceNo</code></td>
+      <td colspan="2"> Reference No From Partner <br> <small>Examplae : INV-0001</small> </td>
+      <td>String(9-16)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>validUpto</code></td>
+      <td colspan = "2" >Expired time payment url </td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td><code>pointOfInitiation</code></td>
+      <td colspan = "2" >Point of initiation from partner,<br> value: app/pc/mweb </td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td rowspan = "3" > <code>urlParam</code></td>
+      <td colspan = "2"><code>url</code>: URL after payment sucess </td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>type</code>: Pay Return<br> <small>always PAY_RETURN </small></td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>isDeepLink</code>: Is Merchant use deep link or not<br> <small>Example: "Y/N"</small></td>
+      <td>String(1)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td rowspan="2"><code>amount</code></td>
+      <td colspan="2"><code>value</code>: Transaction Amount (ISO 4217) <br> <small>Example: "11500.00"</small></td>
+      <td>String(16.2)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td colspan="2"><code>Currency</code>: Currency <br> <small>Example: "IDR"</small></td>
+      <td>String(3)</td>
+      <td>✅</td>
+    </tr>
+    <tr>
+      <td><code>additionalInfo</code> </td>
+      <td colspan = "2" ><code>channel</code>: payment channel</td>
+      <td>String</td>
+      <td>✅</td>
+    </tr>
+    </tbody>
+  </table> 
+
+##### DANA
+
+DANA spesific parameters
+<table>
+    <thead>
+    <tr>
+      <th><strong>Parameter</strong></th>
+      <th colspan="2"><strong>Description</strong></th>
+      <th><strong>Data Type</strong></th>
+      <th><strong>Required</strong></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td rowspan = "2" ><code>additionalInfo</code></td>
+      <td colspan = "2" ><code>orderTitle</code>: Order title from merchant</td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+    <tr>
+      <td colspan = "2" ><code>supportDeepLinkCheckoutUrl</code> : Value 'true' for Jumpapp behaviour, 'false' for webview, false by default</td>
+      <td>String</td>
+      <td>❌</td>
+    </tr>
+    </tbody>
+  </table> 
+For Shopeepay and Dana you can use the `doPaymentJumpApp` function for for Jumpapp behaviour
+
+- **Function:** `doPaymentJumpApp`
 
 ```java
-CreateVaRequestDto createVaRequestDto = CreateVaRequestDto.builder()
-        .partnerServiceId("    1899")
-        .customerNo("20240704001")
-        .virtualAccountNo("    189920240704001")
-        .virtualAccountName("SDK TEST")
-        .virtualAccountEmail("sdk@email.com")
-        .virtualAccountPhone("6281288932399")
-        .trxId("INV_20240711001")
-        .totalAmount(TotalAmountDto.builder()
-                .value("10000.00")
-                .currency("IDR")
-                .build())
-        .additionalInfo(AdditionalInfoDto.builder()
-                .channel("VIRTUAL_ACCOUNT_BANK_CIMB")
-                .virtualAccountConfig(VirtualAccountConfigDto.builder()
-                        .reusableStatus(false)
-                        .build())
-                .build())
-        .virtualAccountTrxType("C")
-        .expiredDate("2024-07-29T09:54:04+07:00")
-        .build();
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.request.PaymentJumpAppRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.jumpapp.response.PaymentJumpAppResponseDto;
+    
+    public PaymentJumpAppResponseDto doPaymentJumpApp(PaymentJumpAppRequestDto paymentJumpAppRequestDto) {
+        return dokuSnap.doPaymentJumpApp(paymentJumpAppRequestDto, privateKey, secretKey, clientId, deviceId, ipAddress, isProduction);
+    }
 ```
 
-###### createVa Function
-Call the `createVa` function to request the paycode from DOKU. You’ll receive the paycode and payment instructions to display to your customers. This function is applicable for DGPC and MGPC.
+  
+      
+## 3. Other Operation
 
-```java
-/**
- * CreateVaRequestDto -> object
- * privateKey -> string
- * clientId -> string
- * isProduction -> boolean
- */
-dokuSnap.createVa(CreateVaRequestDto, privateKey, clientId, isProduction);
-```
+### A. Check Transaction Status
 
-##### Create VA DIPC
-###### #coming-soon inquiryResponse Function
-If you use the DIPC feature, you can generate your own paycode and allow your customers to pay without direct communication with DOKU. After customers initiate the payment via the acquirer's channel, DOKU sends an inquiry request to you for validation. This function is applicable for DIPC.
+  ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.request.CheckStatusRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.checkstatus.response.CheckStatusResponseDto;
+    
+    public CheckStatusResponseDto doCheckStatus(CheckStatusRequestDto checkStatusRequestDto){
+        return dokuSnap.doCheckStatus(checkStatusRequestDto, privateKey, secretKey, clientId, isProduction);
+    }
+  ```
 
-> [!Important!]
->Before sending the inquiry, DOKU sends a token request. Use the `generateToken` function found in the Handling Payment Notification section.
+### B. Refund
 
+  ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.request.RefundRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.refund.response.RefundResponseDto;
+    
+    public RefundResponseDto doRefund(RefundRequestDto refundRequestDto, String authCode){
+        return dokuSnap.doRefund(refundRequestDto, privateKey, secretKey, clientId, ipAddress, authCode, isProduction);
+    }
+  ```
 
-##### Update VA
-###### UpdateVaRequestDto Model
-Create the request object to update VA. Specify the acquirer in the request object.
+### C. Balance Inquiry
 
-```java
-UpdateVaRequestDto updateVaRequestDto = UpdateVaRequestDto.builder()
-        .partnerServiceId("    1899")
-        .customerNo("000000000650")
-        .virtualAccountNo("    1899000000000650")
-        .virtualAccountName("SDK TEST")
-        .virtualAccountEmail("sdk@email.com")
-        .virtualAccountPhone("6281288932399")
-        .trxId("INV_20240710001")
-        .totalAmount(TotalAmountDto.builder()
-                .value("10000.00")
-                .currency("IDR")
-                .build())
-        .additionalInfo(UpdateVaAdditionalInfoDto.builder()
-                .channel("VIRTUAL_ACCOUNT_BANK_CIMB")
-                .virtualAccountConfig(UpdateVaAdditionalInfoDto.UpdateVaVirtualAccountConfigDto.builder()
-                        .status("ACTIVE")
-                        .build())
-                .build())
-        .virtualAccountTrxType("C")
-        .expiredDate("2024-07-29T09:54:04+07:00")
-        .build();
-```
+  ```java
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.request.BalanceInquiryRequestDto;
+    import com.doku.sdk.dokujavalibrary.dto.directdebit.balanceinquiry.response.BalanceInquiryResponseDto;
+    
+    public BalanceInquiryResponseDto doBalanceInquiry(BalanceInquiryRequestDto balanceInquiryRequestDto, String authCode) {
+        return dokuSnap.doBalanceInquiry(balanceInquiryRequestDto, privateKey, secretKey, clientId, ipAddress, authCode, isProduction);
+    }
+  ```
 
-###### updateVa Function
-Call the `updateVa` function to update VA. It will return the updated VA.
+## 4. Error Handling and Troubleshooting
 
-```java
-/**
- * UpdateVaRequestDto -> object
- * privateKey -> string
- * clientId -> string
- * secretKey -> string
- * isProduction -> boolean
- */
-dokuSnap.updateVa(UpdateVaRequestDto, privateKey, clientId, secretKey, isProduction);
-```
+The SDK throws exceptions for various error conditions. throw status and body like this:
+ ```java
+    @PostMapping(value = "/create")
+    public ResponseEntity<CreateVaResponseDto> createVa(@RequestBody CreateVaRequestDto createVaRequestDto) {
+        var response = dokuSnap.createVa(createVaRequestDto, privateKey, clientId, secretKey, false);
 
-##### Delete VA
-###### DeleteVaRequestDto Model
-Create the request object to delete VA. Specify the acquirer in the request object.
+        String httpStatus = response.getResponseCode().substring(0,3);
+        HttpStatus status = HttpStatus.valueOf(Integer.parseInt(httpStatus));
+        return ResponseEntity.status(status).body(response);
+    }
+ ```
 
-```java
-DeleteVaRequestDto deleteVaRequestDto = DeleteVaRequestDto.builder()
-        .partnerServiceId("    1899")
-        .customerNo("000000000661")
-        .virtualAccountNo("    1899000000000661")
-        .trxId("INV_20240715001")
-        .additionalInfo(DeleteVaRequestAdditionalInfoDto.builder()
-                .channel("VIRTUAL_ACCOUNT_BANK_CIMB")
-                .build())
-        .build();
-```
+This section provides common errors and solutions:
 
-###### deletePaymentCode Function
-Call the `deletePaymentCode` function to delete VA.
-
-```java
-/**
- * DeleteVaRequestDto -> object
- * privateKey -> string
- * clientId -> string
- * secretKey -> string
- * isProduction -> boolean
- */
-dokuSnap.deletePaymentCode(DeleteVaRequestDto, privateKey, clientId, secretKey, isProduction);
-```
-
-##### Check Status VA
-###### CheckStatusVaRequestDto Model
-Create the request object to check status of your VA. Specify the acquirer in the request object.
-
-```java
-CheckStatusVaRequestDto checkStatusVaRequestDto = CheckStatusVaRequestDto.builder()
-        .partnerServiceId("    1899")
-        .customerNo("000000000661")
-        .virtualAccountNo("    1899000000000661")
-        .build();
-```
-
-###### checkStatusVa Function
-Call the `checkStatusVa` function to check the status of your VA.
-
-```java
-/**
- * CheckStatusVaRequestDto -> object
- * privateKey -> string
- * clientId -> string
- * secretKey -> string
- * isProduction -> boolean
- */
-dokuSnap.checkStatusVa(CheckStatusRequestDto, privateKey, clientId, secretKey, isProduction);
-```
+| Error Code | Description                           | Solution                                     |
+|------------|---------------------------------------|----------------------------------------------|
+| `4010000`  | Unauthorized                          | Check if Client ID and Secret Key are valid. |
+| `4012400`  | Virtual Account Not Found             | Verify the virtual account number provided.  |
+| `2002400`  | Successful                            | Transaction completed successfully.          |
 
 
-### Handling Payment Notification
-After your customers make a payment, you’ll receive a notification from DOKU to update the payment status on your end. DOKU first sends a token request (as with DIPC), then uses that token to send the payment notification.
-##### validateAsymmetricSignatureAndGenerateToken function
-Generate the response to DOKU, including the required token, by calling this function.
-
-```java
-/**
- * signature -> string
- * timestamp -> string
- * privateKey -> string
- * clientId -> string
- */
-dokuSnap.validateAsymmetricSignatureAndGenerateToken(signature, timestamp, privateKey, clientId);
-```
-
-##### validateTokenAndGenerateNotificationReponse function
-Deserialize the raw notification data into a structured object using a Data Transfer Object (DTO). This allows you to update the order status, notify customers, or perform other necessary actions based on the notification details.
-
-```java
-/**
- * tokenB2b -> string
- * NotifyPaymentRequestDto -> object
- * publicKey -> string
- */
-dokuSnap.validateTokenAndGenerateNotificationResponse(tokenB2b, NotifyPaymentRequestDto, publicKey);
-```
-
-##### generateNotificationResponse function
-DOKU requires a response to the notification. Use this function to serialize the response data to match DOKU’s format.
-You will need to validate the token first and provide the PaymentNotificationRequestBodyDto (you can use the model included in the SDK).
-
-```java
-/**
- * isTokenValid -> boolean
- * PaymentNotificationRequestBodyDto -> object
- */
-dokuSnap.generateNotificationResponse(isTokenValid, PaymentNotificationRequestBodyDto);
-```
-
-### 4. Additional Features
-Need to use our functions independently? No problem! Here’s how:
-#### - v1 to SNAP converter
-If you're one of our earliest users, you might still use our v1 APIs. In order to simplify your re-integration process to DOKU's SNAP API specification, DOKU provides you with a helper tools to directly convert v1 APIs to SNAP APIs specification.
-
-##### a. convertRequestV1
-Convert DOKU's inquiry and notification from SNAP format (JSON) to v1 format (XML). Feed the inquiry and notification directly to your app without manually mapping parameters or converting file formats.
-This function expects an XML string request and return a SNAP format of the request.
-
-```java
-/**
- * header -> HttpServletRequest
- * InquiryRequestBodyDto -> object
- */
-dokuSnap.directInquiryRequestMapping(header, InquiryRequestBodyDto);
-```
-
-##### b. convertResponseV1
-Convert your inquiry response to DOKU from v1 format (XML) to SNAP format (Form data). Our library handles response code mapping, allowing you to directly use the converted response and send it to DOKU.
-This function will return the response in form data format.
-
-```java
-/**
- * xmlString -> String
- */
-dokuSnap.directInquiryResponseMapping(xmlString);
-```
-
-#### b. Direct Debit
-#### Direct Debit Account Binding
-> You need to save the authCode from account binding response to access the other functions
-```java
-/**
- * AccountBindingRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * isProduction -> boolean
- * deviceId -> String
- * ipAddress -> String
- */
-dokuSnap.doAccountBinding(AccountBindingRequestDto, privateKey, clientId, isProduction, deviceId, ipAddress);
-```
-
-#### Direct Debit Account Unbinding
-```java
-/**
- * AccountUnbindingRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * isProduction -> boolean
- * ipAddress -> String
- */
-dokuSnap.doAccountUnbinding(AccountUnbindingRequestDto, privateKey, clientId, isProduction, ipAddress);
-```
-
-#### Direct Debit Card Registration
-> You need to save the authCode from account binding response to access the other functions
-```java
-/**
- * CardRegistrationRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * channelId -> String
- * isProduction -> boolean
- */
-dokuSnap.doCardRegistration(CardRegistrationRequestDto, privateKey, clientId, channelId, isProduction);
-```
-
-#### Direct Debit Card Unbinding
-```java
-/**
- * CardUnbindingRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * isProduction -> boolean
- */
-dokuSnap.doCardUnbinding(CardUnbindingRequestDto, privateKey, clientId, isProduction);
-```
-
-#### Direct Debit Payment
-> You need to save the authCode from account binding/card registration
-```java
-/**
- * PaymentRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * ipAddress -> String
- * channelId -> String
- * authCode -> String
- * isProduction -> boolean
- */
-dokuSnap.doPayment(PaymentRequestDto, privateKey, clientId, channelid, authCode, isProduction);
-```
-
-#### Direct Debit Payment Jump App
-> This function is only applicable for DANA & Shopee Pay acquirer
-```java
-/**
- * PaymentJumpAppRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * deviceId -> String
- * ipAddress -> String
- * isProduction -> boolean
- */
-dokuSnap.doPaymentJumpApp(PaymentJumpAppRequestDto, privateKey, clientId, deviceId, ipAddress, isProduction);
-```
-
-#### Direct Debit Refund
-> You need to save the authCode from account binding/card registration
-```java
-/**
- * RefundRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * ipAddress -> String
- * authCode -> String
- * isProduction -> boolean
- */
-dokuSnap.doRefund(RefundRequestDto, privateKey, clientId, ipAddress, authCode, isProduction);
-```
-
-#### Direct Debit Balance Inquiry (Check Balance)
-> You need to save the authCode from account binding/card registration
-```java
-/**
- * BalanceInquiryRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * ipAddress -> String
- * authCode -> String
- * isProduction -> boolean
- */
-dokuSnap.doBalanceInquiry(BalanceInquiryRequestDto, privateKey, clientId, ipAddress, authCode, isProduction);
-```
-
-#### Direct Debit Check Status
-```java
-/**
- * CheckStatusRequestDto -> object
- * privateKey -> String
- * clientId -> String
- * isProduction -> boolean
- */
-dokuSnap.doCheckStatus(CheckStatusRequestDto, privateKey, clientId, isProduction);
-```
