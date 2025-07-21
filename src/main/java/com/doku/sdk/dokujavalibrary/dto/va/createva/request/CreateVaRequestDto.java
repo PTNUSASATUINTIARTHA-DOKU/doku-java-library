@@ -3,6 +3,8 @@ package com.doku.sdk.dokujavalibrary.dto.va.createva.request;
 import com.doku.sdk.dokujavalibrary.dto.TotalAmountDto;
 import com.doku.sdk.dokujavalibrary.dto.va.AdditionalInfoDto;
 import com.doku.sdk.dokujavalibrary.dto.va.VirtualAccountDataDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.BillAmountDto;
+import com.doku.sdk.dokujavalibrary.dto.va.checkstatusva.response.CheckStatusResponsePaymentFlagReasonDto;
 import com.doku.sdk.dokujavalibrary.enums.VaChannelEnum;
 import com.doku.sdk.dokujavalibrary.exception.GeneralException;
 import com.doku.sdk.dokujavalibrary.exception.SimulatorException;
@@ -26,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Arrays;
+import java.util.List;
 
 @Data
 @Builder
@@ -87,6 +90,8 @@ public class CreateVaRequestDto {
     @SafeString(groups = SafeStringValidation.class)
     @DateIso8601(groups = PatternValidation.class, message = "expiredDate must be in ISO-8601 format. Ensure that expiredDate follows the correct format. Example: '2023-01-01T10:55:00+07:00'.")
     private String expiredDate;
+
+    private List<CheckStatusResponsePaymentFlagReasonDto> freeTexts;
 
     private OriginDto origin;
 
