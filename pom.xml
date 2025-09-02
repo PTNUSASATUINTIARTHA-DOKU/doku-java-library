@@ -3,15 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.doku.au</groupId>
-		<artifactId>au-spring-parent</artifactId>
-		<version>1.4.1</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.15</version> <!-- Use the appropriate Spring Boot version -->
 	</parent>
 
 	<groupId>com.doku.sdk</groupId>
 	<artifactId>doku-java-library</artifactId>
-	<version>1.0.9</version>
+	<version>1.0.10</version>
 	<name>doku-java-library</name>
 	<description>DOKU Java Library</description>
 
